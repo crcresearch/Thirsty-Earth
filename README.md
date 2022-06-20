@@ -1,3 +1,3 @@
 # Thirsty-Earth
 
-#Authors: Rob Wieck, Caleb Reinking, Matt Noffsinger
+#Authors: Rob Wieck, Caleb Reinking, Matthew Noffsinger
