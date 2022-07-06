@@ -38,6 +38,8 @@ const ChatLogSettings = ({ G, ctx, playerID, moves, revealDeck, setRevealDeck })
       return <GameView G={G} playerID={playerID} revealDeck={revealDeck} setRevealDeck={setRevealDeck} />;
     } else if (selection === "rules") {
       return <Rules page={rulesPage} setPage={setRPage} />;
+    } else if (selection === "p2p chat") {
+      return <PlayerChat G={G} ctx={ctx} playerID={playerID} moves={moves} />;
     }
   };
 
