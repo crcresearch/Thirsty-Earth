@@ -16,10 +16,13 @@ const handleKeyUp = (e) => {
 const ChatLog = ({ G, playerID, moves }) => {
   const [msg, setMsg] = useState("");
 
+  var chatLen = G.chat.length;
+
   const message = (content) => {
     moves.message(playerID, content);
     document.getElementById("player-msg").value = "";
     setMsg("");
+    chatLen += 1;
   };
 
   useEffect(() => {
@@ -28,6 +31,7 @@ const ChatLog = ({ G, playerID, moves }) => {
     objDiv.scrollTop = objDiv.scrollHeight;
   }, [G.chat]);
 
+  //if (G.chat[8].receiver === undefined){
   return (
     <>
       <div id="scrollBottom" className="msgs">
@@ -73,5 +77,6 @@ const ChatLog = ({ G, playerID, moves }) => {
     </>
   );
 };
+//};
 
 export default ChatLog;

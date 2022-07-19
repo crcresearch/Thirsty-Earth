@@ -5,7 +5,7 @@ import "./Lobby.scss";
 const Lobby = (props) => {
   return (
     <div className="lobby-container">
-      <div className="game-title">online coup</div>
+      <div className="game-title">thirsty earth</div>
       {props.children}
       <div className="game-info">
         Developed by vyang1222 -{" "}

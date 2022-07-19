@@ -4,10 +4,11 @@ import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 import ChatLog from "./ChatLog";
 import GameView from "./GameView";
 import Rules from "./Rules";
+import PlayerChat from "./PlayerChat";
 
 import "./CLS.scss";
 
-const allOptions = ["chat & log", "game view", "rules"];
+const allOptions = ["chat & log", "p2p chat", "game view", "rules"];
 
 const ChatLogSettings = ({ G, ctx, playerID, moves, revealDeck, setRevealDeck }) => {
   const [optionIndex, setIndex] = useState(0);

@@ -14,7 +14,10 @@ import { getTurnMsg } from "./logic/messageBuilder";
 import { GAME_NAME } from "../config";
 
 /* ---- Setup ---- */
-const setup = ({ numPlayers }) => {
+const setup = (props) => {
+
+  const { numPlayers } = props;
+
   const { deck, players } = initializeGame(numPlayers);
 
   // initialize game state G

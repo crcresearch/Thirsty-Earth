@@ -1,9 +1,6 @@
-const message = (G, ctx, id, content) => {
-  G.chat.push({ id, content });
-  // TODO: save chat and game state data into database... don't want to clutter poor webpage with chat if it gets flooded
-  if (G.chat.length > 35) {
-    G.chat.shift();
-  }
+const message = (G, ctx, id, content, receiver) => {
+  G.chat.push({ id, content, receiver });
+  console.log(receiver)
 };
 
 const changeNames = (G, ctx, playerList) => {

@@ -1,6 +1,6 @@
 import { cards } from "./cards";
 
-export const initializeGame = (numPlayers) => {
+export const initializeGame = (G, ctx, playerID, numPlayers) => {
   const deck = [];
   const players = [];
   // ensure >= 2 cards will always be left over regardless of player count
@@ -14,6 +14,8 @@ export const initializeGame = (numPlayers) => {
   });
 
   shuffle(deck);
+
+  console.log(G.playerChat)
 
   // give each player their starting cards and coins, initialize their own player state
   for (let i = 0; i < numPlayers; i++) {
@@ -32,7 +34,7 @@ export const initializeGame = (numPlayers) => {
   return { deck, players };
 };
 
-export const getPlayOrder = (numPlayers) => {
+export const getPlayOrder = (G, ctx, playerID, numPlayers) => {
   const playOrder = Array(numPlayers)
     .fill()
     .map((_, i) => "" + i);

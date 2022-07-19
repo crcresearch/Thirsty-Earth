@@ -3,7 +3,7 @@ import uniqid from "uniqid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import "./PlayerChat.scss";
-//import PlayerDropdown from "./PlayerDropdown";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 const handleKeyUp = (e) => {
   e.preventDefault();
@@ -13,31 +13,11 @@ const handleKeyUp = (e) => {
   }
 };
 
-const PlayerChat = (props) => {
+const PlayerChat = ({ G, ctx, playerID, moves }) => {
 
-  const { G, ctx, playerID, moves } = props;
+  var prevChatLen = G.chat.length;
+
   const [msg, setMsg] = useState("");
-
-  const message = (content, sender, receiver) => {
-    receiver = document.getElementById("player-drop").value;
-    sender = G.currentPlayer;
-    moves.message(playerID, content, sender, receiver);
-    document.getElementById("player-msg").value = "";
-    setMsg("");
-  };
-
-  useEffect(() => {
-    // when a new message appear, automatically scroll chat box (when applicable) to bottom to show it
-    let objDiv = document.getElementById("scrollBottom");
-    objDiv.scrollTop = objDiv.scrollHeight;
-  }, [G.chat]);
-
-  const playerNames = [];
-  const dropOptions = [];
-  for (let i=0; i < ctx.numPlayers; i++){
-  playerNames.push(props.G.players[i].name)
-  dropOptions.push({label: props.G.players[i].name, value: props.G.players[i].name})
-  }
 
   let [player, setPlayer] = useState("Choose a Player");
   
@@ -45,20 +25,72 @@ const PlayerChat = (props) => {
     setPlayer(e.target.value)
   }
 
+  // populate player-to-player chats
+  const playerChat = [];
+  for (let i=0; i < ctx.numPlayers; i++){
+    playerChat.push({
+    player1: parseInt(playerID),
+    player2: i,
+    chat: [],
+  });
+  }
+
+  /* cycle through players template
+  for (let i=0; i <= ctx.numPlayers; i++){
+
+    };
+  */
+
+  const message = (content, receiver) => {
+    moves.message(playerID, content, receiver);
+    document.getElementById("player-msg").value = "";
+    setMsg("");
+
+    //playerChat[receiver].chat.push({content, receiver});
+    prevChatLen += 1;
+    console.log(G.chat)
+    console.log(playerID)
+    console.log(player.value)
+  };
+
+  useEffect(() => {
+    // when a new message appear, automatically scroll chat box (when applicable) to bottom to show it
+    let objDiv = document.getElementById("scrollBottom");
+    objDiv.scrollTop = objDiv.scrollHeight;
+  }, [G.playerChat]);
+
+  const playerNames = [];
+  const dropOptions = [];
+  for (let i=0; i < ctx.numPlayers; i++){
+  playerNames.push(G.players[i].name)
+  dropOptions.push({label: G.players[i].name, value: G.players[i].id})
+  }
+
+  for (let i=0; i <= ctx.numPlayers; i++){
+  if (player.value === "global"){
   return (
     <>
       <div id="scrollBottom" className="msgs">
-        {G.chat.map((msg) => {
+        {playerChat[i].chat.map((msg) => {
           let className = "msg ";
-            if (msg.receiver === G.currentPlayer && msg.sender === G.currentPlayer) {
+            return (
+              <div id="playerMsg" className={className} key={uniqid()}>
+                {playerChat[i].chat}
+                <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
+                {msg.content}
+              </div>
+            )
+          })}
+        {playerChat[i].chat.map((msg) => {
+          let className = "msg ";
             return (
               <div id="playerMsg" className={className} key={uniqid()}>
                 <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
                 {msg.content}
               </div>
             );
-          }
-        })}
+          })
+        }
       </div>
       <div className="chat-form">
       <select
@@ -67,7 +99,7 @@ const PlayerChat = (props) => {
         onChange={handlePlayerChange}>
           <option value="Choose a Player">Choose a Player</option>
           {dropOptions.map((player) => <option value={player.value}>{player.label}</option>)}
-        </select>
+      </select>
         <input
           id="player-msg"
           type="text"
@@ -77,12 +109,43 @@ const PlayerChat = (props) => {
           onKeyUp={(e) => handleKeyUp(e)}
           autoComplete="off"
         />
-        <button id="send-button" className="send-btn" onClick={() => message(msg, G.currentPlayer, document.getElementById("player-drop").value)} disabled={msg.length === 0}>
+        <button id="send-button" className="send-btn" onClick={() => message(msg, player.value)} disabled={msg.length === 0}>
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
       </div>
     </>
   );
+}
+  else {
+    return (
+      <>
+        <div id="scrollBottom" className="msgs">
+        </div>
+        <div className="chat-form">
+        <select
+          id="player-drop"
+          value={player}
+          onChange={handlePlayerChange}>
+            <option value="Choose a Player">Choose a Player</option>
+            {dropOptions.map((player) => <option value={player.value}>{player.label}</option>)}
+        </select>
+          <input
+            id="player-msg"
+            type="text"
+            maxLength="70"
+            placeholder="Enter Message"
+            onChange={(e) => setMsg(e.target.value)}
+            onKeyUp={(e) => handleKeyUp(e)}
+            autoComplete="off"
+          />
+          <button id="send-button" className="send-btn" onClick={() => message(msg, player.value)} disabled={msg.length === 0}>
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
+        </div>
+      </>
+    );
+  }
+};
 };
 
 export default PlayerChat;

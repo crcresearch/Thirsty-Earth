@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+export NODE_PATH='/Users/christianfarls/Documents/GitHub/Thirsty-Earth/thirsty_earth_env/lib/node_modules'
+export NPM_CONFIG_PREFIX='/Users/christianfarls/Documents/GitHub/Thirsty-Earth/thirsty_earth_env'
+export npm_config_prefix='/Users/christianfarls/Documents/GitHub/Thirsty-Earth/thirsty_earth_env'
+exec 'thirsty_earth_env/bin/node' "$@"
