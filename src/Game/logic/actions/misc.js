@@ -1,4 +1,5 @@
 const message = (G, ctx, id, content, receiver) => {
+  // receiver value gets removed while being pushed to G, not sure why
   G.chat.push({ id, content, receiver });
 };
 

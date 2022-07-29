@@ -17,13 +17,15 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
 
   const [msg, setMsg] = useState("");
 
+  // Stores player selected in dropdown
   let [player, setPlayer] = useState("Choose a Player");
   
   let handlePlayerChange = (e) => {
     setPlayer(e.target.value)
   }
 
-  // populate player-to-player chats
+  // Populate player-to-player chats; must be initialized OUTSIDE of PlayerChat.js (preferably in Game.js)
+  // or else playerChat will constantly be reinitialized
   const playerChat = [];
   for (let i=0; i < ctx.numPlayers; i++){
     for (let j=0; j < ctx.numPlayers; j++){
@@ -34,11 +36,18 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
   })
   }};
 
+  // Modified message function to reflect filtering with receiver value
   const message = (content, receiver) => {
-    moves.message(playerID, content, receiver);
-    document.getElementById("player-msg").value = "";
-    setMsg("");
-    //playerChat[receiver].chat.push({content, receiver});
+    if (receiver !== "Choose a Player"){
+      playerChat[receiver].chat.push({content, receiver});
+      document.getElementById("player-msg").value = "";
+      setMsg("");
+    }
+    else {
+      moves.message(playerID, content, receiver);
+      document.getElementById("player-msg").value = "";
+      setMsg("");
+    }
   };
 
   useEffect(() => {
@@ -47,6 +56,7 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
     objDiv.scrollTop = objDiv.scrollHeight;
   }, [G.playerChat]);
 
+  // Creates values for dropdown menu
   const playerNames = [];
   const dropOptions = [];
   for (let i=0; i < ctx.numPlayers; i++){
@@ -54,12 +64,13 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
   dropOptions.push({label: G.players[i].name, value: G.players[i].id})
   }
 
+  // Example of how chat mapping would be filtered determmined by player selected in dropdown
   for (let i=0; i <= ctx.numPlayers; i++){
-  if (player.value === "global"){
+  if (player.value !== "Choose a Player"){
   return (
     <>
       <div id="scrollBottom" className="msgs">
-        {playerChat[i].chat.map((msg) => {
+        {playerChat[parseInt(player)].chat.map((msg) => {
           let className = "msg ";
             return (
               <div id="playerMsg" className={className} key={uniqid()}>
@@ -93,47 +104,6 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
       </div>
     </>
   );
-}
-  else {
-    return (
-      <>
-        <div id="scrollBottom" className="msgs">
-        {playerChat[i].chat.map((msg) => {
-          let className = "msg ";
-            return (
-              <div id="playerMsg" className={className} key={uniqid()}>
-                {playerChat[i].chat}
-                <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
-                {msg.content}
-              </div>
-            )
-          })}
-        </div>
-        <div className="chat-form">
-        <select
-          id="player-drop"
-          value={player}
-          onChange={handlePlayerChange}>
-            <option value="Choose a Player">Choose a Player</option>
-            {dropOptions.map((player) => <option value={player.value}>{player.label}</option>)}
-        </select>
-          <input
-            id="player-msg"
-            type="text"
-            maxLength="70"
-            placeholder="Enter Message"
-            onChange={(e) => setMsg(e.target.value)}
-            onKeyUp={(e) => handleKeyUp(e)}
-            autoComplete="off"
-          />
-          <button id="send-button" className="send-btn" onClick={() => message(msg, player.value)} disabled={msg.length === 0}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-        </div>
-      </>
-    );
-  }
-};
-};
+}}};
 
 export default PlayerChat;
