@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import "./PlayerChat.scss";
 import { propTypes } from "react-bootstrap/esm/Image";
-import ChatScreen from "./ChatScreen";
 
 const handleKeyUp = (e) => {
   e.preventDefault();
@@ -18,59 +17,35 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
 
   const [msg, setMsg] = useState("");
 
-  let [player, setPlayer] = useState("Global");
+  let [player, setPlayer] = useState("Choose a Player");
   
   let handlePlayerChange = (e) => {
     setPlayer(e.target.value)
   }
 
-    // populate player-to-player chats
-    const playerChat = [];
-    for (let i=0; i < ctx.numPlayers; i++){
-      playerChat.push({
-      player1: parseInt(playerID),
-      player2: i,
-      chat: [],
-    });
-    }
-
-    for (let i = 0; i < G.chat.length; i++) {
-        for (let j = 0; j < playerChat.length; j++) {
-          if (playerChat[j].player2 === parseInt(G.chat[i].id)) {
-            playerChat[j].chat.push(G.chat[i])
-          }
-       }
-    }
-
-    for (let i = 0; i < G.chat.length; i++) {
-      if (parseInt(playerID) === parseInt(G.chat[i].id)) {
-        playerChat[parseInt(playerID)].chat.push(G.chat[i])
-      }
-    }
-
-  localStorage.setItem("playerChat", playerChat);
-  console.log(localStorage)
-  //console.log(playerChat)
-  //console.log(localStorage.getItem("playerChat")[0].player1)
-
-  /* cycle through players template
-  for (let i=0; i <= ctx.numPlayers; i++){
-
-    };
-  */
+  // populate player-to-player chats
+  const playerChat = [];
+  for (let i=0; i < ctx.numPlayers; i++){
+    for (let j=0; j < ctx.numPlayers; j++){
+    playerChat.push({
+    player1: i,
+    player2: j,
+    chat: [],
+  })
+  }};
 
   const message = (content, receiver) => {
     moves.message(playerID, content, receiver);
     document.getElementById("player-msg").value = "";
     setMsg("");
+    //playerChat[receiver].chat.push({content, receiver});
   };
-  console.log(G.chat)
 
   useEffect(() => {
     // when a new message appear, automatically scroll chat box (when applicable) to bottom to show it
     let objDiv = document.getElementById("scrollBottom");
     objDiv.scrollTop = objDiv.scrollHeight;
-  }, [G.chat]);
+  }, [G.playerChat]);
 
   const playerNames = [];
   const dropOptions = [];
@@ -79,14 +54,16 @@ const PlayerChat = ({ G, ctx, playerID, moves }) => {
   dropOptions.push({label: G.players[i].name, value: G.players[i].id})
   }
 
-if (player === "Global"){
+  for (let i=0; i <= ctx.numPlayers; i++){
+  if (player.value === "global"){
   return (
     <>
       <div id="scrollBottom" className="msgs">
-        {G.chat.map((msg) => {
+        {playerChat[i].chat.map((msg) => {
           let className = "msg ";
             return (
               <div id="playerMsg" className={className} key={uniqid()}>
+                {playerChat[i].chat}
                 <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
                 {msg.content}
               </div>
@@ -98,7 +75,7 @@ if (player === "Global"){
         id="player-drop"
         value={player}
         onChange={handlePlayerChange}>
-          <option value="Global">Global</option> 
+          <option value="Choose a Player">Choose a Player</option>
           {dropOptions.map((player) => <option value={player.value}>{player.label}</option>)}
       </select>
         <input
@@ -110,33 +87,34 @@ if (player === "Global"){
           onKeyUp={(e) => handleKeyUp(e)}
           autoComplete="off"
         />
-        <button id="send-button" className="send-btn" onClick={() => message(msg, player)} disabled={msg.length === 0}>
+        <button id="send-button" className="send-btn" onClick={() => message(msg, player.value)} disabled={msg.length === 0}>
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
       </div>
     </>
-  )}
-
+  );
+}
   else {
     return (
       <>
         <div id="scrollBottom" className="msgs">
-          {playerChat[parseInt(player)].chat.map((msg) => {
-            let className = "msg ";
-              return (
-                <div id="playerMsg" className={className} key={uniqid()}>
-                  <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
-                  {msg.content}
-                </div>
-              )
-            })}
+        {playerChat[i].chat.map((msg) => {
+          let className = "msg ";
+            return (
+              <div id="playerMsg" className={className} key={uniqid()}>
+                {playerChat[i].chat}
+                <span className="msg-sender">{G.players[msg.id].name + ": "}</span>
+                {msg.content}
+              </div>
+            )
+          })}
         </div>
         <div className="chat-form">
         <select
           id="player-drop"
           value={player}
           onChange={handlePlayerChange}>
-            <option value="Global">Global</option> 
+            <option value="Choose a Player">Choose a Player</option>
             {dropOptions.map((player) => <option value={player.value}>{player.label}</option>)}
         </select>
           <input
@@ -148,12 +126,14 @@ if (player === "Global"){
             onKeyUp={(e) => handleKeyUp(e)}
             autoComplete="off"
           />
-          <button id="send-button" className="send-btn" onClick={() => message(msg, player)} disabled={msg.length === 0}>
+          <button id="send-button" className="send-btn" onClick={() => message(msg, player.value)} disabled={msg.length === 0}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
         </div>
       </>
-    )}
-
+    );
+  }
 };
+};
+
 export default PlayerChat;

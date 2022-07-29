@@ -15,6 +15,8 @@ export const initializeGame = (G, ctx, playerID, numPlayers) => {
 
   shuffle(deck);
 
+  console.log(G.playerChat)
+
   // give each player their starting cards and coins, initialize their own player state
   for (let i = 0; i < numPlayers; i++) {
     players.push({

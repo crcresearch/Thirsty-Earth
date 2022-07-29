@@ -1,6 +1,5 @@
 const message = (G, ctx, id, content, receiver) => {
   G.chat.push({ id, content, receiver });
-  console.log({ id, content, receiver })
 };
 
 const changeNames = (G, ctx, playerList) => {
