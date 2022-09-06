@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    ports:
+      - '8000:8000'
+#      - 127.0.0.1:8000:8000
+
+  nginx:
+    restart: always
+    build: 
+      context: ./nginx
+#      dockerfile: ./nginx/Dockerfile
+    ports:
+    - '80:80'
+    - '443:443'
+    depends_on:
+    - client
+
