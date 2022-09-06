@@ -5,12 +5,14 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./
-    ports:
-      - '8000:8000'
+    expose:
+    - 8000
+      #    ports:
+            #      - '8000:8000'
 #      - 127.0.0.1:8000:8000
 
   nginx:
-    restart: always
+    restart: unless-stopped
     build: 
       context: ./nginx
 #      dockerfile: ./nginx/Dockerfile
@@ -19,4 +21,6 @@ services:
     - '443:443'
     depends_on:
     - client
+    volumes:
+    - ./certs/:/etc/ssl/
 
