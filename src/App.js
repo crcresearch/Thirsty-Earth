@@ -3,11 +3,12 @@ import { Client } from 'boardgame.io/react';
 import { PushTheButtonFrank } from './Game';
 import { ButtonBoard } from './Board';
 import { SocketIO } from 'boardgame.io/multiplayer';
+import { BASE_URL} from "./config";
 
 const PushTheButtonClient = Client({
   game: PushTheButtonFrank,
   board: ButtonBoard,
-  multiplayer: SocketIO({ server: 'localhost:8000' }),
+  multiplayer: SocketIO({ server: BASE_URL }),
 });
 
 const App = () => (
