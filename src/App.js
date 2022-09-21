@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { GameHub } from './GameHub';
-import { EnterName } from "./EnterName";
+import { EnterName } from "./Lobby";
 
 
 
