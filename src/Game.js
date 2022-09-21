@@ -1,4 +1,5 @@
 export const PushTheButtonFrank = {
+    name: 'push-the-button',
     setup: (ctx) => ({ 
         buttonValue: 1
     }),
