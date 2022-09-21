@@ -2,10 +2,12 @@ import React from "react";
 
 import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client } from 'boardgame.io/react';
-import { BASE_URL} from "./config";
 
 import { PushTheButtonFrank} from "./Game";
 import { ButtonBoard } from './Board';
+
+import { BASE_URL} from "./config";
+
 
 
 export function GameHub() {
@@ -15,10 +17,10 @@ export function GameHub() {
         multiplayer: SocketIO({ server: BASE_URL }),
     });
 
+
     return(
         <div>
-            <PushTheButtonClient playerID="0" />
-            <PushTheButtonClient playerID="1" />
+            <PushTheButtonClient playerID='0' />
         </div>
     )
 }
