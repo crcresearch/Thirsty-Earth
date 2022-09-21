@@ -5,6 +5,10 @@ import {DEFAULT_PORT} from "./config";
 const { Server, Origins } =  require('boardgame.io/server');
 const { PushTheButtonFrank } = require('./Game');
 
+const lobbyConfig = {
+  apiPort: 8080,
+  apiCallback: () => console.log('Running Lobby API on port 8080...'),
+};
 
 const server = Server({
     games: [PushTheButtonFrank],
@@ -26,4 +30,6 @@ server.run({
       async (ctx, next) => await serve(frontEndAppBuildPath)(Object.assign(ctx, { path: "index.html" }), next)
     );
   },
+  lobbyConfig
 });
+server.app.use(cors({ origin: "*" }));
