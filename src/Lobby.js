@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { LobbyClient } from 'boardgame.io/client';
 import { useSetRecoilState } from "recoil";
 
@@ -34,6 +34,7 @@ export function EnterName() {
     const setPlayerID = useSetRecoilState(playerIDAtom);
     const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
     const [matchIDQuery, setMatchIDQuery] = useState("");
+    let navigate = useNavigate();
 
     function createMatch() {
         lobbyClient.createMatch('push-the-button', {
@@ -45,10 +46,12 @@ export function EnterName() {
             {
                 playerName: 'bob'
             })
-            .then(({ pid, playerCreds }) => {
-                setPlayerID(pid);
-                setPlayerCredentials(playerCreds);
-                console.log(pid);
+            .then((playerInfo) => {
+                console.log(playerInfo);
+                setPlayerID(playerInfo.playerID);
+                setPlayerCredentials(playerInfo.playerCredentials);
+                
+                navigate("/game", { replace: true} );
             });
             setGameID(matchID);
             console.log(matchID);
@@ -64,9 +67,10 @@ export function EnterName() {
                 playerName: 'alice'
             }
         )
-        .then(({ pid, playerCreds}) => {
-            setPlayerID(pid);
-            setPlayerCredentials(playerCreds);
+        .then((playerInfo) => {
+            setPlayerID(playerInfo.playerID);
+            setPlayerCredentials(playerInfo.playerCredentials);
+            navigate("/game", { replace: true} );
         });
     }
 
@@ -88,18 +92,12 @@ export function EnterName() {
             <br />
             <label htmlFor="name">Your name: </label>
             <input type="text" id="name" required style={inputStyle}></input><br />
-            <Link to='/game'>
-                <button className='button-style' style={extraButtonStyle} onClick={() => joinMatch(matchIDQuery)}>Join</button>
-            </Link>
+            <button className='button-style' style={extraButtonStyle} onClick={() => joinMatch(matchIDQuery)}>Join</button>
             
-       
-
             <h2>Create Game</h2>
             <label htmlFor="name">Your name: </label>
             <input type="text" id="name" required style={inputStyle}></input><br />
-            <Link to='/game'>
-                <button className='button-style' style={extraButtonStyle} onClick={createMatch}>Create</button>
-            </Link>  
+            <button className='button-style' style={extraButtonStyle} onClick={createMatch}>Create</button>
         </div>
     )
 }
