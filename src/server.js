@@ -1,6 +1,7 @@
 import path from 'path';
 import serve from 'koa-static';
 import {DEFAULT_PORT} from "./config";
+import cors from "@koa/cors";
 
 const { Server, Origins } =  require('boardgame.io/server');
 const { PushTheButtonFrank } = require('./Game');
