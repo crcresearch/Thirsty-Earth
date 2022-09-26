@@ -26,7 +26,7 @@ const inputStyle = {
 
 
 
-const lobbyClient = new LobbyClient({ server: `http://${API_URL}` });
+const lobbyClient = new LobbyClient({ server: API_URL });
 
 
 
