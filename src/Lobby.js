@@ -48,8 +48,10 @@ export function EnterName() {
             .then(({ pid, playerCreds }) => {
                 setPlayerID(pid);
                 setPlayerCredentials(playerCreds);
+                console.log(pid);
             });
             setGameID(matchID);
+            console.log(matchID);
         });
     }
 
@@ -86,8 +88,10 @@ export function EnterName() {
             <br />
             <label htmlFor="name">Your name: </label>
             <input type="text" id="name" required style={inputStyle}></input><br />
-        
-            <button className='button-style' style={extraButtonStyle} onClick={() => joinMatch(matchIDQuery)}>Join</button>
+            <Link to='/game'>
+                <button className='button-style' style={extraButtonStyle} onClick={() => joinMatch(matchIDQuery)}>Join</button>
+            </Link>
+            
        
 
             <h2>Create Game</h2>
