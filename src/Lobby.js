@@ -7,6 +7,7 @@ import { useSetRecoilState } from "recoil";
 import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
+import { BASE_URL } from "./config";
 
 const divStyle = {
     textAlign: 'center',
@@ -25,7 +26,7 @@ const inputStyle = {
 
 
 
-const lobbyClient = new LobbyClient({ server: 'http://localhost:8080' });
+const lobbyClient = new LobbyClient({ server: BASE_URL });
 
 
 
