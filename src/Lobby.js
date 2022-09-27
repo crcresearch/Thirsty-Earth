@@ -7,6 +7,7 @@ import { useSetRecoilState } from "recoil";
 import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
+import { API_URL } from "./config";
 
 const divStyle = {
   textAlign: "center",

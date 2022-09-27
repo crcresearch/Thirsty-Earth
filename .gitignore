@@ -21,4 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+#certs
+/certs
+
+/src/config.js
 package-lock.json

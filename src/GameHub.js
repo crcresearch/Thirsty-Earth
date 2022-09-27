@@ -11,6 +11,8 @@ import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
 
+import { BASE_URL} from "./config";
+
 
 
 export function GameHub() {
@@ -18,7 +20,7 @@ export function GameHub() {
     const PushTheButtonClient = Client({
         game: PushTheButtonFrank,
         board: ButtonBoard,
-        multiplayer: SocketIO({ server: 'localhost:8000' }),
+        multiplayer: SocketIO({ server: BASE_URL }),
     });
 
     const gameID = useRecoilValue(gameIDAtom);
