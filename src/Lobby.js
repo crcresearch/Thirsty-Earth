@@ -3,10 +3,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LobbyClient } from "boardgame.io/client";
 import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
+import { playerNameAtom } from "./atoms/playername";
+
 import { API_URL } from "./config";
 
 const divStyle = {
@@ -29,10 +32,16 @@ export function EnterName() {
   const setGameID = useSetRecoilState(gameIDAtom);
   const setPlayerID = useSetRecoilState(playerIDAtom);
   const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
+  //const [playerName, setPlayerName] = useRecoilState(playerNameAtom);
+  const setPlayerNameAtom = useSetRecoilState(playerNameAtom);
+
   const [matchIDQuery, setMatchIDQuery] = useState("");
+  const [joiningPlayerName, setJoiningPlayerName] = useState("");
+  const [creatingPlayerName, setCreatingPlayerName] = useState("");
+
   let navigate = useNavigate();
 
-  function createMatch() {
+  function createMatch(playerName) {
     lobbyClient
       .createMatch("push-the-button", {
         numPlayers: 2,
@@ -40,7 +49,7 @@ export function EnterName() {
       .then(({ matchID }) => {
         lobbyClient
           .joinMatch("push-the-button", matchID, {
-            playerName: "bob",
+            playerName: playerName,
           })
           .then((playerInfo) => {
             console.log(playerInfo);
@@ -50,19 +59,22 @@ export function EnterName() {
             navigate("/game", { replace: true });
           });
         setGameID(matchID);
+        setPlayerNameAtom(playerName);
+        
         console.log(matchID);
       });
   }
 
-  function joinMatch(matchID) {
+  function joinMatch(matchID, playerName) {
     setGameID(matchID);
     lobbyClient
       .joinMatch("push-the-button", matchID, {
-        playerName: "alice",
+        playerName: playerName,
       })
       .then((playerInfo) => {
         setPlayerID(playerInfo.playerID);
         setPlayerCredentials(playerInfo.playerCredentials);
+        setPlayerNameAtom(playerName);
         navigate("/game", { replace: true });
       });
   }
@@ -96,6 +108,10 @@ export function EnterName() {
             required
             className="form-control"
             style={inputStyle}
+            value={joiningPlayerName}
+            onChange={(event) => {
+              setJoiningPlayerName(event.target.value);
+            }}
           ></input>
 
           <div className="d-flex flex-row-reverse ">
@@ -103,7 +119,7 @@ export function EnterName() {
               type="button"
               className="btn btn-block btn-primary"
               style={extraButtonStyle}
-              onClick={() => joinMatch(matchIDQuery)}
+              onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
             >
               Join
             </button>
@@ -118,13 +134,17 @@ export function EnterName() {
             placeholder="Your Name"
             required
             style={inputStyle}
+            value={creatingPlayerName}
+            onChange={(event) => {
+              setCreatingPlayerName(event.target.value)
+            }}
           ></input>
           <div className="d-flex flex-row-reverse ">
             <button
               type="button"
               className="btn btn-primary"
               style={extraButtonStyle}
-              onClick={createMatch}
+              onClick={() => {createMatch(creatingPlayerName)}}
             >
               Create Game
             </button>
