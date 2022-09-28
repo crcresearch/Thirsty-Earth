@@ -32,12 +32,13 @@ export function EnterName() {
   const setGameID = useSetRecoilState(gameIDAtom);
   const setPlayerID = useSetRecoilState(playerIDAtom);
   const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
-  //const [playerName, setPlayerName] = useRecoilState(playerNameAtom);
   const setPlayerNameAtom = useSetRecoilState(playerNameAtom);
 
   const [matchIDQuery, setMatchIDQuery] = useState("");
   const [joiningPlayerName, setJoiningPlayerName] = useState("");
   const [creatingPlayerName, setCreatingPlayerName] = useState("");
+
+  const [errorText, setErrorText] = useState("")
 
   let navigate = useNavigate();
 
@@ -76,7 +77,19 @@ export function EnterName() {
         setPlayerCredentials(playerInfo.playerCredentials);
         setPlayerNameAtom(playerName);
         navigate("/game", { replace: true });
+      })
+      .catch((error) => {
+        setErrorText('Invalid Room ID');
       });
+  }
+
+  let alert = "";
+
+  if(errorText !== "") {
+    alert = <div className="alert alert-danger" role="alert">{errorText}</div>;
+  }
+  else {
+    alert = "";
   }
 
   return (
@@ -87,6 +100,7 @@ export function EnterName() {
           <h2 className="subtitle-font text-center">Join Game</h2>
           <div className="mb-3">
             {/* <label htmlFor="roomid"  className="form-label">Room ID: </label> */}
+            {alert}
             <input
               type="text"
               className="form-control"
