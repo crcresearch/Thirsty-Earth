@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GameHub } from './GameHub';
 import { EnterName } from "./Lobby";
+import { GameIDError } from './GameIDError';
 
 
 
@@ -10,6 +11,7 @@ const App = () => (
     <Routes>
       <Route path="/game/:gameID" element={<GameHub/>} />
       <Route path="/" element={<EnterName/>} />
+      <Route path="/game" element={<GameIDError/>}/>
     </Routes>
   </BrowserRouter>
 
