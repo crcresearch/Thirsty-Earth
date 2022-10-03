@@ -8,7 +8,7 @@ import { EnterName } from "./Lobby";
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/game" element={<GameHub/>} />
+      <Route path="/game/:gameID" element={<GameHub/>} />
       <Route path="/" element={<EnterName/>} />
     </Routes>
   </BrowserRouter>

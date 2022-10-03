@@ -57,7 +57,7 @@ export function EnterName() {
             setPlayerID(playerInfo.playerID);
             setPlayerCredentials(playerInfo.playerCredentials);
 
-            navigate("/game", { replace: true });
+            navigate(`/game/${matchID}`, { replace: true });
           });
         setGameID(matchID);
         setPlayerNameAtom(playerName);
@@ -76,7 +76,7 @@ export function EnterName() {
         setPlayerID(playerInfo.playerID);
         setPlayerCredentials(playerInfo.playerCredentials);
         setPlayerNameAtom(playerName);
-        navigate("/game", { replace: true });
+        navigate(`/game/${matchID}`, { replace: true });
       })
       .catch((error) => {
         setErrorText('Invalid Room ID');
