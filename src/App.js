@@ -12,6 +12,7 @@ const App = () => (
       <Route path="/game/:gameID" element={<GameHub/>} />
       <Route path="/" element={<EnterName/>} />
       <Route path="/game" element={<GameIDError/>}/>
+      <Route path="/error" element={<GameIDError/>}/>
     </Routes>
   </BrowserRouter>
 
