@@ -3,10 +3,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LobbyClient } from "boardgame.io/client";
 import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
+import { playerNameAtom } from "./atoms/playername";
+
 import { API_URL } from "./config";
 
 const divStyle = {
@@ -29,10 +32,17 @@ export function EnterName() {
   const setGameID = useSetRecoilState(gameIDAtom);
   const setPlayerID = useSetRecoilState(playerIDAtom);
   const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
+  const setPlayerNameAtom = useSetRecoilState(playerNameAtom);
+
   const [matchIDQuery, setMatchIDQuery] = useState("");
+  const [joiningPlayerName, setJoiningPlayerName] = useState("");
+  const [creatingPlayerName, setCreatingPlayerName] = useState("");
+
+  const [errorText, setErrorText] = useState("")
+
   let navigate = useNavigate();
 
-  function createMatch() {
+  function createMatch(playerName) {
     lobbyClient
       .createMatch("push-the-button", {
         numPlayers: 2,
@@ -40,31 +50,46 @@ export function EnterName() {
       .then(({ matchID }) => {
         lobbyClient
           .joinMatch("push-the-button", matchID, {
-            playerName: "bob",
+            playerName: playerName,
           })
           .then((playerInfo) => {
             console.log(playerInfo);
             setPlayerID(playerInfo.playerID);
             setPlayerCredentials(playerInfo.playerCredentials);
 
-            navigate("/game", { replace: true });
+            navigate(`/game/${matchID}`, { replace: true });
           });
         setGameID(matchID);
+        setPlayerNameAtom(playerName);
+        
         console.log(matchID);
       });
   }
 
-  function joinMatch(matchID) {
+  function joinMatch(matchID, playerName) {
     setGameID(matchID);
     lobbyClient
       .joinMatch("push-the-button", matchID, {
-        playerName: "alice",
+        playerName: playerName,
       })
       .then((playerInfo) => {
         setPlayerID(playerInfo.playerID);
         setPlayerCredentials(playerInfo.playerCredentials);
-        navigate("/game", { replace: true });
+        setPlayerNameAtom(playerName);
+        navigate(`/game/${matchID}`, { replace: true });
+      })
+      .catch((error) => {
+        setErrorText('Invalid Room ID');
       });
+  }
+
+  let alert = "";
+
+  if(errorText !== "") {
+    alert = <div className="alert alert-danger" role="alert">{errorText}</div>;
+  }
+  else {
+    alert = "";
   }
 
   return (
@@ -75,6 +100,7 @@ export function EnterName() {
           <h2 className="subtitle-font text-center">Join Game</h2>
           <div className="mb-3">
             {/* <label htmlFor="roomid"  className="form-label">Room ID: </label> */}
+            {alert}
             <input
               type="text"
               className="form-control"
@@ -96,6 +122,10 @@ export function EnterName() {
             required
             className="form-control"
             style={inputStyle}
+            value={joiningPlayerName}
+            onChange={(event) => {
+              setJoiningPlayerName(event.target.value);
+            }}
           ></input>
 
           <div className="d-flex flex-row-reverse ">
@@ -103,7 +133,7 @@ export function EnterName() {
               type="button"
               className="btn btn-block btn-primary"
               style={extraButtonStyle}
-              onClick={() => joinMatch(matchIDQuery)}
+              onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
             >
               Join
             </button>
@@ -118,13 +148,17 @@ export function EnterName() {
             placeholder="Your Name"
             required
             style={inputStyle}
+            value={creatingPlayerName}
+            onChange={(event) => {
+              setCreatingPlayerName(event.target.value)
+            }}
           ></input>
           <div className="d-flex flex-row-reverse ">
             <button
               type="button"
               className="btn btn-primary"
               style={extraButtonStyle}
-              onClick={createMatch}
+              onClick={() => {createMatch(creatingPlayerName)}}
             >
               Create Game
             </button>
