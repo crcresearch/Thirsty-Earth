@@ -28,6 +28,6 @@ yarn-error.log*
 /src/config.js
 package-lock.json
 
-docker-compose.json
+docker-compose.yml
 
 src/config.js
