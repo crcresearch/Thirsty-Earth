@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChatBox } from './components/ChatBox';
+import { PreviousRounds } from './components/PreviousRounds';
 
 export function ButtonBoard({ ctx, G, moves }) {
 
@@ -9,11 +10,6 @@ export function ButtonBoard({ ctx, G, moves }) {
 
     const gameBoardStyle = {
         backgroundColor: 'blue',
-        height: '100vh'
-    }
-
-    const recordsStyle = {
-        backgroundColor: 'green',
         height: '100vh'
     }
 
@@ -51,8 +47,8 @@ export function ButtonBoard({ ctx, G, moves }) {
                         </div>
                     </div>
                 </div>
-                <div className="col" style={recordsStyle}>
-                    placeholder
+                <div className="col">
+                    <PreviousRounds />
                 </div>
             </div>
         </div>
