@@ -1,27 +1,11 @@
 import React from 'react';
+import { ChatBox } from './components/ChatBox';
 
 export function ButtonBoard({ ctx, G, moves }) {
 
     const onClick = () => {
         moves.clickButton();
     };
-
-    const buttonStyle = {
-        backgroundColor: '#0033ff',
-        color: '#ffffff',
-        borderRadius: '15px',
-        border: '5px solid black',
-        fontSize: '18pt'
-    };
-
-    const divStyle = {
-        textAlign: 'center'
-    }
-
-    const chatStyle = {
-        backgroundColor: 'red',
-        height: '100vh'
-    }
 
     const gameBoardStyle = {
         backgroundColor: 'blue',
@@ -30,6 +14,11 @@ export function ButtonBoard({ ctx, G, moves }) {
 
     const recordsStyle = {
         backgroundColor: 'green',
+        height: '100vh'
+    }
+
+    const selectionsStyle = {
+        backgroundColor: 'grey',
         height: '100vh'
     }
 
@@ -47,11 +36,20 @@ export function ButtonBoard({ ctx, G, moves }) {
                 <h1>Village: Test</h1>
             </div>
             <div className="row">
-                <div className="col" style={chatStyle}>
-                    placeholder
+                <div className="col">
+                    <ChatBox />
                 </div>
                 <div className="col-6" style={gameBoardStyle}>
-                    placeholder
+                    <div className="container">
+                        <div className="row">
+                            <div className="col" style={selectionsStyle}>
+                                placeholder
+                            </div>
+                            <div className="col-10">
+                                placeholder
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="col" style={recordsStyle}>
                     placeholder
