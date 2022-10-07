@@ -19,7 +19,7 @@ export function ButtonBoard({ ctx, G, moves }) {
     // )
     return (
         <div className="container">
-            <div className="row">
+            <div className="row title-font">
                 <h1>Year: 1</h1>
                 <h1>Village: Test</h1>
             </div>

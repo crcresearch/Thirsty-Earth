@@ -42,3 +42,49 @@ code {
     color: rgba(0,0,0,1);
     text-transform: capitalize;
 }
+
+/* Override default Bootstrap CSS */
+.btn-primary{
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.btn-primary:hover {
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.btn-primary:active {
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.btn-primary:focus {
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.card{
+  background-color: rgba(238,234,223,1);
+  border-width: 5px;
+  border-radius: 10px;
+  border-color: #145424;
+}
+
+.card-header {
+  border-width: 4px;
+  border-color: #145424;
+}
+
+.card-footer {
+  border-width: 4px;
+  border-color: #145424;
+}
+
+/* Other stuff */
+.thick-border {
+  border-width: 5px;
+  border-color: #145424;
+  border-radius: 10px;
+  border-style: solid;
+}

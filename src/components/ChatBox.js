@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const chatBoxStyle = {
-    height: "800px"
+    height: "800px",
 }
 export function ChatBox() {
     return(
@@ -15,7 +15,7 @@ export function ChatBox() {
             </div>
             <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                 <input type="text" className="form-control" placeholder="Type your message here..." />
-                <button className="btn" type="button">Send</button>
+                <button className="btn btn-primary" type="button">Send</button>
             </div>
 
         </div>

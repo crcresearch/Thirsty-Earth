@@ -10,8 +10,7 @@ import grass from "../img/grass.png"
 const gameBoardStyle = {
     backgroundColor: '#31a61e',
     height: '800px',
-    borderRadius: '10px',
-    backgroundImage: `url(${grass})`
+    backgroundImage: `url(${grass})`,
 }
 
 const selectionsStyle = {
@@ -38,7 +37,7 @@ const cropSquareStyle = {
 
 export function MainField() {
     return(
-        <div className="container" style={gameBoardStyle}>
+        <div className="container thick-border" style={gameBoardStyle}>
             <div className="row">
                 <div className="col">
                     <div style={selectionsStyle}>
