@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChatBox } from './components/ChatBox';
 import { PreviousRounds } from './components/PreviousRounds';
+import { MainField } from './components/MainField';
 
 export function ButtonBoard({ ctx, G, moves }) {
 
@@ -8,15 +9,6 @@ export function ButtonBoard({ ctx, G, moves }) {
         moves.clickButton();
     };
 
-    const gameBoardStyle = {
-        backgroundColor: 'blue',
-        height: '100vh'
-    }
-
-    const selectionsStyle = {
-        backgroundColor: 'grey',
-        height: '100vh'
-    }
 
     // return (
     //     <div style={divStyle}>    
@@ -35,17 +27,8 @@ export function ButtonBoard({ ctx, G, moves }) {
                 <div className="col">
                     <ChatBox />
                 </div>
-                <div className="col-6" style={gameBoardStyle}>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col" style={selectionsStyle}>
-                                placeholder
-                            </div>
-                            <div className="col-10">
-                                placeholder
-                            </div>
-                        </div>
-                    </div>
+                <div className="col-6">
+                    <MainField />
                 </div>
                 <div className="col">
                     <PreviousRounds />

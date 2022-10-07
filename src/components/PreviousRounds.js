@@ -2,7 +2,7 @@ import React from 'react';
 
 export function PreviousRounds() {
     const prevRoundsStyle = {
-        height: '100vh'
+        height: '800px'
     }
     return(
         <div className="card" style={prevRoundsStyle}>

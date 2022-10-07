@@ -2,7 +2,7 @@ import React from 'react';
 
 
 const chatBoxStyle = {
-    height: "100vh"
+    height: "800px"
 }
 export function ChatBox() {
     return(
