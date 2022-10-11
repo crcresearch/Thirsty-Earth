@@ -3,7 +3,7 @@ import { ChatBox } from './components/ChatBox';
 import { PreviousRounds } from './components/PreviousRounds';
 import { MainField } from './components/MainField';
 
-export function ButtonBoard({ ctx, G, moves }) {
+export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages }) {
 
     const onClick = () => {
         moves.clickButton();
@@ -25,7 +25,7 @@ export function ButtonBoard({ ctx, G, moves }) {
             </div>
             <div className="row">
                 <div className="col">
-                    <ChatBox />
+                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages}/>
                 </div>
                 <div className="col-6">
                     <MainField />
