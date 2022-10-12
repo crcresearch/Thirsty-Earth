@@ -44,7 +44,7 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
             <div className="card-header d-flex justify-content-between align-items-center p-3">
                 <h5 className="mb-0">Chat</h5>
             </div>
-            <div className="card-body">
+            <div className="card-body chat-scroll">
                 <ul style={chatListStyle}>
                     {messageList}
                 </ul>
