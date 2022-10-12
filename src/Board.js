@@ -9,7 +9,6 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages }) {
         moves.clickButton();
     };
 
-
     // return (
     //     <div style={divStyle}>    
     //         <h1>Current player: {ctx.currentPlayer}</h1>
