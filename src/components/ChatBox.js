@@ -17,12 +17,22 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
     const [message, setMessage] = useState('');
     const [playerData, setPlayerData] = useState('');
     const gameID = useRecoilValue(gameIDAtom);
+
+    // If the message box is not empty when the user hits send, send the message.
     const handleSubmit = (m) => {
         if(m !== '') {
             sendMessageFn(m);
             setMessage('');
         }    
     }
+
+    // Allows the user to press "enter" to submit their message instead of using the "send" button
+    const handleKeyPress = (e) => {
+        if (e.charCode === 13) {
+            handleSubmit(message);
+        }
+    }
+
     //Pull in player data from the server
     useEffect(() => {
         fetch(`${API_URL}/games/push-the-button/${gameID}`, {method: 'GET'})
@@ -32,13 +42,14 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
         })
 
     })
+
  
     const messageList = chatMessages.map((message) =>   
         // Use array position to map the sender ID to their name 
         // TODO: make a less jank way to do this
         <li key={message.id}><b>{playerData[message.sender].name}</b>: {message.payload}</li>
     )
-    //console.log(list);
+
     return(
         <div className="card" style={chatBoxStyle}>
             <div className="card-header d-flex justify-content-between align-items-center p-3">
@@ -57,8 +68,10 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
                     value={message}
                     onChange={(event) => {
                         setMessage(event.target.value);
-                    }} />
-                <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}}>Send</button>
+                    }}
+                    onKeyPress={handleKeyPress}
+                     />
+                <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
             </div>
 
         </div>

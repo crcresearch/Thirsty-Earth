@@ -4,18 +4,6 @@ import { PreviousRounds } from './components/PreviousRounds';
 import { MainField } from './components/MainField';
 
 export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages }) {
-
-    const onClick = () => {
-        moves.clickButton();
-    };
-
-    // return (
-    //     <div style={divStyle}>    
-    //         <h1>Current player: {ctx.currentPlayer}</h1>
-    //         <h1>Button value: {G.buttonValue}</h1> 
-    //         <button style={buttonStyle} onClick={() => onClick()}> push me.</button> 
-    //     </div>
-    // )
     return (
         <div className="container">
             <div className="row title-font">
@@ -24,6 +12,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages }) {
             </div>
             <div className="row">
                 <div className="col">
+                    {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages}/>
                 </div>
                 <div className="col-6">
