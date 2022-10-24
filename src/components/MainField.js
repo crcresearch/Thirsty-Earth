@@ -87,21 +87,23 @@ const SelectAction = ({
 export function MainField() {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [selectedOption, setSelectedOption] = useState('');
-    const [selectedCrop, setSelectedCrop] = useState(0);
 
     const selectOption = ((option) => {
         setSelectedOption(option);
     })
 
-    const selectCrop = ((cropNumber) => {
+    //For the given cell, change the tile to the option selected.
+    const selectCrop = ((row, col) => {
         if(selectedOption !== '') {
-            setSelectedCrop(cropNumber);
+            let tempGrid = [...gridSelections];
+            tempGrid[row][col] = selectedOption;
+            setGridSelections(tempGrid);
         }
- 
     })
     const clearSelections = (() => {
-        setSelectedCrop(0);
+        setGridSelections([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]])
         setSelectedOption('');
     })
 
@@ -120,8 +122,8 @@ export function MainField() {
                         {gameGrid.map((subArray, i) => {
                             return (
                                 <div key={i}>
-                                    {subArray.map((crop) => {
-                                        return (<GameTile key={crop} isHighlighted={crop === selectedCrop} image={selectedCrop !== crop || selectedOption === '' ? leaf : selectedOption} onClick={() => {selectCrop(crop)}}/>)
+                                    {subArray.map((crop, j) => {
+                                        return (<GameTile key={crop} isHighlighted={gridSelections[i][j] !== leaf} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
                                     })}
                                 </div>)
                         })}
