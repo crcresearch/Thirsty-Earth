@@ -48,16 +48,18 @@ const imgStyle = {
 const GameTile = ({
     theKey,
     isHighlighted,
-    image
+    image,
+    onClick
 }) => {
     return(
         <div style={{
             ...cropSquareStyle,
             border: isHighlighted 
-                ? 'solid cyan 1px' 
-                : undefined
+                ? 'solid cyan 4px' 
+                : 'solid black 4px'
             }} 
-            key={theKey}>
+            key={theKey}
+            onClick={onClick}>
             <img src={image} style={imgStyle}/>
         </div>
     )
@@ -66,47 +68,31 @@ const GameTile = ({
 const SelectAction = ({
     isHighlighted,
     image,
-    altText
+    altText,
+    onClick
 }) => {
     return(<img src={image} 
             alt={altText} 
             style={{
                 ...imgStyle,
                 border: isHighlighted 
-                ? 'solid cyan 1px' 
+                ? 'solid cyan 4px' 
                 : undefined
-            }} />)
+            }}
+            onClick={onClick} />)
 }
 
 export function MainField() {
-    const [gameGrid, setGameGrid] = useState([['', '', ''], ['', '', ''], ['', '', '']]);
+    const [gameGrid, setGameGrid] = useState([[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
     const [selectedOption, setSelectedOption] = useState('');
-
-    useEffect(() => {
-        let tempArray = gameGrid;
-        for (let i = 0; i < tempArray.length; i++) {
-            for (let j = 0; j < tempArray[i].length; j++) {
-                let cellObject = {
-                    image: leaf
-                };
-                tempArray[i][j] = { ...cellObject };
-            }
-        }
-        setGameGrid(tempArray);
-    }, [gameGrid]);
-
-
-
-    const selectSquare = ((row, col) => {
-        let tempArray = gameGrid;
-        tempArray[row][col].image = cloud;
-        setGameGrid(tempArray);
-        console.log(gameGrid);
-    });
+    const [selectedCrop, setSelectedCrop] = useState(0);
 
     const selectOption = ((option) => {
         setSelectedOption(option);
-        console.log(selectedOption)
+    })
+
+    const selectCrop = ((cropNumber) => {
+        setSelectedCrop(cropNumber);
     })
 
 
@@ -117,7 +103,7 @@ export function MainField() {
                 <div className="col">
                     <div style={selectionsStyle}>
                         {options.map((option, index) => {
-                            return(<SelectAction isHighlighted={option === selectedOption} image={option} altText="placeholder" key={index} onClick={() => selectOption(option)}/>)
+                            return(<SelectAction isHighlighted={option === selectedOption} image={option} altText="placeholder" key={index} onClick={() => {selectOption(option)}}/>)
                         })}
                     </div>
                 </div>
@@ -126,8 +112,8 @@ export function MainField() {
                         {gameGrid.map((subArray, i) => {
                             return (
                                 <div key={i}>
-                                    {subArray.map((cell, j) => {
-                                        return (<GameTile key={i + j} isHighlighted={false} image={leaf}/>)
+                                    {subArray.map((crop) => {
+                                        return (<GameTile key={crop} isHighlighted={crop === selectedCrop} image={selectedCrop !== crop ? leaf : selectedOption} onClick={() => {selectCrop(crop)}}/>)
                                     })}
                                 </div>)
                         })}
