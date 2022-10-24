@@ -100,6 +100,11 @@ export function MainField() {
         }
  
     })
+    const clearSelections = (() => {
+        setSelectedCrop(0);
+        setSelectedOption('');
+    })
+
     return (
         <div className="container thick-border" style={gameBoardStyle}>
             <div className="row">
@@ -122,6 +127,9 @@ export function MainField() {
                         })}
                     </div>
                 </div>
+            </div>
+            <div className="row">
+                <button className="btn btn-primary" onClick={clearSelections}>SUBMIT</button>
             </div>
         </div>
     )
