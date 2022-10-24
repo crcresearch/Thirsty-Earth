@@ -1,14 +1,14 @@
 import path from 'path';
 import serve from 'koa-static';
-import {DEFAULT_PORT} from "./config";
+import {DEFAULT_PORT, API_PORT} from "./config";
 import cors from "@koa/cors";
 
 const { Server, Origins } =  require('boardgame.io/server');
 const { PushTheButtonFrank } = require('./Game');
 
 const lobbyConfig = {
-  apiPort: 8080,
-  apiCallback: () => console.log('Running Lobby API on port 8080...'),
+  apiPort: API_PORT,
+  apiCallback: () => console.log('Running Lobby API on port: ' + API_PORT ),
 };
 
 const server = Server({

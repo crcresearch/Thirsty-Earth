@@ -26,7 +26,7 @@ const inputStyle = {
   borderRadius: "15px",
 };
 
-const lobbyClient = new LobbyClient({ server: "http://localhost:8080" });
+const lobbyClient = new LobbyClient({ server: API_URL });
 
 export function EnterName() {
   const setGameID = useSetRecoilState(gameIDAtom);
