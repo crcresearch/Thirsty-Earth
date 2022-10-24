@@ -29,3 +29,4 @@ package-lock.json
 
 docker-compose.yml
 
+/src/config.js
