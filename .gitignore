@@ -25,9 +25,7 @@ yarn-error.log*
 #certs
 /certs
 
-/src/config.js
 package-lock.json
 
 docker-compose.yml
 
-src/config.js
