@@ -24,7 +24,7 @@ const cropGridStyle = {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: '5%',
-    marginTop: '40%'
+    marginTop: '20%'
 
 }
 const cropSquareStyle = {
@@ -104,7 +104,9 @@ export function MainField() {
 
     return (
         <div className="container thick-border" style={gameBoardStyle}>
-            <div className="row">
+            <div className="row" style={{
+                marginTop: '15%',
+            }}>
                 <div className="col">
                     <div style={selectionsStyle}>
                         {options.map((option, index) => {
