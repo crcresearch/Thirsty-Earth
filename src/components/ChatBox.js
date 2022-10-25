@@ -17,11 +17,11 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
     const [message, setMessage] = useState('');
     const [playerData, setPlayerData] = useState('');
     const gameID = useRecoilValue(gameIDAtom);
-    const bottomRef = useRef(null);
+    //const bottomRef = useRef(null);
 
-    useEffect(() => {
-        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
-    })
+    // useEffect(() => {
+    //     bottomRef.current.scrollIntoView({behavior: 'smooth'})
+    // }, [chatMessages])
 
     // If the message box is not empty when the user hits send, send the message.
     const handleSubmit = (m) => {
@@ -65,7 +65,7 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
                     <ul style={chatListStyle}>
                         {messageList}
                     </ul>
-                    <div ref={bottomRef}/>
+                    {/*<div ref={bottomRef}/>*/}
                 </div>     
             </div>
             <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
