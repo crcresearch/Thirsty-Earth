@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { API_URL } from '../config';
 import { useRecoilValue } from 'recoil';
 import { gameIDAtom } from '../atoms/gameid';
@@ -17,6 +17,11 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
     const [message, setMessage] = useState('');
     const [playerData, setPlayerData] = useState('');
     const gameID = useRecoilValue(gameIDAtom);
+    //const bottomRef = useRef(null);
+
+    // useEffect(() => {
+    //     bottomRef.current.scrollIntoView({behavior: 'smooth'})
+    // }, [chatMessages])
 
     // If the message box is not empty when the user hits send, send the message.
     const handleSubmit = (m) => {
@@ -41,7 +46,7 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
             setPlayerData(data.players);          
         })
 
-    })
+    }, [chatMessages, gameID])
 
  
     const messageList = chatMessages.map((message) =>   
@@ -56,9 +61,12 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
                 <h5 className="mb-0">Chat</h5>
             </div>
             <div className="card-body chat-scroll">
-                <ul style={chatListStyle}>
-                    {messageList}
-                </ul>
+                <div id="scroller">
+                    <ul style={chatListStyle}>
+                        {messageList}
+                    </ul>
+                    {/*<div ref={bottomRef}/>*/}
+                </div>     
             </div>
             <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                 <input 

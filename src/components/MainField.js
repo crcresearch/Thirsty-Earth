@@ -5,7 +5,6 @@ import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
-import tumbleweed from '../img/tumbleweed.png';
 import well from '../img/well.png';
 import grass from "../img/grass.png"
 
@@ -25,7 +24,7 @@ const cropGridStyle = {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: '5%',
-    marginTop: '40%'
+    marginTop: '20%'
 
 }
 const cropSquareStyle = {
@@ -41,23 +40,19 @@ const options = [
     cloud,
     river,
     well,
-    briefcase,
-    tumbleweed
+    briefcase
 ]
 
 // Individual crops on the game board.
 const GameTile = ({
     theKey,
-    isHighlighted,
     image,
     onClick
 }) => {
     return(
         <div style={{
             ...cropSquareStyle,
-            border: isHighlighted 
-                ? 'solid cyan 4px' 
-                : 'solid black 4px'
+            border: 'solid black 4px'
             }} 
             key={theKey}
             onClick={onClick}>
@@ -109,7 +104,9 @@ export function MainField() {
 
     return (
         <div className="container thick-border" style={gameBoardStyle}>
-            <div className="row">
+            <div className="row" style={{
+                marginTop: '15%',
+            }}>
                 <div className="col">
                     <div style={selectionsStyle}>
                         {options.map((option, index) => {
@@ -123,7 +120,7 @@ export function MainField() {
                             return (
                                 <div key={i}>
                                     {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} isHighlighted={gridSelections[i][j] !== leaf} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
+                                        return (<GameTile key={crop} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
                                     })}
                                 </div>)
                         })}
