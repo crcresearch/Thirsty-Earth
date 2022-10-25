@@ -48,16 +48,13 @@ const options = [
 // Individual crops on the game board.
 const GameTile = ({
     theKey,
-    isHighlighted,
     image,
     onClick
 }) => {
     return(
         <div style={{
             ...cropSquareStyle,
-            border: isHighlighted 
-                ? 'solid cyan 4px' 
-                : 'solid black 4px'
+            border: 'solid black 4px'
             }} 
             key={theKey}
             onClick={onClick}>
@@ -123,7 +120,7 @@ export function MainField() {
                             return (
                                 <div key={i}>
                                     {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} isHighlighted={gridSelections[i][j] !== leaf} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
+                                        return (<GameTile key={crop} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
                                     })}
                                 </div>)
                         })}
