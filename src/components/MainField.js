@@ -5,7 +5,6 @@ import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
-import tumbleweed from '../img/tumbleweed.png';
 import well from '../img/well.png';
 import grass from "../img/grass.png"
 
@@ -41,8 +40,7 @@ const options = [
     cloud,
     river,
     well,
-    briefcase,
-    tumbleweed
+    briefcase
 ]
 
 // Individual crops on the game board.
