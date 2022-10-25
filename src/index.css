@@ -89,6 +89,7 @@ code {
   border-style: solid;
 }
 
-.chat-scroll{
+.chat-scroll {
   overflow-y: scroll;
 }
+
