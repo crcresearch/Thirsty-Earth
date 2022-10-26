@@ -2,24 +2,25 @@ import { GAME_NAME } from "./config";
 
 export const ThirstyEarth = {
     name: GAME_NAME,
-    setup: (ctx) => ({ 
-        buttonValue: 1
-    }),
+    setup: (ctx) => { 
+        const generatePlayerStats = () => {
+            let stats = [];
+            for(let i = 0; i < ctx.numPlayers; i++) {
+                stats.push({
+                    pid: i,
+                    playerMoney: 100
+                })
+            }
+            return stats;
+        };
+        const playerStats = generatePlayerStats();
+        return {
+            playerStats,
+        }
+    },
 
     turn: {
         minMoves: 1,
         maxMoves: 1
-
-    },
-    moves: {
-        clickButton: (G, ctx) => {
-            if (G.buttonValue === 1) {
-                G.buttonValue = 2;
-            }
-            else {
-                G.buttonValue = 1;
-            }
-
-        }
     }
 }

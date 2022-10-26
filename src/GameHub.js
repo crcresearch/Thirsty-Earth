@@ -21,6 +21,7 @@ export function GameHub() {
 
     const ThirstyEarthClient = Client({
         game: ThirstyEarth,
+        numPlayers: 2,
         board: ButtonBoard,
         multiplayer: SocketIO({ server: BASE_URL }),
     });
@@ -49,7 +50,7 @@ export function GameHub() {
                 <ThirstyEarthClient 
                     playerID={playerID}
                     credentials={playerCredentials}
-                    matchID={gameID} />
+                    matchID={gameID}/>
                 <div style={nameIDStyle}>
                     <p>Name: {playerName}</p>
                     <p>Room ID: {gameID}</p>
