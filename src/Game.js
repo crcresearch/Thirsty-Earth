@@ -13,7 +13,7 @@ export const ThirstyEarth = {
             }
             return stats;
         };
-        const playerStats = generatePlayerStats();
+        let playerStats = generatePlayerStats();
         return {
             playerStats,
         }
