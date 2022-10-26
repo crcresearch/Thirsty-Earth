@@ -10,6 +10,7 @@ import { playerCredentialsAtom } from "./atoms/playercred";
 import { playerNameAtom } from "./atoms/playername";
 
 import { API_URL } from "./config";
+import { GAME_NAME } from "./config";
 
 const extraButtonStyle = {
   marginTop: "18px",
@@ -38,12 +39,12 @@ export function EnterName() {
 
   function createMatch(playerName) {
     lobbyClient
-      .createMatch("thirsty-earth", {
+      .createMatch(GAME_NAME, {
         numPlayers: 2,
       })
       .then(({ matchID }) => {
         lobbyClient
-          .joinMatch("thirsty-earth", matchID, {
+          .joinMatch(GAME_NAME, matchID, {
             playerName: playerName,
           })
           .then((playerInfo) => {
@@ -63,7 +64,7 @@ export function EnterName() {
   function joinMatch(matchID, playerName) {
     setGameID(matchID);
     lobbyClient
-      .joinMatch("thirsty-earth", matchID, {
+      .joinMatch(GAME_NAME, matchID, {
         playerName: playerName,
       })
       .then((playerInfo) => {

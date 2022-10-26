@@ -1,5 +1,7 @@
+import { GAME_NAME } from "./config";
+
 export const ThirstyEarth = {
-    name: 'thirsty-earth',
+    name: GAME_NAME,
     setup: (ctx) => ({ 
         buttonValue: 1
     }),
