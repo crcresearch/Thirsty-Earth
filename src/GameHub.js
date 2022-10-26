@@ -5,7 +5,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client } from 'boardgame.io/react';
 
-import { PushTheButtonFrank} from "./Game";
+import { ThirstyEarth } from "./Game";
 import { ButtonBoard } from './Board';
 
 import { gameIDAtom } from "./atoms/gameid";
@@ -19,8 +19,8 @@ import { BASE_URL} from "./config";
 
 export function GameHub() {
 
-    const PushTheButtonClient = Client({
-        game: PushTheButtonFrank,
+    const ThirstyEarthClient = Client({
+        game: ThirstyEarth,
         board: ButtonBoard,
         multiplayer: SocketIO({ server: BASE_URL }),
     });
@@ -46,7 +46,7 @@ export function GameHub() {
     else {
         return(
             <div>
-                <PushTheButtonClient 
+                <ThirstyEarthClient 
                     playerID={playerID}
                     credentials={playerCredentials}
                     matchID={gameID} />

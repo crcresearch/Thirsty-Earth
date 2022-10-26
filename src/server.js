@@ -4,7 +4,7 @@ import {DEFAULT_PORT, API_PORT} from "./config";
 import cors from "@koa/cors";
 
 const { Server, Origins } =  require('boardgame.io/server');
-const { PushTheButtonFrank } = require('./Game');
+const { ThirstyEarth } = require('./Game');
 
 const lobbyConfig = {
   apiPort: API_PORT,
@@ -12,7 +12,7 @@ const lobbyConfig = {
 };
 
 const server = Server({
-    games: [PushTheButtonFrank],
+    games: [ThirstyEarth],
     origins: [Origins.LOCALHOST],
 });
 

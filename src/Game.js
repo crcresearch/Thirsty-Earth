@@ -1,5 +1,5 @@
-export const PushTheButtonFrank = {
-    name: 'push-the-button',
+export const ThirstyEarth = {
+    name: 'thirsty-earth',
     setup: (ctx) => ({ 
         buttonValue: 1
     }),
