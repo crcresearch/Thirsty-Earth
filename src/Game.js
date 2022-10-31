@@ -55,7 +55,26 @@ export const ThirstyEarth = {
             moves: {
                 calculateNewTotals: (G, random) => {
                     const rainfallMultiplier = random.Number();
-                    
+                    //For each player, calculate the cost and revenue for every crop.
+                    let revenue = 0;
+                    let cost = 0;
+                    for(let i = 0; i < G.playerStats.length; i++) {
+                        const playerFields = G.playerStats[i].playerFields
+                        for(let j = 0; j < playerFields; j++) {
+                            for(let k = 0; k < playerFields[j].length; k++) {
+                                
+                                if(playerFields[j][k] === G.RIVERWATER) {
+                                    revenue += 4 * rainfallMultiplier
+                                    cost += 2
+                                }
+                                if(playerFields[j][k] === G.GROUNDWATER) {
+                                    
+                                }
+                                
+
+                            }
+                        }
+                    }
                 }
             }     
         }
