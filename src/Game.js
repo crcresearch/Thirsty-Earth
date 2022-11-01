@@ -94,7 +94,9 @@ export const ThirstyEarth = {
                         console.log(newSelections);
                         G.playerStats[ctx.currentPlayer].playerFields = [...newSelections];
                     },
-            }
+            },
+            start: true,
+            next: 'moneyCalculation'
         },
         moneyCalculation: {
             moves: {
