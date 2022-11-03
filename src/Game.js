@@ -22,7 +22,8 @@ export const ThirstyEarth = {
                     pid: i,
                     playerMoney: 100,
                     playerFields: [...defaultField],
-                    playerChoiceTally: [...defaultTally]
+                    playerChoiceTally: {...defaultTally},
+                    playerHasPlayed: false
                 })
             }
             return stats;
@@ -42,7 +43,7 @@ export const ThirstyEarth = {
     resetPlayerBoards: (G) => {
         for(let i = 0; i < G.playerStats.length; i++ ) {
             G.playerStats[i].playerFields = [...G.defaultField];
-            G.playerStats[i].playerChoiceTally = [...G.defaultTally]
+            G.playerStats[i].playerChoiceTally = {...G.defaultTally}
         }
     },
 
@@ -73,6 +74,42 @@ export const ThirstyEarth = {
             }
         }
     },
+    calculateNewTotals: (G, random, events) => {
+       
+        const rainfallMultiplier = random.Number();
+        console.log(rainfallMultiplier);
+        console.log(G.playerStats);
+
+        //Go through the tallies of player choices and calculate cost and revenue for each crop.
+        // for(let i = 0; i < G.playerStats.length; i++) {
+        //     let revenue = 0;
+        //     let cost = 0;
+        //     const playerTally = G.playerStats[i].playerChoiceTally;
+        //     //calculate cost and revenue for river water crops
+        //     revenue += (4 * playerTally.riverWater * rainfallMultiplier);
+        //     cost += (2 * playerTally.riverWater);
+
+        //     //calculate cost and revenue for groundwater crops
+        //     if (ThirstyEarth.totalGroundWaterCrops() > 9) {
+        //         revenue += (3 * playerTally.groundWater * rainfallMultiplier);
+        //     }
+        //     else {
+        //         revenue += (5 * playerTally.groundWater * rainfallMultiplier);
+        //     }
+        //     cost += (3 * playerTally.groundWater);
+            
+        //     //calculate cost and revenue for rain water crops
+        //     revenue += (2 * playerTally.rainWater * rainfallMultiplier);
+        //     cost += playerTally.rainWater;
+
+        //     //calculate cost and revenue for leaving fallow
+        //     revenue += playerTally.fallow;
+        //     cost += 0
+
+        //     G.playerStats[i].playerMoney = revenue - cost;
+        // }
+        // events.endPhase();
+    },
 
     totalGroundWaterCrops: (G) => {
         let totalGWCrops = 0
@@ -93,46 +130,25 @@ export const ThirstyEarth = {
                   makeSelection: (G, ctx, newSelections) => {
                         console.log(newSelections);
                         G.playerStats[ctx.currentPlayer].playerFields = [...newSelections];
+                        G.playerStats[ctx.currentPlayer].playerHasPlayed = true;
+                        console.log(G.playerStats);
+
                     },
             },
+            // End the phase if all of the players have made their selections.
+            endIf: ((G) => {
+                return(G.playerStats.every(player => player.playerHasPlayed === true))
+                
+            }),
             start: true,
             next: 'moneyCalculation'
         },
         moneyCalculation: {
-            moves: {
-                calculateNewTotals: (G, random) => {
-                    const rainfallMultiplier = random.Number();
-                   
-                    //Go through the tallies of player choices and calculate cost and revenue for each crop.
-                    for(let i = 0; i < G.playerStats.length; i++) {
-                        let revenue = 0;
-                        let cost = 0;
-                        const playerTally = G.playerStats[i].playerChoiceTally;
-                        //calculate cost and revenue for river water crops
-                        revenue += (4 * playerTally.riverWater * rainfallMultiplier);
-                        cost += (2 * playerTally.riverWater);
-
-                        //calculate cost and revenue for groundwater crops
-                        if (G.totalGroundWaterCrops() > 9) {
-                            revenue += (3 * playerTally.groundWater * rainfallMultiplier);
-                        }
-                        else {
-                            revenue += (5 * playerTally.groundWater * rainfallMultiplier);
-                        }
-                        cost += (3 * playerTally.groundWater);
-                        
-                        //calculate cost and revenue for rain water crops
-                        revenue += (2 * playerTally.rainWater * rainfallMultiplier);
-                        cost += playerTally.rainWater;
-
-                        //calculate cost and revenue for leaving fallow
-                        revenue += playerTally.fallow;
-                        cost += 0
-
-                        G.playerStats[i].playerMoney = revenue - cost;
-                    }
-                }
-            }     
+            //I don't know if this is the best way to invoke my helper functions but it *sorta* works
+            onBegin: ((G, { random, events } ) => {
+                //ThirstyEarth.calculateNewTotals(G, random, events)
+                
+            })  
         }
     }
 }
