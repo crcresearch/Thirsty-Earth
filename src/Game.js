@@ -109,6 +109,7 @@ export const ThirstyEarth = {
             //calculate cost and revenue for leaving fallow
             revenue += playerTally.fallow;
             G.playerStats[i].playerMoney += revenue - cost;
+            console.log(G.playerStats[i].playerMoney, revenue, cost, rainfallMultiplier);
         }
         events.endPhase();
     },
@@ -146,9 +147,10 @@ export const ThirstyEarth = {
         moneyCalculation: {
             //I don't know if this is the best way to invoke my helper functions but it works
             onBegin: ((G, { random, events } ) => {
-                ThirstyEarth.resetPlayerBoards(G);
+            
                 ThirstyEarth.countUpPlayerChoices(G);
                 ThirstyEarth.calculateNewTotals(G, random, events)
+                ThirstyEarth.resetPlayerBoards(G);
                 G.currentRound++;
                 // if the five rounds have been played, end the game.
                 if (G.currentRound > 5) {
