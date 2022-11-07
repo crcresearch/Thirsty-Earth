@@ -1,4 +1,5 @@
 import { GAME_NAME } from "./config";
+import { TurnOrder } from 'boardgame.io/core';
 
 export const ThirstyEarth = {
     name: GAME_NAME,
@@ -29,10 +30,13 @@ export const ThirstyEarth = {
             return stats;
         };
         let playerStats = generatePlayerStats();
+        // keep track of the current round
+        let currentRound = 1;
         return {
             playerStats,
             defaultField,
             defaultTally,
+            currentRound,
             FALLOW,
             GROUNDWATER,
             RAINWATER,
@@ -44,6 +48,7 @@ export const ThirstyEarth = {
         for(let i = 0; i < G.playerStats.length; i++ ) {
             G.playerStats[i].playerFields = [...G.defaultField];
             G.playerStats[i].playerChoiceTally = {...G.defaultTally}
+            G.playerStats[i].playerHasPlayed = false;
         }
     },
 
@@ -118,7 +123,8 @@ export const ThirstyEarth = {
 
     turn: {
         minMoves: 1,
-        maxMoves: 1
+        maxMoves: 1,
+        order: TurnOrder.RESET
     },
     phases: {
         playerMoves: {
@@ -140,9 +146,16 @@ export const ThirstyEarth = {
         moneyCalculation: {
             //I don't know if this is the best way to invoke my helper functions but it works
             onBegin: ((G, { random, events } ) => {
+                ThirstyEarth.resetPlayerBoards(G);
                 ThirstyEarth.countUpPlayerChoices(G);
-                ThirstyEarth.calculateNewTotals(G, random, events) 
-            })  
+                ThirstyEarth.calculateNewTotals(G, random, events)
+                G.currentRound++;
+                // if the five rounds have been played, end the game.
+                if (G.currentRound > 5) {
+                    events.endGame();
+                }
+            }),
+            next: 'playerMoves'
         }
     }
 }
