@@ -16,7 +16,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages }) {
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages}/>
                 </div>
                 <div className="col-6">
-                    <MainField />
+                    <MainField moves={moves}/>
                 </div>
                 <div className="col">
                     <PreviousRounds />

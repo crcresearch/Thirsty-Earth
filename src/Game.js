@@ -109,7 +109,7 @@ export const ThirstyEarth = {
             //calculate cost and revenue for leaving fallow
             revenue += playerTally.fallow;
             G.playerStats[i].playerMoney += revenue - cost;
-            console.log(G.playerStats[i].playerMoney, revenue, cost, rainfallMultiplier);
+            //console.log(G.playerStats[i].playerMoney, revenue, cost, rainfallMultiplier);
         }
         events.endPhase();
     },
