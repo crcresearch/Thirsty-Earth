@@ -4,6 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 
 import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client } from 'boardgame.io/react';
+import { Debug } from 'boardgame.io/debug';
 
 import { ThirstyEarth } from "./Game";
 import { ButtonBoard } from './Board';
@@ -24,6 +25,7 @@ export function GameHub() {
         numPlayers: 2,
         board: ButtonBoard,
         multiplayer: SocketIO({ server: BASE_URL }),
+        debug: {impl: Debug} 
     });
 
     const gameID = useRecoilValue(gameIDAtom);
