@@ -79,7 +79,7 @@ const SelectAction = ({
             onClick={onClick} />)
 }
 
-export function MainField() {
+export function MainField({ moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
@@ -97,9 +97,30 @@ export function MainField() {
             setGridSelections(tempGrid);
         }
     })
+
     const clearSelections = (() => {
         setGridSelections([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]])
         setSelectedOption('');
+    })
+
+    const submitMove = (() => {
+        let submitGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        for(let i = 0; i < gridSelections.length; i++) {
+            for(let j = 0; j < gridSelections[i].length; j++) {
+                if(gridSelections[i][j] === cloud) {
+                    submitGrid[i][j] = 2;
+                }
+                if(gridSelections[i][j] === river) {
+                    submitGrid[i][j] = 3;
+                }
+                if(gridSelections[i][j] === well) {
+                    submitGrid[i][j] = 1;
+                }
+            }
+        }
+        moves.makeSelection(submitGrid);
+        clearSelections();
+
     })
 
     return (
@@ -128,7 +149,7 @@ export function MainField() {
                 </div>
             </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={clearSelections}>SUBMIT</button>
+                <button className="btn btn-primary" onClick={submitMove}>SUBMIT</button>
             </div>
         </div>
     )

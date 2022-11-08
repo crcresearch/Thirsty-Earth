@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LobbyClient } from "boardgame.io/client";
 import { useSetRecoilState } from "recoil";
-import { useRecoilState } from "recoil";
 
 import { gameIDAtom } from "./atoms/gameid";
 import { playerIDAtom } from "./atoms/pid";
@@ -11,11 +10,7 @@ import { playerCredentialsAtom } from "./atoms/playercred";
 import { playerNameAtom } from "./atoms/playername";
 
 import { API_URL } from "./config";
-
-const divStyle = {
-  textAlign: "center",
-  marginTop: "5%",
-};
+import { GAME_NAME } from "./config";
 
 const extraButtonStyle = {
   marginTop: "18px",
@@ -44,12 +39,12 @@ export function EnterName() {
 
   function createMatch(playerName) {
     lobbyClient
-      .createMatch("push-the-button", {
+      .createMatch(GAME_NAME, {
         numPlayers: 2,
       })
       .then(({ matchID }) => {
         lobbyClient
-          .joinMatch("push-the-button", matchID, {
+          .joinMatch(GAME_NAME, matchID, {
             playerName: playerName,
           })
           .then((playerInfo) => {
@@ -69,7 +64,7 @@ export function EnterName() {
   function joinMatch(matchID, playerName) {
     setGameID(matchID);
     lobbyClient
-      .joinMatch("push-the-button", matchID, {
+      .joinMatch(GAME_NAME, matchID, {
         playerName: playerName,
       })
       .then((playerInfo) => {
