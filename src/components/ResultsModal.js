@@ -2,6 +2,10 @@
 
 import React from 'react';
 
+const modalContentStyle = {
+    marginTop: '40%'
+}
+
 export function ResultsModal({ showModal, playerStats }) {
     return (
         //If the flag determining whether the modal should be shown is true, show the modal. Else, keep it hidden.
@@ -11,7 +15,7 @@ export function ResultsModal({ showModal, playerStats }) {
             role="dialog"
         >
             <div className="modal-dialog" role="document">
-                <div className="modal-content">
+                <div className="modal-content" style={modalContentStyle}>
                     <div className="modal-header">
                         <h4 className="modal-title">Game Summary</h4>
                     </div>
@@ -22,12 +26,6 @@ export function ResultsModal({ showModal, playerStats }) {
                         <h5>Player 2 Results</h5>
                         <p>Money: {playerStats[1].playerMoney.toFixed(2)}</p>
 
-                    </div>
-                    <div className="modal-footer">
-                        {/*TODO: figure out how to reset the game*/}
-                        <button type="button" className="btn btn-primary">
-                            New Game
-                        </button>
                     </div>
                 </div>
             </div>
