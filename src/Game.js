@@ -1,5 +1,6 @@
 import { GAME_NAME } from "./config";
-import { TurnOrder } from 'boardgame.io/core';
+import { Stage } from 'boardgame.io/core';
+
 
 export const ThirstyEarth = {
     name: GAME_NAME,
@@ -24,7 +25,6 @@ export const ThirstyEarth = {
                     playerMoney: 100,
                     playerFields: [...defaultField],
                     playerChoiceTally: {...defaultTally},
-                    playerHasPlayed: false
                 })
             }
             return stats;
@@ -121,26 +121,22 @@ export const ThirstyEarth = {
         }
         return totalGWCrops;
     },
-
-    turn: {
-        minMoves: 1,
-        maxMoves: 1,
-        order: TurnOrder.RESET
-    },
     phases: {
         playerMoves: {
             moves: {
                   //Override the player's current selections with their new selections
-                  makeSelection: (G, ctx, newSelections) => {
-                        G.playerStats[ctx.currentPlayer].playerFields = [...newSelections];
-                        G.playerStats[ctx.currentPlayer].playerHasPlayed = true;
+                  makeSelection: (G, ctx, newSelections, playerID) => {
+                        G.playerStats[playerID].playerFields = [...newSelections];
+                        G.playerStats[playerID].playerHasPlayed = true;
+                        // If all players have gone (aka activePlayers does not have any players left in it, end the phase.)
+                        if (ctx.activePlayers && Object.keys(ctx.activePlayers).length === 1) {
+                            ctx.events.endPhase();
+                        }
                     },
             },
-            // End the phase if all of the players have made their selections.
-            endIf: ((G) => {
-                return(G.playerStats.every(player => player.playerHasPlayed === true))
-                
-            }),
+            turn: {
+                activePlayers: {all: Stage.NULL, minMoves: 1, maxMoves: 1},
+            },
             start: true,
             next: 'moneyCalculation'
         },
