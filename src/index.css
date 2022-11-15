@@ -93,3 +93,42 @@ code {
   overflow-y: scroll;
 }
 
+/*modal styling borrowed from https://github.com/timbrownls20/Demo/blob/master/React/bootstrap-modal/src/css/modal.css*/
+.modal{
+  display: block;
+  visibility: hidden;
+
+}
+
+.modal-show
+{
+  visibility:visible;
+  background-color: rgba(169, 169, 169, 0.8);
+  transition: opacity 0.2s linear; 
+} 
+
+.modal-content 
+{
+  opacity: 0; 
+  background-color: rgba(238,234,223,1);
+  border-width: 5px;
+  border-radius: 10px;
+  border-color: #145424;
+}
+
+.modal-show .modal-content 
+{
+  opacity: 1; 
+  transition: 0.2s linear; 
+} 
+
+.modal-header {
+  border-width: 5px;
+  border-color: #145424;
+}
+
+.modal-footer {
+  border-width: 5px;
+  border-color: #145424;
+}
+

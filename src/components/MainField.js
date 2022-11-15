@@ -1,5 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+
+import { playerIDAtom } from '../atoms/pid';
 
 import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
@@ -84,6 +87,7 @@ export function MainField({ moves }) {
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [selectedOption, setSelectedOption] = useState('');
+    const playerID = useRecoilValue(playerIDAtom);
 
     const selectOption = ((option) => {
         setSelectedOption(option);
@@ -118,7 +122,7 @@ export function MainField({ moves }) {
                 }
             }
         }
-        moves.makeSelection(submitGrid);
+        moves.makeSelection(submitGrid, playerID);
         clearSelections();
 
     })
