@@ -122,6 +122,7 @@ export function MainField({ moves }) {
                 }
             }
         }
+        console.log(playerID);
         moves.makeSelection(submitGrid, playerID);
         clearSelections();
 

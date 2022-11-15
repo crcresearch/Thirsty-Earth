@@ -48,7 +48,6 @@ export const ThirstyEarth = {
         for(let i = 0; i < G.playerStats.length; i++ ) {
             G.playerStats[i].playerFields = [...G.defaultField];
             G.playerStats[i].playerChoiceTally = {...G.defaultTally}
-            G.playerStats[i].playerHasPlayed = false;
         }
     },
 
@@ -127,7 +126,6 @@ export const ThirstyEarth = {
                   //Override the player's current selections with their new selections
                   makeSelection: (G, ctx, newSelections, playerID) => {
                         G.playerStats[playerID].playerFields = [...newSelections];
-                        G.playerStats[playerID].playerHasPlayed = true;
                         // If all players have gone (aka activePlayers does not have any players left in it, end the phase.)
                         if (ctx.activePlayers && Object.keys(ctx.activePlayers).length === 1) {
                             ctx.events.endPhase();
