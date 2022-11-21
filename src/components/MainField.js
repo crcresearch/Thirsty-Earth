@@ -26,13 +26,21 @@ const gameBoardStyle = {
 const selectionsStyle = {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: '50%'
+    marginBottom: '5%',
+    marginTop: '-15%'
+}
+
+const topSelectionsStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: '10%',
+    marginLeft: '30%'
 }
 const cropGridStyle = {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: '5%',
-    marginTop: '20%'
+    marginTop: '-10%'
 
 }
 const cropSquareStyle = {
@@ -99,10 +107,7 @@ export function MainField({ moves }) {
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const playerID = useRecoilValue(playerIDAtom);
 
-    const selectOption = ((option) => {
-        setSelectedOption(option);
-    })
-
+    // Selectors for both top and left options
     const selectLeftOption = (option) => {
         let tempObject = {...selectedOption};
         tempObject.left = option;
@@ -151,6 +156,14 @@ export function MainField({ moves }) {
 
     return (
         <div className="container thick-border" style={gameBoardStyle}>
+            <div className="row">
+                <div style={topSelectionsStyle}>
+                    {topOptions.map((option, index) => {
+                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
+                    })}
+
+                </div> 
+            </div>
             <div className="row" style={{
                 marginTop: '15%',
             }}>
