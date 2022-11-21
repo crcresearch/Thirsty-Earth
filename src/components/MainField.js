@@ -4,15 +4,20 @@ import { useRecoilValue } from 'recoil';
 
 import { playerIDAtom } from '../atoms/pid';
 
-import leaf from '../img/leaf.png';
-import briefcase from '../img/briefcase.png';
+// left-hand side options
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
 import well from '../img/well.png';
+
+// top options "toptions", if you will.
+import leaf from '../img/leaf.png';
+import briefcase from '../img/briefcase.png';
+import apple from '../img/apple.png';
+
+// background image.
 import grass from "../img/grass.png"
 
 // Various styles used in the component.
-
 const gameBoardStyle = {
     backgroundColor: '#31a61e',
     height: '800px',
@@ -21,7 +26,7 @@ const gameBoardStyle = {
 const selectionsStyle = {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: '30%'
+    marginTop: '50%'
 }
 const cropGridStyle = {
     display: 'flex',
@@ -39,10 +44,15 @@ const imgStyle = {
     height: '100px',
 }
 
-const options = [
+const leftOptions = [
     cloud,
     river,
-    well,
+    well
+]
+
+const topOptions = [
+    leaf,
+    apple,
     briefcase
 ]
 
@@ -86,18 +96,30 @@ export function MainField({ moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const playerID = useRecoilValue(playerIDAtom);
 
     const selectOption = ((option) => {
         setSelectedOption(option);
     })
 
+    const selectLeftOption = (option) => {
+        let tempObject = {...selectedOption};
+        tempObject.left = option;
+        setSelectedOption(tempObject);
+    }
+
+    const selectTopOption = (option) => {
+        let tempObject = {...selectedOption};
+        tempObject.top = option;
+        setSelectedOption(tempObject);
+    }
+
     //For the given cell, change the tile to the option selected.
     const selectCrop = ((row, col) => {
         if(selectedOption !== '') {
             let tempGrid = [...gridSelections];
-            tempGrid[row][col] = selectedOption;
+            tempGrid[row][col] = selectedOption.left;
             setGridSelections(tempGrid);
         }
     })
@@ -134,8 +156,8 @@ export function MainField({ moves }) {
             }}>
                 <div className="col">
                     <div style={selectionsStyle}>
-                        {options.map((option, index) => {
-                            return(<SelectAction isHighlighted={option === selectedOption} image={option} altText="placeholder" key={index} onClick={() => {selectOption(option)}}/>)
+                        {leftOptions.map((option, index) => {
+                            return(<SelectAction isHighlighted={option === selectedOption.left} image={option} altText="placeholder" key={index} onClick={() => {selectLeftOption(option)}}/>)
                         })}
                     </div>
                 </div>
@@ -153,7 +175,7 @@ export function MainField({ moves }) {
                 </div>
             </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={submitMove}>SUBMIT</button>
+                <button className="btn btn-primary" onClick={submitMove} style={{ marginTop: '36px'}}>SUBMIT</button>
             </div>
         </div>
     )
