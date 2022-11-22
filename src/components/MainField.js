@@ -15,7 +15,10 @@ import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
 
 // background image.
-import grass from "../img/grass.png"
+import grass from "../img/grass.png";
+
+// Empty tile (default for irrigation method)
+import empty_tile from "../img/empty_tile.png";
 
 // Various styles used in the component.
 const gameBoardStyle = {
@@ -50,6 +53,11 @@ const cropSquareStyle = {
 const imgStyle = {
     width: '100px',
     height: '100px',
+} 
+
+const miniTileStyle = {
+    width: '100px',
+    height: '50px'
 }
 
 const leftOptions = [
@@ -67,17 +75,25 @@ const topOptions = [
 // Individual crops on the game board.
 const GameTile = ({
     theKey,
-    image,
-    onClick
+    topImage,
+    bottomImage,
+    topClick,
+    bottomClick
 }) => {
     return(
         <div style={{
             ...cropSquareStyle,
-            border: 'solid black 4px'
+            border: 'solid black 4px',
+            backgroundColor: '#8e4d26',
             }} 
-            key={theKey}
-            onClick={onClick}>
-            <img src={image} style={imgStyle}/>
+            key={theKey}>
+            <div style={{border: 'solid black 2px'}}>
+                <img src={topImage} style={miniTileStyle} onClick={topClick}/>
+            </div>
+            <div style={{border: 'solid black 2px'}}>
+                <img src={bottomImage} style={miniTileStyle} onClick={bottomClick}/>
+            </div>
+           
         </div>
     )
 }
@@ -103,7 +119,24 @@ const SelectAction = ({
 export function MainField({ moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-    const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
+    //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
+    const [gridSelections, setGridSelections] = useState([
+        [
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf},
+        ],
+        [
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf}
+        ],
+        [
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: leaf},
+        ]
+    ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const playerID = useRecoilValue(playerIDAtom);
 
@@ -120,11 +153,20 @@ export function MainField({ moves }) {
         setSelectedOption(tempObject);
     }
 
-    //For the given cell, change the tile to the option selected.
-    const selectCrop = ((row, col) => {
-        if(selectedOption !== '') {
+    //Match option selected on left to a bottom tile
+    const selectLeftCrop = ((row, col) => {
+        if(selectedOption.left !== '') {
             let tempGrid = [...gridSelections];
-            tempGrid[row][col] = selectedOption.left;
+            tempGrid[row][col].left = selectedOption.left;
+            setGridSelections(tempGrid);
+        }
+    })
+
+    //Match option selected on the top to a top tile.
+    const selectTopCrop = ((row, col) => {
+        if(selectedOption.top !== '') {
+            let tempGrid = [...gridSelections];
+            tempGrid[row][col].top = selectedOption.top;
             setGridSelections(tempGrid);
         }
     })
@@ -180,7 +222,7 @@ export function MainField({ moves }) {
                             return (
                                 <div key={i}>
                                     {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
+                                        return (<GameTile key={crop} topImage={gridSelections[i][j].top} bottomImage={gridSelections[i][j].left} topClick={() => {selectTopCrop(i, j)}} bottomClick={() => selectLeftCrop(i, j)}/>)
                                     })}
                                 </div>)
                         })}
@@ -192,5 +234,4 @@ export function MainField({ moves }) {
             </div>
         </div>
     )
-
 }
