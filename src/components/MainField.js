@@ -56,8 +56,8 @@ const imgStyle = {
 } 
 
 const miniTileStyle = {
-    width: '100px',
-    height: '50px'
+    width: 'auto',
+    height: '50px',
 }
 
 const leftOptions = [
@@ -85,12 +85,13 @@ const GameTile = ({
             ...cropSquareStyle,
             border: 'solid black 4px',
             backgroundColor: '#8e4d26',
+            width: '100px'
             }} 
             key={theKey}>
-            <div style={{border: 'solid black 2px'}}>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}}>
                 <img src={topImage} style={miniTileStyle} onClick={topClick}/>
             </div>
-            <div style={{border: 'solid black 2px'}}>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}}>
                 <img src={bottomImage} style={miniTileStyle} onClick={bottomClick}/>
             </div>
            
