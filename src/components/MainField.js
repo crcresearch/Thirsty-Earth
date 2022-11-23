@@ -197,28 +197,23 @@ export function MainField({ moves }) {
         }
     })
 
-    const clearSelections = (() => {
-        setGridSelections([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]])
-        setSelectedOption('');
-    })
-
     const submitMove = (() => {
         let submitGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
-                if(gridSelections[i][j] === cloud) {
+                if(gridSelections[i][j].left === cloud) {
                     submitGrid[i][j] = 2;
                 }
-                if(gridSelections[i][j] === river) {
+                if(gridSelections[i][j].left === river) {
                     submitGrid[i][j] = 3;
                 }
-                if(gridSelections[i][j] === well) {
+                if(gridSelections[i][j].left === well) {
                     submitGrid[i][j] = 1;
                 }
             }
         }
         moves.makeSelection(submitGrid, playerID);
-        clearSelections();
+        resetOptions();
 
     })
 
