@@ -91,11 +91,11 @@ const GameTile = ({
             width: '100px'
             }} 
             key={theKey}>
-            <div style={{border: 'solid black 2px', textAlign: 'center'}}>
-                <img src={topImage} style={miniTileStyle} onClick={topClick}/>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={topClick}>
+                <img src={topImage} style={miniTileStyle} />
             </div>
-            <div style={{border: 'solid black 2px', textAlign: 'center'}}>
-                <img src={bottomImage} style={miniTileStyle} onClick={bottomClick}/>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={bottomClick}>
+                <img src={bottomImage} style={miniTileStyle}/>
             </div>
            
         </div>
