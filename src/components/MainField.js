@@ -225,7 +225,7 @@ export function MainField({ moves }) {
     return (
         <div className="container thick-border" style={gameBoardStyle}>
             <div className="row">
-                <div style={{margin: '24px'}}>
+                <div style={{marginTop: '24px'}}>
                     <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
                 </div>
             </div>
