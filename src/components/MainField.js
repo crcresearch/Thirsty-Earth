@@ -20,6 +20,9 @@ import grass from "../img/grass.png";
 // Empty tile (default for irrigation method)
 import empty_tile from "../img/empty_tile.png";
 
+//reset icon
+import reset from "../img/reset_icon.png"
+
 // Various styles used in the component.
 const gameBoardStyle = {
     backgroundColor: '#31a61e',
@@ -123,24 +126,46 @@ export function MainField({ moves }) {
     //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [gridSelections, setGridSelections] = useState([
         [
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
         ],
         [
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf}
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
         ],
         [
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf},
-            {left: empty_tile, top: leaf},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
         ]
     ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const playerID = useRecoilValue(playerIDAtom);
 
+    const resetOptions = () => {
+        setGridSelections([
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+            ],
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile}
+            ],
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+            ]
+        ]);
+
+        setSelectedOption({left: '', top: ''})
+
+    }
     // Selectors for both top and left options
     const selectLeftOption = (option) => {
         let tempObject = {...selectedOption};
@@ -199,6 +224,11 @@ export function MainField({ moves }) {
 
     return (
         <div className="container thick-border" style={gameBoardStyle}>
+            <div className="row">
+                <div style={{margin: '24px'}}>
+                    <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
+                </div>
+            </div>
             <div className="row">
                 <div style={topSelectionsStyle}>
                     {topOptions.map((option, index) => {
