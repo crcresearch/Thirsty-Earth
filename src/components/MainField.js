@@ -220,11 +220,6 @@ export function MainField({ moves }) {
     return (
         <div className="container thick-border" style={gameBoardStyle}>
             <div className="row">
-                <div style={{marginTop: '24px'}}>
-                    <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
-                </div>
-            </div>
-            <div className="row">
                 <div style={topSelectionsStyle}>
                     {topOptions.map((option, index) => {
                         return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
@@ -253,6 +248,11 @@ export function MainField({ moves }) {
                                 </div>)
                         })}
                     </div>
+                </div>
+            </div>
+            <div className="row container" style={{display: 'flex', justifyContent: 'space-between', flexFlow: 'row'}}>
+                <div style={{marginTop: '24px', marginLeft: 'auto', width: '50px'}}>
+                    <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
                 </div>
             </div>
             <div className="row">
