@@ -4,15 +4,26 @@ import { useRecoilValue } from 'recoil';
 
 import { playerIDAtom } from '../atoms/pid';
 
-import leaf from '../img/leaf.png';
-import briefcase from '../img/briefcase.png';
+// left-hand side options
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
 import well from '../img/well.png';
-import grass from "../img/grass.png"
+
+// top options "toptions", if you will.
+import leaf from '../img/leaf.png';
+import briefcase from '../img/briefcase.png';
+import apple from '../img/apple.png';
+
+// background image.
+import grass from "../img/grass.png";
+
+// Empty tile (default for irrigation method)
+import empty_tile from "../img/empty_tile.png";
+
+//reset icon
+import reset from "../img/reset_icon.png"
 
 // Various styles used in the component.
-
 const gameBoardStyle = {
     backgroundColor: '#31a61e',
     height: '800px',
@@ -21,13 +32,21 @@ const gameBoardStyle = {
 const selectionsStyle = {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: '30%'
+    marginBottom: '5%',
+    marginTop: '-15%'
+}
+
+const topSelectionsStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: '10%',
+    marginLeft: '30%'
 }
 const cropGridStyle = {
     display: 'flex',
     flexDirection: 'row',
     marginLeft: '5%',
-    marginTop: '20%'
+    marginTop: '-10%'
 
 }
 const cropSquareStyle = {
@@ -37,29 +56,48 @@ const cropSquareStyle = {
 const imgStyle = {
     width: '100px',
     height: '100px',
+} 
+
+const miniTileStyle = {
+    width: 'auto',
+    height: '50px',
 }
 
-const options = [
+const leftOptions = [
     cloud,
     river,
-    well,
+    well
+]
+
+const topOptions = [
+    leaf,
+    apple,
     briefcase
 ]
 
 // Individual crops on the game board.
 const GameTile = ({
     theKey,
-    image,
-    onClick
+    topImage,
+    bottomImage,
+    topClick,
+    bottomClick
 }) => {
     return(
         <div style={{
             ...cropSquareStyle,
-            border: 'solid black 4px'
+            border: 'solid black 4px',
+            backgroundColor: '#8e4d26',
+            width: '100px'
             }} 
-            key={theKey}
-            onClick={onClick}>
-            <img src={image} style={imgStyle}/>
+            key={theKey}>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={topClick}>
+                <img src={topImage} style={miniTileStyle} />
+            </div>
+            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={bottomClick}>
+                <img src={bottomImage} style={miniTileStyle}/>
+            </div>
+           
         </div>
     )
 }
@@ -85,57 +123,117 @@ const SelectAction = ({
 export function MainField({ moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-    const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
-    const [selectedOption, setSelectedOption] = useState('');
+    //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
+    const [gridSelections, setGridSelections] = useState([
+        [
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+        ],
+        [
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+        ],
+        [
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+            {left: empty_tile, top: empty_tile},
+        ]
+    ])
+    const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const playerID = useRecoilValue(playerIDAtom);
 
-    const selectOption = ((option) => {
-        setSelectedOption(option);
-    })
+    const resetOptions = () => {
+        setGridSelections([
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+            ],
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile}
+            ],
+            [
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+                {left: empty_tile, top: empty_tile},
+            ]
+        ]);
 
-    //For the given cell, change the tile to the option selected.
-    const selectCrop = ((row, col) => {
-        if(selectedOption !== '') {
+        setSelectedOption({left: '', top: ''})
+
+    }
+    // Selectors for both top and left options
+    const selectLeftOption = (option) => {
+        let tempObject = {...selectedOption};
+        tempObject.left = option;
+        setSelectedOption(tempObject);
+    }
+
+    const selectTopOption = (option) => {
+        let tempObject = {...selectedOption};
+        tempObject.top = option;
+        setSelectedOption(tempObject);
+    }
+
+    //Match option selected on left to a bottom tile
+    const selectLeftCrop = ((row, col) => {
+        if(selectedOption.left !== '') {
             let tempGrid = [...gridSelections];
-            tempGrid[row][col] = selectedOption;
+            tempGrid[row][col].left = selectedOption.left;
             setGridSelections(tempGrid);
         }
     })
 
-    const clearSelections = (() => {
-        setGridSelections([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]])
-        setSelectedOption('');
+    //Match option selected on the top to a top tile.
+    const selectTopCrop = ((row, col) => {
+        if(selectedOption.top !== '') {
+            let tempGrid = [...gridSelections];
+            tempGrid[row][col].top = selectedOption.top;
+            setGridSelections(tempGrid);
+        }
     })
 
     const submitMove = (() => {
         let submitGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
-                if(gridSelections[i][j] === cloud) {
+                if(gridSelections[i][j].left === cloud) {
                     submitGrid[i][j] = 2;
                 }
-                if(gridSelections[i][j] === river) {
+                if(gridSelections[i][j].left === river) {
                     submitGrid[i][j] = 3;
                 }
-                if(gridSelections[i][j] === well) {
+                if(gridSelections[i][j].left === well) {
                     submitGrid[i][j] = 1;
                 }
             }
         }
         moves.makeSelection(submitGrid, playerID);
-        clearSelections();
+        resetOptions();
 
     })
 
     return (
         <div className="container thick-border" style={gameBoardStyle}>
+            <div className="row">
+                <div style={topSelectionsStyle}>
+                    {topOptions.map((option, index) => {
+                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
+                    })}
+
+                </div> 
+            </div>
             <div className="row" style={{
                 marginTop: '15%',
             }}>
                 <div className="col">
                     <div style={selectionsStyle}>
-                        {options.map((option, index) => {
-                            return(<SelectAction isHighlighted={option === selectedOption} image={option} altText="placeholder" key={index} onClick={() => {selectOption(option)}}/>)
+                        {leftOptions.map((option, index) => {
+                            return(<SelectAction isHighlighted={option === selectedOption.left} image={option} altText="placeholder" key={index} onClick={() => {selectLeftOption(option)}}/>)
                         })}
                     </div>
                 </div>
@@ -145,17 +243,21 @@ export function MainField({ moves }) {
                             return (
                                 <div key={i}>
                                     {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} image={gridSelections[i][j]} onClick={() => {selectCrop(i, j)}}/>)
+                                        return (<GameTile key={crop} topImage={gridSelections[i][j].top} bottomImage={gridSelections[i][j].left} topClick={() => {selectTopCrop(i, j)}} bottomClick={() => selectLeftCrop(i, j)}/>)
                                     })}
                                 </div>)
                         })}
                     </div>
                 </div>
             </div>
+            <div className="row container" style={{display: 'flex', justifyContent: 'space-between', flexFlow: 'row'}}>
+                <div style={{marginTop: '24px', marginLeft: 'auto', width: '50px'}}>
+                    <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
+                </div>
+            </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={submitMove}>SUBMIT</button>
+                <button className="btn btn-primary" onClick={submitMove} style={{ marginTop: '36px'}}>SUBMIT</button>
             </div>
         </div>
     )
-
 }
