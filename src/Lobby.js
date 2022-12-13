@@ -35,12 +35,19 @@ export function EnterName() {
 
   const [errorText, setErrorText] = useState("")
 
+
+  const [moderated, setModerated] = React.useState(false);
+  const [numPlayers, setNumPlayers] = React.useState(2);
+  const [numYears, setNumYears] = React.useState(5);
+  // const [turnTimer, setTurnTimer] = React.useState(null);
+  const [gameLabel, setGameLabel] = React.useState("");
+
   let navigate = useNavigate();
 
   function createMatch(playerName) {
     lobbyClient
       .createMatch(GAME_NAME, {
-        numPlayers: 2,
+        numPlayers: numPlayers, setupData: {numYears: numYears, moderated: moderated, turnLength: 12000, maxYears: 25, gameLabel: gameLabel}, unlisted: true
       })
       .then(({ matchID }) => {
         lobbyClient
@@ -148,6 +155,43 @@ export function EnterName() {
               setCreatingPlayerName(event.target.value)
             }}
           ></input>
+          <input
+            type="number"
+            id="numPlayers"
+            className="form-control"
+            placeholder="Number of Players"
+            required
+            style={inputStyle}
+            value={numPlayers}
+            onChange={(event) => {
+              setNumPlayers(event.target.valueAsNumber)
+            }}
+          ></input>
+          <input
+            type="number"
+            id="numYears"
+            className="form-control"
+            placeholder="Number Of Years"
+            required
+            style={inputStyle}
+            value={numYears}
+            onChange={(event) => {
+              setNumYears(event.target.valueAsNumber)
+            }}
+          ></input>
+          <input
+            type="text"
+            id="gameLabel"
+            className="form-control"
+            placeholder="My Game Nickname"
+            style={inputStyle}
+            value={gameLabel}
+            onChange={(event) => {
+              setGameLabel(event.target.value)
+            }}
+          ></input>
+          <input type="checkbox" id="isModerated" value={moderated} onChange={e => setModerated(e.target.checked)} />
+          <label htmlFor="isModerated">Moderated Game</label>
           <div className="d-flex flex-row-reverse ">
             <button
               type="button"

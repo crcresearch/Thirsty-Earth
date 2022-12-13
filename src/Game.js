@@ -4,7 +4,11 @@ import { Stage } from 'boardgame.io/core';
 
 export const ThirstyEarth = {
     name: GAME_NAME,
-    setup: (ctx) => { 
+  // The minimum and maximum number of players supported
+  // (This is only enforced when using the Lobby server component.)
+  minPlayers: 1,
+  maxPlayers: 40,
+    setup: (ctx, setupData) => { 
         const FALLOW = 0;
         const GROUNDWATER = 1;
         const RAINWATER = 2;
@@ -40,7 +44,8 @@ export const ThirstyEarth = {
             FALLOW,
             GROUNDWATER,
             RAINWATER,
-            RIVERWATER
+            RIVERWATER,
+            gameConfig: setupData
         }
     },
     //Reset the player's choices after they play and their new totals are calculated
@@ -121,6 +126,24 @@ export const ThirstyEarth = {
         return totalGWCrops;
     },
     phases: {
+        setup: {
+            moves: {
+                  //Override the player's current selections with their new selections
+                  startGame: (G, ctx, newSelections, playerID) => {
+                        ctx.events.endPhase();
+                    },
+            },
+            onBegin: ((G, {events}) => {
+                if (!G.gameConfig.moderated) {
+                    events.endPhase();
+                }
+            }),
+            turn: {
+                activePlayers: [0],
+            },
+            start: true,
+            next: 'playerMoves'
+        },
         playerMoves: {
             moves: {
                   //Override the player's current selections with their new selections
@@ -135,7 +158,6 @@ export const ThirstyEarth = {
             turn: {
                 activePlayers: {all: Stage.NULL, minMoves: 1, maxMoves: 1},
             },
-            start: true,
             next: 'moneyCalculation'
         },
         moneyCalculation: {
@@ -147,7 +169,7 @@ export const ThirstyEarth = {
                 ThirstyEarth.resetPlayerBoards(G);
                 G.currentRound++;
                 // if the five rounds have been played, end the game.
-                if (G.currentRound > 5) {
+                if (G.currentRound > G.gameConfig.numYears) {
                     events.endGame();
                 }
             }),

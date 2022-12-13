@@ -30,3 +30,7 @@ package-lock.json
 docker-compose.yml
 
 /src/config.js
+
+# LOCAL ENVIRONMENT FILES
+nenv
+.envs
