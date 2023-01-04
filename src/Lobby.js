@@ -47,7 +47,7 @@ export function EnterName() {
   function createMatch(playerName) {
     lobbyClient
       .createMatch(GAME_NAME, {
-        numPlayers: numPlayers, setupData: {numYears: numYears, moderated: moderated, turnLength: 12000, maxYears: 25, gameLabel: gameLabel}, unlisted: true
+        numPlayers: numPlayers, setupData: {numYears: numYears, moderated: moderated, turnLength: 30000, maxYears: 25, gameLabel: gameLabel}, unlisted: true
       })
       .then(({ matchID }) => {
         lobbyClient

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { playerIDAtom } from '../atoms/pid';
@@ -22,6 +22,13 @@ import empty_tile from "../img/empty_tile.png";
 
 //reset icon
 import reset from "../img/reset_icon.png"
+
+function useStateAndRef(initial) {
+    const [value, setValue] = useState(initial);
+    const valueRef = useRef(value);
+    valueRef.current = value;
+    return [value, setValue, valueRef];
+  }
 
 // Various styles used in the component.
 const gameBoardStyle = {
@@ -120,7 +127,7 @@ const SelectAction = ({
             onClick={onClick} />)
 }
 
-export function MainField({ moves }) {
+export function MainField({ G, moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
@@ -142,7 +149,25 @@ export function MainField({ moves }) {
         ]
     ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
+    const [turnTimeLeft, setTurnTimeLeft] = useState(0);
+    const [turnEnd, setTurnEnd, refTurnEnd] = useStateAndRef(0);
     const playerID = useRecoilValue(playerIDAtom);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          console.log()
+          setTurnTimeLeft(refTurnEnd.current != 0 ? Math.floor((refTurnEnd.current - Date.now())/1000) : 0)
+        }, 1000);
+        return () =>  clearInterval(interval);
+      }, []);
+
+    
+    useEffect(() => {
+        setTurnEnd(G.turnTimeout)
+        console.log("turn timeout", G.turnTimeout)
+    }, [G.turnTimeout, turnEnd])
+
+      
 
     const resetOptions = () => {
         setGridSelections([
@@ -213,6 +238,12 @@ export function MainField({ moves }) {
             }
         }
         moves.makeSelection(submitGrid, playerID);
+        let now = Date.now()
+        let timerFunc = function (time, round) {
+            console.log("Sending timer func")
+            moves.advanceTimer(playerID, time, round)
+        };
+        setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
         resetOptions();
 
     })
@@ -256,7 +287,10 @@ export function MainField({ moves }) {
                 </div>
             </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={submitMove} style={{ marginTop: '36px'}}>SUBMIT</button>
+                <button className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
+            </div>
+            <div className="row text-right">
+                <span>Turn Timer {Math.max(0,turnTimeLeft)}</span>
             </div>
         </div>
     )
