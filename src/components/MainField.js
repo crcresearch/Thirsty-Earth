@@ -223,21 +223,36 @@ export function MainField({ G, moves }) {
     })
 
     const submitMove = (() => {
-        let submitGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        let submitWaterGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
                 if(gridSelections[i][j].left === cloud) {
-                    submitGrid[i][j] = 2;
+                    submitWaterGrid[i][j] = 2;
                 }
-                if(gridSelections[i][j].left === river) {
-                    submitGrid[i][j] = 3;
+                else if(gridSelections[i][j].left === river) {
+                    submitWaterGrid[i][j] = 3;
                 }
-                if(gridSelections[i][j].left === well) {
-                    submitGrid[i][j] = 1;
+                else if(gridSelections[i][j].left === well) {
+                    submitWaterGrid[i][j] = 1;
                 }
             }
         }
-        moves.makeSelection(submitGrid, playerID);
+        
+        let submitCropGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        for(let i = 0; i < gridSelections.length; i++) {
+            for(let j = 0; j < gridSelections[i].length; j++) {
+                if(gridSelections[i][j].top === apple) {
+                    submitCropGrid[i][j] = 2;
+                }
+                else if(gridSelections[i][j].top === leaf) {
+                    submitCropGrid[i][j] = 3;
+                }
+                else if(gridSelections[i][j].top === briefcase) {
+                    submitCropGrid[i][j] = 1;
+                }
+            }
+        }
+        moves.makeSelection(submitWaterGrid, submitCropGrid, playerID);
         let now = Date.now()
         let timerFunc = function (time, round) {
             console.log("Sending timer func")

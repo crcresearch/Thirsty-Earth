@@ -47,7 +47,11 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                         <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
                     </div>
                     <div className="col-6">
+                    { ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
+                        :
+                        <h3>game is being configured by moderator and is not ready to play yet. This is where instructions may go. The board will appear when the moderator starts the first year. </h3>
+                    }
                     </div>
                     <div className="col">
                         <PreviousRounds />

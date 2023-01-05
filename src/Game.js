@@ -20,6 +20,7 @@ export const ThirstyEarth = {
             riverWater: 0
         }
         const turnTimeout = 0;
+        const playerOffset = setupData.moderated ? 1 : 0
 
         const generatePlayerStats = () => {
             let stats = [];
@@ -27,10 +28,11 @@ export const ThirstyEarth = {
                 stats.push({
                     pid: i,
                     playerMoney: 100,
-                    playerFields: [...defaultField],
+                    playerWaterFields: [...defaultField],
+                    playerCropFields: [...defaultField],
                     playerChoiceTally: {...defaultTally},
                     selectionsSubmitted: false,
-                    village: 0
+                    village: (setupData.moderated && i == 0) ? 0 : (((i - playerOffset) % setupData.numVillages) +1)
                 })
             }
             return stats;
@@ -54,7 +56,8 @@ export const ThirstyEarth = {
     //Reset the player's choices after they play and their new totals are calculated
     resetPlayerBoards: (G) => {
         for(let i = 0; i < G.playerStats.length; i++ ) {
-            G.playerStats[i].playerFields = [...G.defaultField];
+            G.playerStats[i].playerWaterFields = [...G.defaultField];
+            G.playerStats[i].playerCropFields = [...G.defaultField];
             G.playerStats[i].playerChoiceTally = {...G.defaultTally}
             G.playerStats[i].selectionsSubmitted = false
         }
@@ -63,10 +66,10 @@ export const ThirstyEarth = {
     //Count up the number of each choice that each player has made and store the result in the playerChoiceTally.
     countUpPlayerChoices: (G) => {
         for(let i = 0; i < G.playerStats.length; i++) {
-            const playerFields = G.playerStats[i].playerFields;
-            for(let j = 0; j < playerFields.length; j++) {
-                for(let k = 0; k < playerFields[j].length; k++) {
-                    switch(playerFields[j][k]) {
+            const playerWaterFields = G.playerStats[i].playerWaterFields;
+            for(let j = 0; j < playerWaterFields.length; j++) {
+                for(let k = 0; k < playerWaterFields[j].length; k++) {
+                    switch(playerWaterFields[j][k]) {
                         case G.FALLOW:
                             G.playerStats[i].playerChoiceTally.fallow++;
                             break;
@@ -156,11 +159,14 @@ export const ThirstyEarth = {
         playerMoves: {
             moves: {
                 //Override the player's current selections with their new selections
-                makeSelection: (G, ctx, newSelections, playerID) => {
+                makeSelection: (G, ctx, newWaterSelections, newCropSelections, playerID) => {
+                    console.log(playerID)
                     if(G.playerStats[playerID].selectionsSubmitted) {
                         return INVALID_MOVE
                     }
-                    G.playerStats[playerID].playerFields = [...newSelections];
+                    G.playerStats[playerID].playerWaterFields = [...newWaterSelections];
+                    G.playerStats[playerID].playerCropFields = [...newCropSelections];
+                    // console.log(G.playerStats[playerID].playerWaterFields)
                     G.playerStats[playerID].selectionsSubmitted = true;
                     // If all players have gone (aka activePlayers does not have any players left in it, end the phase.)
                     let players_played = G.playerStats.reduce(

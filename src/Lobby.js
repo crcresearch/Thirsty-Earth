@@ -37,8 +37,9 @@ export function EnterName() {
 
 
   const [moderated, setModerated] = React.useState(false);
-  const [numPlayers, setNumPlayers] = React.useState(2);
-  const [numYears, setNumYears] = React.useState(5);
+  const [numVillages, setNumVillages] = React.useState("");
+  const [numPlayers, setNumPlayers] = React.useState("");
+  const [numYears, setNumYears] = React.useState("");
   // const [turnTimer, setTurnTimer] = React.useState(null);
   const [gameLabel, setGameLabel] = React.useState("");
 
@@ -47,7 +48,7 @@ export function EnterName() {
   function createMatch(playerName) {
     lobbyClient
       .createMatch(GAME_NAME, {
-        numPlayers: numPlayers, setupData: {numYears: numYears, moderated: moderated, turnLength: 30000, maxYears: 25, gameLabel: gameLabel}, unlisted: true
+        numPlayers: numPlayers * numVillages + (moderated ? 1: 0), setupData: {numYears: numYears, playersPerVillage: numPlayers, numVillages: numVillages, moderated: moderated, turnLength: 30000, maxYears: 25, gameLabel: gameLabel}, unlisted: true
       })
       .then(({ matchID }) => {
         lobbyClient
@@ -146,7 +147,7 @@ export function EnterName() {
           <input
             type="text"
             id="name"
-            className="form-control"
+            className="form-control mb-2"
             placeholder="Your Name"
             required
             style={inputStyle}
@@ -157,9 +158,9 @@ export function EnterName() {
           ></input>
           <input
             type="number"
-            id="numPlayers"
-            className="form-control"
-            placeholder="Number of Players"
+            id="numVillages"
+            className="form-control  mb-2"
+            placeholder="Number of Villages"
             required
             style={inputStyle}
             value={numPlayers}
@@ -169,8 +170,19 @@ export function EnterName() {
           ></input>
           <input
             type="number"
+            id="playersPerVillage"
+            className="form-control  mb-2"
+            placeholder="Players Per Village"
+            style={inputStyle}
+            value={numVillages}
+            onChange={(event) => {
+              setNumVillages(event.target.valueAsNumber)
+            }}
+          ></input>
+          <input
+            type="number"
             id="numYears"
-            className="form-control"
+            className="form-control mb-2"
             placeholder="Number Of Years"
             required
             style={inputStyle}
@@ -182,7 +194,7 @@ export function EnterName() {
           <input
             type="text"
             id="gameLabel"
-            className="form-control"
+            className="form-control mb-2"
             placeholder="My Game Nickname"
             style={inputStyle}
             value={gameLabel}
