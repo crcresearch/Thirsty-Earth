@@ -162,10 +162,10 @@ export function MainField({ G, moves }) {
       }, []);
 
     
-    useEffect(() => {
-        setTurnEnd(G.turnTimeout)
-        console.log("turn timeout", G.turnTimeout)
-    }, [G.turnTimeout, turnEnd])
+    // useEffect(() => {
+    //     setTurnEnd(G.turnTimeout)
+    //     console.log("turn timeout", G.turnTimeout)
+    // }, [G.turnTimeout, turnEnd])
 
       
 
@@ -304,9 +304,9 @@ export function MainField({ G, moves }) {
             <div className="row">
                 <button enabled={G.playerStats[playerID].selectionsSubmitted ? "disabled": ""} className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
             </div>
-            <div className="row text-right">
+            {/* <div className="row text-right">
                 <span>Turn Timer {Math.max(0,turnTimeLeft)}</span>
-            </div>
+            </div> */}
         </div>
     )
 }
