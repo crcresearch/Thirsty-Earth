@@ -38,6 +38,12 @@ export const ThirstyEarth = {
             return stats;
         };
         let playerStats = generatePlayerStats();
+        
+        const yearlyStateRecord = [{
+            playerStats: playerStats.slice(),
+            gwDepth: 2,
+            lastYearModelOutput: {}
+        }]
         // keep track of the current round
         let currentRound = 1;
         return {
@@ -50,6 +56,7 @@ export const ThirstyEarth = {
             GROUNDWATER,
             RAINWATER,
             RIVERWATER,
+            yearlyStateRecord,
             gameConfig: setupData
         }
     },
@@ -90,6 +97,14 @@ export const ThirstyEarth = {
             }
         }
     },
+    storeYearlyOutcomes: (G) => {
+        let newYearlyStateObj = {};
+        newYearlyStateObj['playerStats'] = JSON.parse(JSON.stringify(G.playerStats))
+        console.log( newYearlyStateObj['playerStats'][1].playerCropFields)
+        newYearlyStateObj['gwDepth'] = G.currentRound*2;
+        newYearlyStateObj['lastYearModelOutput'] = {}
+        G.yearlyStateRecord.push(newYearlyStateObj)
+    },
     calculateNewTotals: (G, random, events) => {
        
         const rainfallMultiplier = (random.Number());
@@ -122,7 +137,6 @@ export const ThirstyEarth = {
             G.playerStats[i].playerMoney += revenue - cost;
             //console.log(G.playerStats[i].playerMoney, revenue, cost, rainfallMultiplier);
         }
-        events.endPhase();
     },
 
     totalGroundWaterCrops: (G) => {
@@ -217,6 +231,7 @@ export const ThirstyEarth = {
             
                 ThirstyEarth.countUpPlayerChoices(G);
                 ThirstyEarth.calculateNewTotals(G, random, events)
+                ThirstyEarth.storeYearlyOutcomes(G)
                 ThirstyEarth.resetPlayerBoards(G);
                 G.turnTimeout = 0
                 G.currentRound++;
@@ -224,7 +239,36 @@ export const ThirstyEarth = {
                 if (G.currentRound > G.gameConfig.numYears) {
                     events.endGame();
                 }
+                else {
+                    events.endPhase();
+                }
             }),
+            next: 'moderatorPause'
+        },
+        moderatorPause: {
+            onBegin: ((G, {events}) => {
+                if (!G.gameConfig.moderated) {
+                    events.endPhase();
+                }
+            }),moves: {
+                advanceToPlayerMoves: (G, ctx, playerID) => {
+                    if(G.gameConfig.moderated === false || (G.gameConfig.moderated === true && playerID != 0)){
+                        return INVALID_MOVE;
+                    }
+                    ctx.events.endPhase();
+                },
+                rewind: (G, ctx, playerID, yearToRewind) => {
+                    if(G.gameConfig.moderated === false || (G.gameConfig.moderated === true && playerID != 0)){
+                        return INVALID_MOVE;
+                    }
+                    G.currentRound = yearToRewind;
+                    G.playerStats = JSON.parse(JSON.stringify(G.yearlyStateRecord[yearToRewind-1].playerStats.slice()))
+                    G.yearlyStateRecord = JSON.parse(JSON.stringify(G.yearlyStateRecord.slice(0,yearToRewind)))
+                },
+            },
+            turn: {
+                activePlayers: {all: Stage.NULL, minMoves: 1, maxMoves: 10},
+            },
             next: 'playerMoves'
         }
     }

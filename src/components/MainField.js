@@ -302,7 +302,7 @@ export function MainField({ G, moves }) {
                 </div>
             </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
+                <button enabled={G.playerStats[playerID].selectionsSubmitted ? "disabled": ""} className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
             </div>
             <div className="row text-right">
                 <span>Turn Timer {Math.max(0,turnTimeLeft)}</span>

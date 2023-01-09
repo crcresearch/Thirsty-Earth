@@ -88,7 +88,18 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 }
                 {ctx.phase == "playerMoves" && 
                 <div>
-                <button className='btn btn-primary' onClick={() => moves.advanceYear(0)}>Advance Year</button>
+                <button className='btn btn-primary' onClick={() => moves.advanceYear(0)}>End Choice Period of Current Year</button>
+                </div>
+                }
+                {ctx.phase == "moderatorPause" && 
+                <div>
+                <button className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Advance to Next Choice Period</button> <br/>
+                {[...Array(G.currentRound)].map(function(x, i) {
+                 return <><button className='btn btn-primary mb-2' onClick={() => moves.rewind(0,i+1)}>Rewind to Beginning of Year {i+1}</button><br/></>
+                })
+                 }
+                
+                {/* <button className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Rewind to Beginning of Year </button> */}
                 </div>
                 }
             </div>

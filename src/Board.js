@@ -50,11 +50,13 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     { ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
                         :
-                        <h3>game is being configured by moderator and is not ready to play yet. This is where instructions may go. The board will appear when the moderator starts the first year. </h3>
+                        <div className='d-flex align-items-center' style={{height: "100%"}}>
+                            <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
+                        </div>
                     }
                     </div>
                     <div className="col">
-                        <PreviousRounds />
+                        <PreviousRounds G={G} playerID={playerID}/>
                     </div>
                 </div>
             </div>}
