@@ -163,9 +163,9 @@ export function EnterName() {
             placeholder="Number of Villages"
             required
             style={inputStyle}
-            value={numPlayers}
+            value={numVillages}
             onChange={(event) => {
-              setNumPlayers(event.target.valueAsNumber)
+              setNumVillages(event.target.valueAsNumber)
             }}
           ></input>
           <input
@@ -174,9 +174,9 @@ export function EnterName() {
             className="form-control  mb-2"
             placeholder="Players Per Village"
             style={inputStyle}
-            value={numVillages}
+            value={numPlayers}
             onChange={(event) => {
-              setNumVillages(event.target.valueAsNumber)
+              setNumPlayers(event.target.valueAsNumber)
             }}
           ></input>
           <input

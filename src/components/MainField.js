@@ -258,7 +258,7 @@ export function MainField({ G, moves }) {
             console.log("Sending timer func")
             moves.advanceTimer(playerID, time, round)
         };
-        setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
+        // setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
         resetOptions();
 
     })
