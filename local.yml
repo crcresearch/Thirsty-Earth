@@ -1,0 +1,29 @@
+version: '3.9'
+
+volumes:
+  local_postgres_data: {}
+
+services:
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    env_file:
+      - ./.envs/.postgres
+    expose:
+      - 8000
+      - 8080
+    ports:
+      - 127.0.0.1:8000:8000
+      - 127.0.0.1:8080:8080
+      #  - '8000:8000'
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+    env_file:
+      - ./.envs/.postgres
+    ports:
+    - '127.0.0.1:5432:5432'

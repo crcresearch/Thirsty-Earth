@@ -3,3 +3,4 @@ nenv
 .git
 .gitignore
 .DS_Store
+.env

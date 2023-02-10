@@ -34,3 +34,4 @@ docker-compose.yml
 # LOCAL ENVIRONMENT FILES
 nenv
 .envs
+.env
