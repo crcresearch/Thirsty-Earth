@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { playerIDAtom } from '../atoms/pid';
@@ -22,6 +22,13 @@ import empty_tile from "../img/empty_tile.png";
 
 //reset icon
 import reset from "../img/reset_icon.png"
+
+function useStateAndRef(initial) {
+    const [value, setValue] = useState(initial);
+    const valueRef = useRef(value);
+    valueRef.current = value;
+    return [value, setValue, valueRef];
+  }
 
 // Various styles used in the component.
 const gameBoardStyle = {
@@ -120,7 +127,7 @@ const SelectAction = ({
             onClick={onClick} />)
 }
 
-export function MainField({ moves }) {
+export function MainField({ G, moves }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
     //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
@@ -142,7 +149,25 @@ export function MainField({ moves }) {
         ]
     ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
+    const [turnTimeLeft, setTurnTimeLeft] = useState(0);
+    const [turnEnd, setTurnEnd, refTurnEnd] = useStateAndRef(0);
     const playerID = useRecoilValue(playerIDAtom);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          console.log()
+          setTurnTimeLeft(refTurnEnd.current != 0 ? Math.floor((refTurnEnd.current - Date.now())/1000) : 0)
+        }, 1000);
+        return () =>  clearInterval(interval);
+      }, []);
+
+    
+    // useEffect(() => {
+    //     setTurnEnd(G.turnTimeout)
+    //     console.log("turn timeout", G.turnTimeout)
+    // }, [G.turnTimeout, turnEnd])
+
+      
 
     const resetOptions = () => {
         setGridSelections([
@@ -198,21 +223,42 @@ export function MainField({ moves }) {
     })
 
     const submitMove = (() => {
-        let submitGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        let submitWaterGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
                 if(gridSelections[i][j].left === cloud) {
-                    submitGrid[i][j] = 2;
+                    submitWaterGrid[i][j] = 2;
                 }
-                if(gridSelections[i][j].left === river) {
-                    submitGrid[i][j] = 3;
+                else if(gridSelections[i][j].left === river) {
+                    submitWaterGrid[i][j] = 3;
                 }
-                if(gridSelections[i][j].left === well) {
-                    submitGrid[i][j] = 1;
+                else if(gridSelections[i][j].left === well) {
+                    submitWaterGrid[i][j] = 1;
                 }
             }
         }
-        moves.makeSelection(submitGrid, playerID);
+        
+        let submitCropGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        for(let i = 0; i < gridSelections.length; i++) {
+            for(let j = 0; j < gridSelections[i].length; j++) {
+                if(gridSelections[i][j].top === apple) {
+                    submitCropGrid[i][j] = 2;
+                }
+                else if(gridSelections[i][j].top === leaf) {
+                    submitCropGrid[i][j] = 3;
+                }
+                else if(gridSelections[i][j].top === briefcase) {
+                    submitCropGrid[i][j] = 1;
+                }
+            }
+        }
+        moves.makeSelection(submitWaterGrid, submitCropGrid, playerID);
+        let now = Date.now()
+        let timerFunc = function (time, round) {
+            console.log("Sending timer func")
+            moves.advanceTimer(playerID, time, round)
+        };
+        // setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
         resetOptions();
 
     })
@@ -256,8 +302,11 @@ export function MainField({ moves }) {
                 </div>
             </div>
             <div className="row">
-                <button className="btn btn-primary" onClick={submitMove} style={{ marginTop: '36px'}}>SUBMIT</button>
+                <button enabled={G.playerStats[playerID].selectionsSubmitted ? "disabled": ""} className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
             </div>
+            {/* <div className="row text-right">
+                <span>Turn Timer {Math.max(0,turnTimeLeft)}</span>
+            </div> */}
         </div>
     )
 }

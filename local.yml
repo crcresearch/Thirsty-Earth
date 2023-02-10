@@ -18,19 +18,6 @@ services:
       - 127.0.0.1:8080:8080
       #  - '8000:8000'
 
-  nginx:
-    restart: unless-stopped
-    build: 
-      context: ./nginx
-#      dockerfile: ./nginx/Dockerfile
-    ports:
-    - '80:80'
-    - '443:443'
-    depends_on:
-    - client
-    volumes:
-    - ./certs/:/etc/ssl/
-
   postgres:
     image: postgres:15-alpine
     container_name: postgres

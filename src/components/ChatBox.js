@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { API_URL } from '../config';
 import { useRecoilValue } from 'recoil';
 import { gameIDAtom } from '../atoms/gameid';
+import { playerIDAtom } from '../atoms/pid';
 
 const chatBoxStyle = {
     height: "800px",
@@ -13,10 +14,12 @@ const chatListStyle = {
 }
 
 
-export function ChatBox({ sendMessageFn, chatMessages }) {
+export function ChatBox({ sendMessageFn, chatMessages, G }) {
     const [message, setMessage] = useState('');
     const [playerData, setPlayerData] = useState('');
     const gameID = useRecoilValue(gameIDAtom);
+    const playerID = useRecoilValue(playerIDAtom);
+    const [globalMessages, setGlobalMessages] = useState(false);
     //const bottomRef = useRef(null);
 
     // useEffect(() => {
@@ -26,7 +29,8 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
     // If the message box is not empty when the user hits send, send the message.
     const handleSubmit = (m) => {
         if(m !== '') {
-            sendMessageFn(m);
+            let prefix = globalMessages ? "<GLOBAL> " : `<VILLAGE ${G.playerStats[playerID].village}> `
+            sendMessageFn(prefix + m);
             setMessage('');
         }    
     }
@@ -45,20 +49,26 @@ export function ChatBox({ sendMessageFn, chatMessages }) {
         .then((data) => {
             setPlayerData(data.players);          
         })
+        console.log("playerData", playerData)
 
     }, [chatMessages, gameID])
 
  
-    const messageList = chatMessages.map((message) =>   
+    const messageList = chatMessages.filter(message => message.payload.startsWith(globalMessages ? '<GLOBAL> ' : `<VILLAGE ${G.playerStats[playerID].village}> `)).map((message) =>   
         // Use array position to map the sender ID to their name 
         // TODO: make a less jank way to do this
-        <li key={message.id}><b>{playerData[message.sender].name}</b>: {message.payload}</li>
+        <li key={message.id}><b>{playerData[message.sender].name}</b>: {message.payload.replace(globalMessages ? '<GLOBAL> ' : `<VILLAGE ${G.playerStats[playerID].village}> `, '')}</li>
     )
 
     return(
         <div className="card" style={chatBoxStyle}>
             <div className="card-header d-flex justify-content-between align-items-center p-3">
-                <h5 className="mb-0">Chat</h5>
+                <div>
+            <h3 className='text-center'>Chat</h3>
+            <div className='d-flex align-items-center container'>
+            <button className={globalMessages? "btn btn-outline-succes" : "btn btn-primary"} onClick={() =>{setGlobalMessages(false)}}><h5 className="mb-0">Village</h5></button>
+            <button className={!globalMessages? "btn btn-outline-succes" : "btn btn-primary"} onClick={() =>{setGlobalMessages(true)}}><h5 className="mb-0">Global</h5></button></div>
+            </div>
             </div>
             <div className="card-body chat-scroll">
                 <div id="scroller">
