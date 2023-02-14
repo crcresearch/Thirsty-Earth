@@ -30,37 +30,41 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     }, [G.gameConfig.moderated, moderated])
     return (
         <div>
-
             <ResultsModal showModal={showModal} playerStats={G.playerStats} />
 
             {(moderated && playerID == 0) ? 
              <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData}/>
-             : <div className="container">
-                <div className="row title-font">
-                    <h1>Year: {G.currentRound}</h1>
-                    <h1>Village: {G.playerStats[playerID].village}</h1>
-                    <h1>Your Money: {G.playerStats[playerID].playerMoney.toFixed(2)}</h1>
+            : <div className="container mt-4">
+                <div className="row justify-content-md-center bg-navy text-light rounded-top">
+                    <div className="col-md-6 align-self-center">
+                        <h4 className="ps-1 my-2 text-center text-md-start header-font">Thirsty Earth</h4>
+                    </div>
+                    <div className="col-md-6 align-self-center">
+                        <ul className="nav justify-content-end">
+                            <li className="nav-item px-2">
+                                <span class="fw-bold text-white-50">Name:</span> {matchData[playerID].name} 
+                            </li>
+                            <li className="nav-item px-2">
+                                <span class="fw-bold text-white-50">Village:</span> {G.playerStats[playerID].village}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div className="row">
-                    <div className="col">
-                        {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
-                        <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
-                    </div>
-                    <div className="col-6">
+                    {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
+                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
                     { ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
                         :
-                        <div className='d-flex align-items-center' style={{height: "100%"}}>
-                            <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
+                        <div className="col-lg-7 border-navy border-start-0 border-end-0">
+                            <div className='d-flex align-items-center' style={{height: "100%"}}>
+                                <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
+                            </div>
                         </div>
                     }
-                    </div>
-                    <div className="col">
-                        <PreviousRounds G={G} playerID={playerID}/>
-                    </div>
+                    <PreviousRounds G={G} playerID={playerID}/>
                 </div>
             </div>}
         </div>
-      
     )
 }

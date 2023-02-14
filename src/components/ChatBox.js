@@ -61,37 +61,56 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
     )
 
     return(
-        <div className="card" style={chatBoxStyle}>
-            <div className="card-header d-flex justify-content-between align-items-center p-3">
-                <div>
-            <h3 className='text-center'>Chat</h3>
-            <div className='d-flex align-items-center container'>
-            <button className={globalMessages? "btn btn-outline-succes" : "btn btn-primary"} onClick={() =>{setGlobalMessages(false)}}><h5 className="mb-0">Village</h5></button>
-            <button className={!globalMessages? "btn btn-outline-succes" : "btn btn-primary"} onClick={() =>{setGlobalMessages(true)}}><h5 className="mb-0">Global</h5></button></div>
+        <div className="col-lg bg-lt-navy border-navy position-relative">
+            <div class="row bg-med-navy">
+                <h5 class="pt-1 text-center text-light">Chat</h5>
             </div>
-            </div>
-            <div className="card-body chat-scroll">
+            <nav class="nav nav-pills nav-fill nav-navy border-bottom border-dark pb-2 mt-2 ">
+                <button className={globalMessages ? "nav-link" : "nav-link active"} aria-current="page" onClick={() =>{setGlobalMessages(false)}}><h5 className="mb-0">Village</h5></button>
+                <button className={!globalMessages ? "nav-link" : "nav-link active"} onClick={() =>{setGlobalMessages(true)}}><h5 className="mb-0">Global</h5></button>
+            </nav>
+            <div class="row mt-2 chat-scroll">
                 <div id="scroller">
                     <ul style={chatListStyle}>
                         {messageList}
                     </ul>
                     {/*<div ref={bottomRef}/>*/}
-                </div>     
+                </div>
             </div>
-            <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
-                <input 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="Type your message here..."
-                    value={message}
-                    onChange={(event) => {
-                        setMessage(event.target.value);
-                    }}
-                    onKeyPress={handleKeyPress}
-                     />
-                <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
+            <div class="row d-block d-lg-none">
+                <div class="col">
+                    <div class="input-group my-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Type your message here..."
+                            value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value);
+                            }}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
+                    </div>
+                </div>
+            </div>      
+            <div class="row d-none d-lg-block">
+                <div class="col position-absolute bottom-0 end-1">
+                    <div class="input-group my-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder="Type your message here..."
+                            value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value);
+                            }}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
+                    </div>
+                </div>
             </div>
-
         </div>
     )
 }
