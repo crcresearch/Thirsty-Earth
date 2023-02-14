@@ -19,7 +19,11 @@ import apple from '../img/apple.png';
 
 const headerStyle = {
     visibility: "hidden"
-  };
+};
+
+const tableStyle = {
+    width: "20%"
+}
 
 export function Moderator({ ctx, G, moves, matchData}) {
     console.log(matchData)
@@ -61,27 +65,27 @@ export function Moderator({ ctx, G, moves, matchData}) {
             </div>
             {G.villages.map(village => (
                 <div>
-                    {(village > 0) ?
-                        <span className="h5 mt-3">Village {village}</span>
-                        : <span className="h5 mb-2">Moderator</span>
+                    {(village > 0) &&
+                        <span className="h5 mt-3 mb-2">Village {village}</span>
                     }
                     <table className='table table-striped mb-3'>
-                        <thead>
-                            <td style={village > 0 ? headerStyle : null}>Player ID</td>
-                            <td style={village > 0 ? headerStyle : null}>Player Name</td>
-                            <td style={village > 0 ? headerStyle : null}>Is Connected</td>
-                            <td style={village > 0 ? headerStyle : null}>Money</td>
-                            <td style={village > 0 ? headerStyle : null}>Turn Submitted</td>
-                        </thead>
+                        { (village === 0) &&
+                            <thead>
+                                <td>Player ID</td>
+                                <td>Player Name</td>
+                                <td>Is Connected</td>
+                                <td>Money</td>
+                                <td>Turn Submitted</td>
+                            </thead>
+                        }
                         <tbody>
                             {matchData.filter(el => G.playerStats[el.id].village === village).map(player => (
                                 <tr key={player.id}>
-                                    <td>{player.id}</td>
-                                    <td>{player.name ? player.name : ""}</td>
-                                    <td>{player.isConnected ? player.isConnected.toString() : ""}</td>
-                                    <td>{G.playerStats[player.id].playerMoney}</td>
-                                    <td>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img key={index} src={waterChoices[choice]} width="20px"></img>))}<br/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img key={index} src={cropChoices[choice]} width="20px"></img>))}</div> : "No"}
-                                    </td>
+                                    <td className="align-middle" style={tableStyle}>{player.id} { (village === 0) && "(Moderator)" }</td>
+                                    <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
+                                    <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
+                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney}</td>
+                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img key={index} src={waterChoices[choice]} width="20px"></img>))}<br/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img key={index} src={cropChoices[choice]} width="20px"></img>))}</div> : "No"}</td>
                                 </tr>
                             ))}
                         </tbody>
