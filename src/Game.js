@@ -21,6 +21,7 @@ export const ThirstyEarth = {
         }
         const turnTimeout = 0;
         const playerOffset = setupData.moderated ? 1 : 0
+        const villages = [...Array(setupData.numVillages + 1).keys()]
 
         const generatePlayerStats = () => {
             let stats = [];
@@ -47,6 +48,7 @@ export const ThirstyEarth = {
         // keep track of the current round
         let currentRound = 1;
         return {
+            villages,
             playerStats,
             defaultField,
             defaultTally,

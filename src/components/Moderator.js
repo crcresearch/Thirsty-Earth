@@ -17,12 +17,16 @@ import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
 
+const headerStyle = {
+    visibility: "hidden"
+  };
+
 export function Moderator({ ctx, G, moves, matchData}) {
     console.log(matchData)
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [empty_tile, well, cloud, river]
-    const cropChoices = [empty_tile, leaf, apple, briefcase]
+    const cropChoices = [empty_tile, briefcase, apple, leaf]
 
     return (
         <div className='container mt-4'>
@@ -55,29 +59,35 @@ export function Moderator({ ctx, G, moves, matchData}) {
             <div className="text-center">
                 <h3>Players</h3>
             </div>
-            <table className='table table-striped'>
-                <thead>
-                <td>Player ID</td>
-                <td>Player Name</td>
-                <td>Is Connected</td>
-                <td>Village</td>
-                <td>Money</td>
-                <td>Turn Submitted</td>
-                </thead>
-                <tbody>
-                    {matchData.map(player => (
-                        <tr key={player.id}>
-                            <td>{player.id}</td>
-                            <td>{player.name ? player.name : ""}</td>
-                            <td>{player.isConnected ? player.isConnected.toString() : ""}</td>
-                            <td>{G.playerStats[player.id].village}</td>
-                            <td>{G.playerStats[player.id].playerMoney}</td>
-                            <td>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img key={index} src={waterChoices[choice]} width="20px"></img>))}<br/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img key={index} src={cropChoices[choice]} width="20px"></img>))}</div> : "No"}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {G.villages.map(village => (
+                <div>
+                    {(village > 0) ?
+                        <span className="h5 mt-3">Village {village}</span>
+                        : <span className="h5 mb-2">Moderator</span>
+                    }
+                    <table className='table table-striped mb-3'>
+                        <thead>
+                            <td style={village > 0 ? headerStyle : null}>Player ID</td>
+                            <td style={village > 0 ? headerStyle : null}>Player Name</td>
+                            <td style={village > 0 ? headerStyle : null}>Is Connected</td>
+                            <td style={village > 0 ? headerStyle : null}>Money</td>
+                            <td style={village > 0 ? headerStyle : null}>Turn Submitted</td>
+                        </thead>
+                        <tbody>
+                            {matchData.filter(el => G.playerStats[el.id].village === village).map(player => (
+                                <tr key={player.id}>
+                                    <td>{player.id}</td>
+                                    <td>{player.name ? player.name : ""}</td>
+                                    <td>{player.isConnected ? player.isConnected.toString() : ""}</td>
+                                    <td>{G.playerStats[player.id].playerMoney}</td>
+                                    <td>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img key={index} src={waterChoices[choice]} width="20px"></img>))}<br/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img key={index} src={cropChoices[choice]} width="20px"></img>))}</div> : "No"}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ))}
             <hr/>
             <div className="text-left">
                 <h3>Actions for Game State: {ctx.phase}</h3>
