@@ -22,7 +22,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [empty_tile, well, cloud, river]
-    const cropChoices = [empty_tile, leaf, apple, briefcase]
+    const cropChoices = [empty_tile, briefcase, apple, leaf]
 
     return (
         <div className='container mt-4'>
