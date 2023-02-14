@@ -132,3 +132,144 @@ code {
   border-color: #145424;
 }
 
+/* 
+   Bootstrap style overrides for Thirsty Earth game
+------------------------------------------------------- */
+
+.bg-tan {
+  background: #eeeadf;
+}
+
+.bg-navy {
+  background: #243953;
+}
+.border-navy {
+  border: 3px solid #243953;
+}
+.bg-med-navy {
+  background: #7d868f;
+}
+.bg-lt-navy {
+  background: #d7d6cf;
+}
+
+.bg-green {
+  background: #5d9351;
+}
+
+.bg-dirt {
+  background: #8e4d26;
+  border: 2px solid #5d9351;
+}
+.bg-wet-dirt {
+  background: #5f7f91;
+  border: 2px solid #5d9351;
+}
+.bg-dirt-bank {
+  background: #8e4d26;
+  border: 2px solid #243953;
+  border-radius: 12px;
+}
+.bg-wet-dirt-bank {
+  background: #5f7f91;
+  border: 2px solid #243953;
+  border-radius: 12px;
+}
+
+.header-font {
+  letter-spacing: .25px;
+  opacity: .75;
+}
+
+.bg-dirt img,
+.bg-wet-dirt img {
+  max-width: 70px;
+}
+
+.img-thumb {
+  max-width: 28%;
+  padding: 4%;
+}
+
+.img-tiny {
+  max-width: 20%;
+  padding: 2%;
+}
+
+.img-icon {
+  width: 20px;
+  margin-top: -5px;
+  margin-left: 5px;
+  Opacity: .75;
+}
+
+.water-summary {
+}
+.water-summary img {
+  background: #5f7f91;
+  width: 17%;
+}
+.crop-summary img {
+  background: #8e4d26;
+  width: 17%;
+}
+
+.btn-submit {
+  color: #fff;
+  background-color: #157347;
+  border-color: #146c43;
+}
+.btn-submit:hover {
+  color: #fff;
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.btn-submit:disabled {
+  color: #fff;
+  background-color: #145424;
+  border-color: #145424;
+}
+
+.btn-navy {
+  color: #fff;
+  background-color: #243953;
+  border-color: #243953;
+}
+.btn-navy:hover {
+  color: #fff;
+  background-color: #0c2340;
+  border-color: #0c2340;
+}
+
+.nav-pills.nav-navy .nav-link {
+  color: #243953;
+}
+.nav-pills.nav-navy .nav-link.active {
+  color: #fff;
+  background-color: #243953;
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(100, 100, 100, 0.3);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.overlay-text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 40px;
+  text-align: center;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}

@@ -18,7 +18,8 @@ import apple from '../img/apple.png';
 import grass from "../img/grass.png";
 
 // Empty tile (default for irrigation method)
-import empty_tile from "../img/empty_tile.png";
+import crop_empty from "../img/crop_empty.png";
+import water_empty from "../img/water_empty.png";
 
 //reset icon
 import reset from "../img/reset_icon.png"
@@ -70,6 +71,14 @@ const miniTileStyle = {
     height: '50px',
 }
 
+const overlayOnStyle = {
+    display: 'block'
+}
+
+const overlayOffStyle = {
+    display: 'none'
+}
+
 const leftOptions = [
     cloud,
     river,
@@ -91,20 +100,13 @@ const GameTile = ({
     bottomClick
 }) => {
     return(
-        <div style={{
-            ...cropSquareStyle,
-            border: 'solid black 4px',
-            backgroundColor: '#8e4d26',
-            width: '100px'
-            }} 
-            key={theKey}>
-            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={topClick}>
-                <img src={topImage} style={miniTileStyle} />
+        <div className="col" key={theKey}>
+            <div className="bg-wet-dirt text-center" onClick={topClick}>
+                <img src={topImage} className="img-fluid" />
             </div>
-            <div style={{border: 'solid black 2px', textAlign: 'center'}} onClick={bottomClick}>
-                <img src={bottomImage} style={miniTileStyle}/>
+            <div className="bg-dirt text-center" onClick={bottomClick}>
+                <img src={bottomImage} className="img-fluid"/>
             </div>
-           
         </div>
     )
 }
@@ -119,11 +121,11 @@ const SelectAction = ({
     return(<img src={image} 
             alt={altText} 
             style={{
-                ...imgStyle,
                 border: isHighlighted 
-                ? 'solid cyan 4px' 
+                ? 'solid cyan 2px' 
                 : undefined
             }}
+            className="img-thumb"
             onClick={onClick} />)
 }
 
@@ -133,19 +135,19 @@ export function MainField({ G, moves }) {
     //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [gridSelections, setGridSelections] = useState([
         [
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
         ],
         [
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
         ],
         [
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
-            {left: empty_tile, top: empty_tile},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
+            {left: water_empty, top: crop_empty},
         ]
     ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
@@ -172,19 +174,19 @@ export function MainField({ G, moves }) {
     const resetOptions = () => {
         setGridSelections([
             [
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile},
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty},
             ],
             [
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile}
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty}
             ],
             [
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile},
-                {left: empty_tile, top: empty_tile},
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty},
+                {left: water_empty, top: crop_empty},
             ]
         ]);
 
@@ -259,54 +261,69 @@ export function MainField({ G, moves }) {
             moves.advanceTimer(playerID, time, round)
         };
         // setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
-        resetOptions();
-
     })
 
     return (
-        <div className="container thick-border" style={gameBoardStyle}>
-            <div className="row">
-                <div style={topSelectionsStyle}>
-                    {topOptions.map((option, index) => {
-                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
-                    })}
-
-                </div> 
+        <div className="col-lg-7 bg-green border-navy border-start-0 border-end-0">
+            <div className="overlay col-lg-7" style={G.playerStats[playerID].selectionsSubmitted ? overlayOnStyle : overlayOffStyle}>
+                <div className='overlay-text'>
+                    Year {G.currentRound} field selections submitted. Please wait for next year.
+                </div>
             </div>
-            <div className="row" style={{
-                marginTop: '15%',
-            }}>
-                <div className="col">
-                    <div style={selectionsStyle}>
+            <div className="row  justify-content-center mt-4">
+                <div className="col-3">
+                    <div className="text-left">
+                        <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
+                        <h5 className="text-light"><span className="fw-bold text-white-50">Funds:</span> {G.playerStats[playerID].playerMoney.toFixed(2)}</h5>
+                    </div>
+                </div>
+                <div className="col-4">
+                    <div className="bg-wet-dirt-bank text-center">
+                        <h6 className="text-white-50 mt-2 mb-0">WATER options:</h6>
                         {leftOptions.map((option, index) => {
                             return(<SelectAction isHighlighted={option === selectedOption.left} image={option} altText="placeholder" key={index} onClick={() => {selectLeftOption(option)}}/>)
                         })}
                     </div>
                 </div>
-                <div className="col-9">
-                    <div style={cropGridStyle}>
-                        {gameGrid.map((subArray, i) => {
-                            return (
-                                <div key={i}>
-                                    {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} topImage={gridSelections[i][j].top} bottomImage={gridSelections[i][j].left} topClick={() => {selectTopCrop(i, j)}} bottomClick={() => selectLeftCrop(i, j)}/>)
-                                    })}
-                                </div>)
+                <div className="col-4">
+                    <div className="bg-dirt-bank text-center">
+                        <h6 className="text-white-50 mt-2 mb-0">CROP options:</h6>
+                        {topOptions.map((option, index) => {
+                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
                         })}
                     </div>
                 </div>
             </div>
-            <div className="row container" style={{display: 'flex', justifyContent: 'space-between', flexFlow: 'row'}}>
-                <div style={{marginTop: '24px', marginLeft: 'auto', width: '50px'}}>
-                    <img style={{height: '50px', width: '50px'}} src={reset} alt="reset button" onClick={resetOptions}></img>
+            <div className="row justify-content-center my-3">
+                <div className="col-9">
+                    <div className="row justify-content-center mb-1">
+                        <div className="text-white text-end">
+                            Clear all fields <img src={reset} alt="reset button" onClick={resetOptions} className="img-icon" /> 
+                        </div>
+                    </div>
+                    <div>
+                        {gameGrid.map((subArray, i) => {
+                            return (
+                                <div className="row row-cols-3" key={i}>
+                                    {subArray.map((crop, j) => {
+                                        return (<GameTile key={crop} topImage={gridSelections[i][j].left} bottomImage={gridSelections[i][j].top} topClick={() => {selectLeftCrop(i, j)}} bottomClick={() => selectTopCrop(i, j)}/>)
+                                    })}
+                                </div>)
+                        })}
+                    </div>
+                    <div class="row justify-content-center my-4">
+                        <div class="d-grid">
+                        <button 
+                            disabled={G.playerStats[playerID].selectionsSubmitted ? true : false} 
+                            className={G.playerStats[playerID].selectionsSubmitted ? "btn btn-secondary" : "btn btn-submit"} 
+                            onClick={() => submitMove()} style={{ marginTop: '36px'}}
+                        >
+                            {G.playerStats[playerID].selectionsSubmitted ? "SUBMITTED SELECTIONS" : "SUBMIT"}
+                        </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div className="row">
-                <button enabled={G.playerStats[playerID].selectionsSubmitted ? "disabled": ""} className="btn btn-primary" onClick={() => submitMove()} style={{ marginTop: '36px'}}>SUBMIT</button>
-            </div>
-            {/* <div className="row text-right">
-                <span>Turn Timer {Math.max(0,turnTimeLeft)}</span>
-            </div> */}
         </div>
     )
 }
