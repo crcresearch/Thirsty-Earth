@@ -33,9 +33,7 @@ function useStateAndRef(initial) {
 
 // Various styles used in the component.
 const gameBoardStyle = {
-    backgroundColor: '#31a61e',
-    height: '800px',
-    backgroundImage: `url(${grass})`,
+    position: 'relative'
 }
 const selectionsStyle = {
     display: 'flex',
@@ -69,14 +67,6 @@ const imgStyle = {
 const miniTileStyle = {
     width: 'auto',
     height: '50px',
-}
-
-const overlayOnStyle = {
-    display: 'block'
-}
-
-const overlayOffStyle = {
-    display: 'none'
 }
 
 const leftOptions = [
@@ -264,12 +254,14 @@ export function MainField({ G, moves }) {
     })
 
     return (
-        <div className="col-lg-7 bg-green border-navy border-start-0 border-end-0">
-            <div className="overlay col-lg-7" style={G.playerStats[playerID].selectionsSubmitted ? overlayOnStyle : overlayOffStyle}>
-                <div className='overlay-text'>
-                    Year {G.currentRound} field selections submitted. Please wait for next year.
+        <div className="col-lg-7 bg-green border-navy border-start-0 border-end-0" style={gameBoardStyle}>
+            {(G.playerStats[playerID].selectionsSubmitted) &&
+                <div className="overlay">
+                    <div className='overlay-text'>
+                        Year {G.currentRound} field selections submitted. Please wait for next year.
+                    </div>
                 </div>
-            </div>
+            }
             <div className="row  justify-content-center mt-4">
                 <div className="col-3">
                     <div className="text-left">
