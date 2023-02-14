@@ -113,7 +113,7 @@ code {
   background-color: rgba(238,234,223,1);
   border-width: 5px;
   border-radius: 10px;
-  border-color: #145424;
+  border-color: #243953;
 }
 
 .modal-show .modal-content 
@@ -124,12 +124,12 @@ code {
 
 .modal-header {
   border-width: 5px;
-  border-color: #145424;
+  border-color: #243953;
 }
 
 .modal-footer {
   border-width: 5px;
-  border-color: #145424;
+  border-color: #243953;
 }
 
 /* 
