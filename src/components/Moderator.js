@@ -5,6 +5,8 @@ import { useRecoilValue } from 'recoil';
 import { playerIDAtom } from '../atoms/pid';
 import { gameIDAtom } from '../atoms/gameid';
 
+import axios from 'axios'
+import { PLUMBER_URL } from "../config";
 
 // left-hand side options
 import cloud from '../img/cloud.png';
@@ -88,7 +90,23 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 }
                 {ctx.phase == "playerMoves" && 
                 <div>
-                <button className='btn btn-primary' onClick={() => moves.advanceYear(0)}>End Choice Period of Current Year</button>
+                <button className='btn btn-primary' onClick={() => {
+                    let waterChoices = ""
+                    let cropChoices = ""
+                    console.log(PLUMBER_URL)
+                    matchData.map(player => {
+                        console.log(G.playerStats)
+                        if(player.name != undefined) {
+                            G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (waterChoices += String(choice)))
+                            G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
+                        }
+                    });
+                    axios.post(`${PLUMBER_URL}/calculate?Wa=${waterChoices}&Cr=${cropChoices}&IB=0&IB=1&GD=0&r0=1&P=0.5&Ld=1&dP=0&dLd=0&QFS=3&QNS=4&QNG=4&QFG=3&rhoRF=1.3&rhoRS=0.7&rhoRG=0.45&rhoR=0.5&aF=1&EPR=2&k=1.25&aCr=2&psi=1`).then((res) => {
+                        moves.advanceYear(0, res.data)
+                        // console.log(res.data)
+                    })
+                }
+                }>End Choice Period of Current Year</button>
                 </div>
                 }
                 {ctx.phase == "moderatorPause" && 

@@ -105,37 +105,10 @@ export const ThirstyEarth = {
         newYearlyStateObj['lastYearModelOutput'] = {}
         G.yearlyStateRecord.push(newYearlyStateObj)
     },
-    calculateNewTotals: (G, random, events) => {
-       
-        const rainfallMultiplier = (random.Number());
-
+    calculateNewTotals: (G, events, data) => {
         //Go through the tallies of player choices and calculate cost and revenue for each crop.
-        for(let i = 0; i < G.playerStats.length; i++) {
-            let revenue = 0;
-            let cost = 0;
-            const playerTally = G.playerStats[i].playerChoiceTally;
-
-            //calculate cost and revenue for river water crops
-            revenue += (4 * playerTally.riverWater * rainfallMultiplier);
-            cost += (2 * playerTally.riverWater);
-
-            //calculate cost and revenue for groundwater crops
-            if (ThirstyEarth.totalGroundWaterCrops(G) > 9) {
-                revenue += (3 * playerTally.groundWater * rainfallMultiplier);
-            }
-            else {
-                revenue += (5 * playerTally.groundWater * rainfallMultiplier);
-            }
-            cost += (3 * playerTally.groundWater);
-            
-            //calculate cost and revenue for rain water crops
-            revenue += (2 * playerTally.rainWater * rainfallMultiplier);
-            cost += playerTally.rainWater;
-
-            //calculate cost and revenue for leaving fallow
-            revenue += playerTally.fallow;
-            G.playerStats[i].playerMoney += revenue - cost;
-            //console.log(G.playerStats[i].playerMoney, revenue, cost, rainfallMultiplier);
+        for(let i = 0; i < data[0].length; i++) {
+            G.playerStats[i].playerMoney = G.playerStats[i].playerMoney + data[0][i].P_Net
         }
     },
 
@@ -196,13 +169,25 @@ export const ThirstyEarth = {
                         G.turnTimeout = Date.now() + G.gameConfig.turnLength
                     }
             },
-                advanceYear: (G, ctx, playerID) => {
+                advanceYear: (G, ctx, playerID, computedData) => {
                     // console.log(G)
                     // console.log("PlayerID", playerID)
                     if(G.gameConfig.moderated === false || (G.gameConfig.moderated === true && playerID != 0)){
                         return INVALID_MOVE;
                     }
-                    if (playerID == 0 && G.gameConfig.moderated === true) {
+                    if (playerID == 0 && G.gameConfig.moderated === true) {     
+                        ThirstyEarth.calculateNewTotals(G, ctx.events, computedData)
+                        ThirstyEarth.storeYearlyOutcomes(G)
+                        ThirstyEarth.resetPlayerBoards(G);
+                        G.turnTimeout = 0
+                        G.currentRound++;
+                        // if the five rounds have been played, end the game.
+                        if (G.currentRound > G.gameConfig.numYears) {
+                            ctx.events.endGame();
+                        }
+                        else {
+                            ctx.events.endPhase();
+                        }
                         ctx.events.endPhase();
                     }
                 },
@@ -223,26 +208,6 @@ export const ThirstyEarth = {
             turn: {
                 activePlayers: {all: Stage.NULL, minMoves: 1, maxMoves: 2},
             },
-            next: 'moneyCalculation'
-        },
-        moneyCalculation: {
-            //I don't know if this is the best way to invoke my helper functions but it works
-            onBegin: ((G, { random, events } ) => {
-            
-                ThirstyEarth.countUpPlayerChoices(G);
-                ThirstyEarth.calculateNewTotals(G, random, events)
-                ThirstyEarth.storeYearlyOutcomes(G)
-                ThirstyEarth.resetPlayerBoards(G);
-                G.turnTimeout = 0
-                G.currentRound++;
-                // if the five rounds have been played, end the game.
-                if (G.currentRound > G.gameConfig.numYears) {
-                    events.endGame();
-                }
-                else {
-                    events.endPhase();
-                }
-            }),
             next: 'moderatorPause'
         },
         moderatorPause: {
