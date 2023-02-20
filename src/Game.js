@@ -13,7 +13,11 @@ export const ThirstyEarth = {
       const GROUNDWATER = 1;
       const RAINWATER = 2;
       const RIVERWATER = 3;
-      const defaultField = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      const defaultField = [
+        [0, 0, 0], 
+        [0, 0, 0], 
+        [0, 0, 0]
+      ];
       const defaultTally = {
           fallow: 0,
           groundWater: 0,
@@ -64,7 +68,7 @@ export const ThirstyEarth = {
   },
   //Reset the player's choices after they play and their new totals are calculated
   resetPlayerBoards: (G) => {
-      for(let i = 0; i < G.playerStats.length; i++ ) {
+      for (let i = 0; i < G.playerStats.length; i++ ) {
           G.playerStats[i].playerWaterFields = [...G.defaultField];
           G.playerStats[i].playerCropFields = [...G.defaultField];
           G.playerStats[i].playerChoiceTally = {...G.defaultTally}
