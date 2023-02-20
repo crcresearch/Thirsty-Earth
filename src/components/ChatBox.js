@@ -6,7 +6,7 @@ import { gameIDAtom } from '../atoms/gameid';
 import { playerIDAtom } from '../atoms/pid';
 
 const chatBoxStyle = {
-    height: "800px",
+    height: "750px",
 }
 const chatListStyle = {
     listStyle: 'none',
@@ -61,7 +61,7 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
     )
 
     return(
-        <div className="col-lg bg-lt-navy border-navy position-relative">
+        <div className="col-lg bg-lt-navy border-navy position-relative" style={chatBoxStyle}>
             <div class="row bg-med-navy">
                 <h5 class="pt-1 text-center text-light">Chat</h5>
             </div>

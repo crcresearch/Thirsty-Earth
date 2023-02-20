@@ -12,16 +12,13 @@ import { PLUMBER_URL } from "../config";
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
 import well from '../img/well.png';
-import empty_tile from "../img/empty_tile.png";
+import crop_empty from "../img/crop_empty.png";
+import water_empty from "../img/water_empty.png";
 
 // top options "toptions", if you will.
 import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
-
-const headerStyle = {
-    visibility: "hidden"
-};
 
 const tableStyle = {
     width: "20%"
@@ -31,8 +28,8 @@ export function Moderator({ ctx, G, moves, matchData}) {
     console.log(matchData)
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
-    const waterChoices = [empty_tile, well, cloud, river]
-    const cropChoices = [empty_tile, briefcase, apple, leaf]
+    const waterChoices = [water_empty, well, cloud, river]
+    const cropChoices = [crop_empty, briefcase, apple, leaf]
 
     return (
         <div className='container mt-4'>
@@ -87,7 +84,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                     <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney}</td>
-                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img key={index} src={waterChoices[choice]} width="20px"></img>))}<br/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img key={index} src={cropChoices[choice]} width="20px"></img>))}</div> : "No"}</td>
+                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"}</td>
                                 </tr>
                             ))}
                         </tbody>

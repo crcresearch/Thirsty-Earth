@@ -90,7 +90,8 @@ code {
 }
 
 .chat-scroll {
-  overflow-y: scroll;
+  height: 77%;
+  overflow-y: auto;
 }
 
 /*modal styling borrowed from https://github.com/timbrownls20/Demo/blob/master/React/bootstrap-modal/src/css/modal.css*/
