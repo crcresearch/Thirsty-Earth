@@ -40,3 +40,15 @@ services:
       - ./.envs/.postgres
     ports:
     - '127.0.0.1:5432:5432'
+  
+  plumber:
+    build:
+      dockerfile: Dockerfile
+      context: ./Plumber
+    container_name: plumber
+    volumes:
+      - ./Plumber:/app
+    ports:
+      - '127.0.0.1:9000:8000'
+    command: "/app/ThirstyEarthFct_v.1_20_23.R"
+

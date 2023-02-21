@@ -17,10 +17,14 @@ export function PreviousRounds({G, playerID}) {
     const waterChoices = [water_empty, well, cloud, river]
     const cropChoices = [crop_empty, briefcase, apple, leaf]
     const prevRoundsStyle = {
-        height: '800px'
+        'height': '750px'
+    }
+    const listInfoStyle = {
+        'height': '85%',
+        'overflow-y': 'auto'
     }
     return(
-        <div className="col-lg bg-lt-navy border-navy">
+        <div className="col-lg bg-lt-navy border-navy" style={prevRoundsStyle}>
             <div className="row bg-med-navy">
                 <h5 className="pt-1 text-center text-light">Previous Rounds</h5>
             </div>
@@ -29,23 +33,25 @@ export function PreviousRounds({G, playerID}) {
                     <h5 className="pt-2 text-center">Hello, welcome to<br/>Thirsty Earth!</h5>
                 </div>
             </div>
-            <div className="row">
+            <div className="row" style={listInfoStyle}>
             { 
                 [...Array(G.currentRound)].map((x, idx) => {
                     let year = (idx+1 == G.currentRound) ? G : G.yearlyStateRecord[idx+1]
                     return (
                         <div className='mb-3'>
                             <p className='mb-0'>Year {idx+1} {idx+1 == G.currentRound ? " (Current)" : ""}</p>
-                            <div className="water-summary">
-                                {year.playerStats[playerID].playerWaterFields.flat(4).map((choice, index) => (
-                                    <img key={index} src={waterChoices[choice]} width="20px"></img>
-                                ))}
-                            </div>
-                            <br/>
-                            <div className="crop-summary">
-                                {year.playerStats[playerID].playerCropFields.flat(4).map((choice, index) => (
-                                    <img key={index} src={cropChoices[choice]} width="20px"></img>
-                                ))}
+                            <div class="row row-cols-5">
+                                {
+                                    [...Array(9)].map((y, index) => {
+                                        return (
+                                            <div className="col mb-1 p-2" key={index}>
+                                                <img className="bg-wet-dirt border-0 p-1" src={waterChoices[year.playerStats[playerID].playerWaterFields.flat(4)[index]]} width="40px"></img>
+                                                <br className="p-0 m-0" />
+                                                <img className="bg-dirt border-0 p-1" src={cropChoices[year.playerStats[playerID].playerCropFields.flat(4)[index]]} width="40px"></img>
+                                            </div>
+                                        )
+                                    })
+                                }
                             </div>
                         </div>
                     )

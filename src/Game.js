@@ -7,76 +7,73 @@ export const ThirstyEarth = {
   // (This is only enforced when using the Lobby server component.)
   minPlayers: 1,
   maxPlayers: 40,
-  setup: (ctx, setupData) => {
-    const FALLOW = 0;
-    const GROUNDWATER = 1;
-    const RAINWATER = 2;
-    const RIVERWATER = 3;
-    const defaultField = [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0],
-    ];
-    const defaultTally = {
-      fallow: 0,
-      groundWater: 0,
-      rainWater: 0,
-      riverWater: 0,
-    };
-    const turnTimeout = 0;
-    const playerOffset = setupData.moderated ? 1 : 0;
 
-    const generatePlayerStats = () => {
-      let stats = [];
-      for (let i = 0; i < ctx.numPlayers; i++) {
-        stats.push({
-          pid: i,
-          playerMoney: 100,
-          playerWaterFields: [...defaultField],
-          playerCropFields: [...defaultField],
-          playerChoiceTally: { ...defaultTally },
-          selectionsSubmitted: false,
-          village:
-            setupData.moderated && i == 0
-              ? 0
-              : ((i - playerOffset) % setupData.numVillages) + 1,
-        });
+  setup: (ctx, setupData) => { 
+      const FALLOW = 0;
+      const GROUNDWATER = 1;
+      const RAINWATER = 2;
+      const RIVERWATER = 3;
+      const defaultField = [
+        [0, 0, 0], 
+        [0, 0, 0], 
+        [0, 0, 0]
+      ];
+      const defaultTally = {
+          fallow: 0,
+          groundWater: 0,
+          rainWater: 0,
+          riverWater: 0
       }
-      return stats;
-    };
-    let playerStats = generatePlayerStats();
-
-    const yearlyStateRecord = [
-      {
-        playerStats: playerStats.slice(),
-        gwDepth: 2,
-        lastYearModelOutput: {},
-      },
-    ];
-    // keep track of the current round
-    let currentRound = 1;
-    return {
-      playerStats,
-      defaultField,
-      defaultTally,
-      currentRound,
-      turnTimeout,
-      FALLOW,
-      GROUNDWATER,
-      RAINWATER,
-      RIVERWATER,
-      yearlyStateRecord,
-      gameConfig: setupData,
-    };
+      const turnTimeout = 0;
+      const playerOffset = setupData.moderated ? 1 : 0
+      const villages = [...Array(setupData.numVillages + 1).keys()]
+      const generatePlayerStats = () => {
+          let stats = [];
+          for(let i = 0; i < ctx.numPlayers; i++) {
+              stats.push({
+                  pid: i,
+                  playerMoney: 100,
+                  playerWaterFields: [...defaultField],
+                  playerCropFields: [...defaultField],
+                  playerChoiceTally: {...defaultTally},
+                  selectionsSubmitted: false,
+                  village: (setupData.moderated && i == 0) ? 0 : (((i - playerOffset) % setupData.numVillages) +1)
+              })
+          }
+          return stats;
+      };
+      let playerStats = generatePlayerStats();
+      
+      const yearlyStateRecord = [{
+          playerStats: playerStats.slice(),
+          gwDepth: 2,
+          lastYearModelOutput: {}
+      }]
+      // keep track of the current round
+      let currentRound = 1;
+      return {
+          villages,
+          playerStats,
+          defaultField,
+          defaultTally,
+          currentRound,
+          turnTimeout,
+          FALLOW,
+          GROUNDWATER,
+          RAINWATER,
+          RIVERWATER,
+          yearlyStateRecord,
+          gameConfig: setupData
+      }
   },
   //Reset the player's choices after they play and their new totals are calculated
   resetPlayerBoards: (G) => {
-    for (let i = 0; i < G.playerStats.length; i++) {
-      G.playerStats[i].playerWaterFields = [...G.defaultField];
-      G.playerStats[i].playerCropFields = [...G.defaultField];
-      G.playerStats[i].playerChoiceTally = { ...G.defaultTally };
-      G.playerStats[i].selectionsSubmitted = false;
-    }
+      for (let i = 0; i < G.playerStats.length; i++ ) {
+          G.playerStats[i].playerWaterFields = [...G.defaultField];
+          G.playerStats[i].playerCropFields = [...G.defaultField];
+          G.playerStats[i].playerChoiceTally = {...G.defaultTally}
+          G.playerStats[i].selectionsSubmitted = false
+      }
   },
 
   //Count up the number of each choice that each player has made and store the result in the playerChoiceTally.

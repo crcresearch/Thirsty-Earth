@@ -29,7 +29,9 @@ services:
     - '127.0.0.1:5432:5432'
 
   plumber:
-    image: creinkin/plumber
+    build:
+      dockerfile: Dockerfile
+      context: ./Plumber
     container_name: plumber
     volumes:
       - ./Plumber:/app

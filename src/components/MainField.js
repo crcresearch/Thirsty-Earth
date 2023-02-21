@@ -33,7 +33,8 @@ function useStateAndRef(initial) {
 
 // Various styles used in the component.
 const gameBoardStyle = {
-    position: 'relative'
+    position: 'relative',
+    height: '750px'
 }
 const selectionsStyle = {
     display: 'flex',
