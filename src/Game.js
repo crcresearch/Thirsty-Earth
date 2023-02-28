@@ -37,13 +37,13 @@ export const ThirstyEarth = {
                   playerCropFields: [...defaultField],
                   playerChoiceTally: {...defaultTally},
                   selectionsSubmitted: false,
-                  village: (setupData.moderated && i == 0) ? 0 : (((i - playerOffset) % setupData.numVillages) +1)
+                  village: (setupData.moderated && i == 0) ? 0 : "unassigned"
               })
           }
           return stats;
       };
       let playerStats = generatePlayerStats();
-      
+
       const yearlyStateRecord = [{
           playerStats: playerStats.slice(),
           gwDepth: 2,
@@ -134,10 +134,8 @@ export const ThirstyEarth = {
         startGame: (G, ctx, newSelections, playerID) => {
           ctx.events.endPhase();
         },
-        setVillageAssignments: (G, ctx, newSelections, playerID) => {
-          for (let i = 0; i < newSelections.length; i++) {
-            G.playerStats[i].village = newSelections[i];
-          }
+        setVillageAssignment: (G, ctx, newSelection, playerID) => {
+          G.playerStats[playerID].village = newSelection
         },
       },
       onBegin: (G, { events }) => {
