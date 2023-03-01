@@ -37,5 +37,5 @@ services:
       - ./Plumber:/app
     ports:
       - '127.0.0.1:9000:8000'
-    command: "/app/ThirstyEarthFct_v.1_20_23.R"
+    command: "/app/ThirstyEarth_Play_V.2.R"
 
