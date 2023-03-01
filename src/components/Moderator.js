@@ -24,8 +24,11 @@ const tableStyle = {
     width: "20%"
 }
 
+const hideButton = {
+    visibility: "hidden"
+}
+
 export function Moderator({ ctx, G, moves, matchData}) {
-    console.log(matchData)
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [water_empty, well, cloud, river]
@@ -62,6 +65,36 @@ export function Moderator({ ctx, G, moves, matchData}) {
             <div className="text-center">
                 <h3>Players</h3>
             </div>
+            {(matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0 && ctx.phase == "setup") &&
+                <div>
+                    <span className="h5 mt-3 mb-2">Unassigned Players</span>
+                    <table className='table table-striped mb-3'>
+                        <thead>
+                            <td>Player ID</td>
+                            <td>Player Name</td>
+                            <td>Is Connected</td>
+                            <td>Assign Village</td>
+                        </thead>
+                        <tbody>
+                            {matchData.filter(el => G.playerStats[el.id].village === "unassigned").map(player => (
+                                <tr key={player.id}>
+                                    <td className="align-middle" style={tableStyle}>{player.id}</td>
+                                    <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
+                                    <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
+                                    <td className="align-middle" style={tableStyle}>
+                                        <select id={`select-${player.id}`} name="village" class="form-select" onChange={(event) => moves.setVillageAssignment(Number(event.target.value), player.id)}>
+                                            <option disabled selected>Select an option from the dropdown list</option>
+                                            {G.villages.filter(el => el !== 0).map(village => (
+                                                <option disabled={matchData.filter(el => G.playerStats[el.id].village === village).length == G.gameConfig.playersPerVillage} key={village} value={village}>Village {village}</option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            }
             {G.villages.map(village => (
                 <div>
                     {(village > 0) &&
@@ -75,6 +108,9 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                 <td>Is Connected</td>
                                 <td>Money</td>
                                 <td>Turn Submitted</td>
+                                {ctx.phase == "setup" &&
+                                    <td>Unassign</td>
+                                }
                             </thead>
                         }
                         <tbody>
@@ -85,6 +121,9 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                     <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney}</td>
                                     <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"}</td>
+                                    {ctx.phase == "setup" &&
+                                        <td className="align-middle" style={tableStyle}><button class="btn btn-primary" style={(player.id === 0) ? hideButton : {}} onClick={() => moves.setVillageAssignment('unassigned', player.id)}>Unassign</button></td>
+                                    }
                                 </tr>
                             ))}
                         </tbody>
