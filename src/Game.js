@@ -178,7 +178,8 @@ export const ThirstyEarth = {
             players_played ==
             (G.gameConfig.moderated ? ctx.numPlayers - 1 : ctx.numPlayers)
           ) {
-            ctx.events.endPhase();
+            // commented this out for now so moderator can run function to get round results, prevent automatically ending phase
+            // ctx.events.endPhase();
           } else {
             G.lastPlayerSubmitted = playerID;
             G.turnTimeout = Date.now() + G.gameConfig.turnLength;

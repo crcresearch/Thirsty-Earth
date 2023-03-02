@@ -1,10 +1,10 @@
 ################ Function for water use and profit each year ############################################################
-#Lauren McGiven & Marc Muller, January 2023
-#Some material from Irrigania (Seibert & Vis, 2012): https://doi.org/10.5194/hess-16-2523-2012
-#Some material from (Hoekstra, 2012): https://doi.org/10.5194/hess-16-2985-2012
+#Lauren McGiven & Marc Muller, February 2023
+#Inspiration from Irrigania (Seibert & Vis, 2012): https://doi.org/10.5194/hess-16-2523-2012
+#and (Hoekstra, 2012): https://doi.org/10.5194/hess-16-2985-2012
 
 #This function is applied individually for a single village. There will be no upstream or downstream villages.
-#rm(list=ls())
+#rm(list=ls())  #clear work space
 library(tidyverse)
 
 #* @filter cors
@@ -38,59 +38,60 @@ cors <- function(res) {
 #* @param lambda:number #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
 #* @param Pen:number #Profit penalty per person for added public information (lump sum per bit)
 #* @post /calculate
-function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, aF, EPR, k, aCr, lambda, Pen){
+ThirstyEarth = function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, aF, EPR, k, aCr, lambda, Pen){
  
-  #Test function with fake arguments - COMMENT OUT TO PLAY GAME:
-# 
-#   #Play Parameters passed as argument
-#   Wa=matrix(sample(c(0,1,2,3),(54),T),ncol=9) #matrix of individual choice per field (here nine fields and six players). 0,1,2,3 indicate fallow, groundwater, surface water and rain
-#   Cr=matrix(sample(c(0,1),54,T),ncol=9) #crop type per field per player
-#   IB = sample(c(1,0), 6, replace = T, prob = c(.35,.65)) #binary vector indicating which information bits to purchase
-# 
-#   #Test function with everyone taking the optimal amounts! (just different test fake arguments)
-#   Wa=rbind(c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0))
-#   #2 groundwater fields, 3 surface water fields, 2 rain field, 2 fallow
-#   Cr=matrix(0,nrow=6,ncol=9) #all low value crops to see how it goes
-# 
-#   ### INITIALIZATION (Parameters passed as argument)
-#   #GD=rep(0,6) #Starting GW depth
-#   r0=1 #rain value of previous year
-#
-#  ######################## FOR CRC: ############################################
-#  #Game creation important parameters moderator can change: P, Ld, dP, dLd, rhoR, rhoRF, rhoRS, rhoRG, aCr, Pen
-#  #If possible - Advanced settings option: QNS, QFS, QNG0, QNG, QFG, aF, EPR, k, lambda
-#  #set current values as default parameter values 
-#   ######### FREE CLIMATE PARAMETERS - important for game creation
-#   # Parameters for rain (by default, 50% probability of good year and no autocorrelation)
-#   P=0.5 #prob of wet/good year (also passed as argument)
-#   Ld=1 #average length of dry spell (also passed as argument)
-#   #Climate change
-#   dP=0 #annual increase in annual probability of wet year
-#   dLd=0 # annual increase in average length of dry spell
-# 
-#   ########## FREE ECON PARAMETERS 
-#   #Important game creation parameters:
-#   #Ratio of Utility for rain vs irrigation
-#   rhoRS=0.35 #for surface water
-#   rhoRG=0.25 #for groundwater
-#   rhoR=0.5 #Multiplier for profit (and recharge) for normal crops for bad vs good rain year.
-#   rhoRF = 1.3 #the ratio between expected unit returns from rain fed crops and outside wages
-#   aCr=2 #Multiplier for both profit and water use for high value crops.
-#   Pen=2 #Profit penalty per person for added public information (lump sum per bit)
-#   
-#   #Advanced settings: 
-#   #Optimal Fields allocation per player for surface water.
-#   QNS=4 #Nash (selfish)
-#   QFS=3 #First best (community)
-#   #Optimal Field allocation per player for groundwater
-#   QNG0=5  #Myopic Nash (period 1)
-#   QNG=3 #Sustainable Nash
-#   QFG=2 #Sustainable first best
-#   aF = 1 #profit from leaving one marginal field fallow
-#   EPR= 5 #Expected groundwater recharge
-#   k=1.25 #Recession constant per period.
-#   lambda = 0.1 #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
-#   
+ #  #Test function with fake arguments - COMMENT OUT TO PLAY GAME:
+ # 
+ #  #Play Parameters passed as argument
+ #  Wa=matrix(sample(c(0,1,2,3),(54),T),ncol=9) #matrix of individual choice per field (here nine fields and six players). 0,1,2,3 indicate fallow, groundwater, surface water and rain
+ #  Cr=matrix(sample(c(0,1),54,T),ncol=9) #crop type per field per player
+ #  IB = sample(c(1,0), 6, replace = T, prob = c(.35,.65)) #binary vector indicating which information bits to purchase
+ # 
+ #  #Test function with everyone taking the optimal amounts! (just different test fake arguments)
+ #  #Wa=rbind(c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0))
+ #  #2 groundwater fields, 3 surface water fields, 2 rain field, 2 fallow
+ #  #Cr=matrix(0,nrow=6,ncol=9) #all low value crops to see how it goes
+ # 
+ #  ### INITIALIZATION (Parameters passed as argument)
+ #  GD=rep(0,6) #Starting GW depth
+ #  r0=1 #rain value of previous year
+ # 
+ # ######################## FOR CRC: ############################################
+ # #Game creation important parameters moderator can change: P, Ld, dP, dLd, rhoR, rhoRF, rhoRS, rhoRG, aCr, Pen
+ # #If possible - Advanced settings option: QNS, QFS, QNG0, QNG, QFG, aF, EPR, k, lambda
+ # #set current values as default parameter values
+ # 
+ #  ######### FREE CLIMATE PARAMETERS - important for game creation
+ #  # Parameters for rain (by default, 50% probability of good year and no autocorrelation)
+ #  P=0.5 #prob of wet/good year (also passed as argument)
+ #  Ld=1.25 #average length of dry spell (also passed as argument)
+ #  #Climate change
+ #  dP=0 #annual increase in annual probability of wet year
+ #  dLd=0 # annual increase in average length of dry spell
+ # 
+ #  ########## FREE ECON PARAMETERS
+ #  #Important game creation parameters:
+ #  #Ratio of Utility for rain vs irrigation
+ #  rhoRS=0.35 #for surface water
+ #  rhoRG=0.25 #for groundwater
+ #  rhoR=0.5 #Multiplier for profit (and recharge) for normal crops for bad vs good rain year.
+ #  rhoRF = 1.3 #the ratio between expected unit returns from rain fed crops and outside wages
+ #  aCr=2 #Multiplier for both profit and water use for high value crops.
+ #  Pen=2 #Profit penalty per person for added public information (lump sum per bit)
+ # 
+ #  #Advanced settings:
+ #  #Optimal Fields allocation per player for surface water.
+ #  QNS=4 #Nash (selfish)
+ #  QFS=3 #First best (community)
+ #  #Optimal Field allocation per player for groundwater
+ #  QNG0=5  #Myopic Nash (period 1)
+ #  QNG=3 #Sustainable Nash
+ #  QFG=2 #Sustainable first best
+ #  aF = 1 #profit from leaving one marginal field fallow
+ #  EPR= 5 #Expected groundwater recharge
+ #  k=1.25 #Recession constant per period.
+ #  lambda = 0.1 #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
+
 
   #################  #################  #################  #################  #################  #################  #################  #################
   ####### CRC Plumber Parameter Type Transformation #######
@@ -144,7 +145,12 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   if(rhoRF<=1) warning('Expected profit from rain fed crops should be higher than fallow')
   if(rhoRF>=1.5) warning('Rain fed crops should be less profitable than fallow in a bad year') 
   if(QNG==4) warning('SW profits become negative before GW')
-
+  if(dP>(1-P)/10) warning('The probability of a good year will be 1 in 10 years')
+  if(dP<-(1-P)/10) warning('The probability of a bad year will be 1 in 10 years')
+  if(Ld>=5) warning('With P=0.5, there is a high probability (>80% for P00 and P11) that the rain year will get stuck as bad or good')
+  if(dLd<(5-Ld)/3) warning('With P=0.5, The probability that the rain year will get stuck as bad or good increases past 80% (for P00 and P11) after only 3 years with this dLd')
+  
+  
   ##########   Rainfall year  ##########
   # Rain is a binary markov chain.
   #For rain: 1 = dry/bad year, 2 = wet/good year
@@ -153,11 +159,10 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   Ld=max(c(1,Ld+dLd))
   P1=P
   P01 = 1/Ld #prob of going from a dry year to wet year
-  P11 = 1 + P01 - (P01/P1) #P00 - prob of going from a dry year to a dry year
+  P11 = 1 + P01 - (P01/P1) #prob of going from a wet year to a wet year
   P10 = 1 - P11 #P10 - prob of going from a wet year to a dry year 
   P00 = 1 - P01 #P00 - prob of going from a dry year to a dry year 
   rain = ifelse(r0==1, sample(0:1,1,F,c(P00,P01)), sample(0:1,1,F,c(P10,P11))) + 1 #bad(1) or good(2) year
-  
   
   #DERIVED PARAMETERS 
   N=nrow(Wa) #number of players
@@ -184,7 +189,7 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   bG = (RG3*bG1) / (k*EPR*(1-lambda))
   r1 = EPR / (P+rhoR - (rhoR*P)) #recharge amount for a good year
   r2 = rhoR*(EPR / (P+rhoR - (rhoR*P))) #recharge amount for a bad year
-
+  
   #NON NEGATIVITY AND OTHER BOUNDS CONDITIONS on all parameters:
   if(R2<0 | R2>1) stop('R2 must be between 0 and 1')
   if(RG2<0 | RG2>1) stop('RG2 must be between 0 and 1')
@@ -330,7 +335,7 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   #Rain fed
   Ri = data.frame(Ri=rowSums(1*Wa==3), RiCr=rowSums((aCr*Cr+!Cr)*(Wa==3))) #Number rain fields
   P_R = uR(Ri[[2]])$uR
-  Rv = sum(Ri[1])/N ##Average number of fields irrigated with RW per player
+  Rv = round(sum(Ri[1])/N, 2) ##Average number of fields irrigated with RW per player
   ERP = aR1*P + aR2*(1-P) #expected rain profits 
   RW = data.frame(Ri, ERP, round(P_R,2))
   names(RW)=c('Ri','RiCr','E[uB_R]','P_R')
@@ -338,7 +343,7 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   #Fallow
   Fi = data.frame(Fi=rowSums(1*(Wa==0)), uB_F=aF)%>%
     mutate(P_F=Fi*aF)  #number of fallow fields & fallow profits
-  Fv = sum(Fi[1])/N #Average number of fields left fallow per player
+  Fv = round(sum(Fi[1])/N, 2) #Average number of fields left fallow per player
   
   ######## Irrigated Fields  ######## 
   
@@ -346,7 +351,7 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   #Individual data 
   Gi = data.frame(Gi=rowSums(1*(Wa==1)),GiCr=rowSums((aCr*Cr+!Cr)*(Wa==1))) #Extract groundwater fields from action matrix
   #Village data
-  Gv=sum(Gi[1])/N #Average number of fields irrigated with GW per player not accounting for high value crops
+  Gv=round(sum(Gi[1])/N, 2) #Average number of fields irrigated with GW per player not accounting for high value crops
   
   #sustainable GW profits equation per player
   Gfun = uG(Gi[[2]],GD)
@@ -357,7 +362,7 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   
   ##### Surface Water ##### 
   Si = data.frame(Si=rowSums(1*(Wa==2)),SiCr=rowSums((aCr*Cr+!Cr)*(Wa==2)))
-  Sv=sum(Si[1])/N #Average number of fields irrigated with SW per player not accounting for high value crops
+  Sv=round(sum(Si[1])/N, 2) #Average number of fields irrigated with SW per player not accounting for high value crops
   
   #Surface water profits equation per player
   Sfun = uS(Si[[2]])
@@ -372,11 +377,24 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   Pen_C = Pen*sum(IB) #number of information bits purchased for the village #total cost of information bits purchased
   
   ########Gather important info: player decisions, profits, penalties, net profit
-  df = RW%>%bind_cols(Fi)%>%bind_cols(SW)%>%bind_cols(GW)%>%mutate(P_Tot=Ri[2]+Fi[2]+P_S+P_G)%>%mutate(P_Net=P_Tot-Pen_C)
+  df = RW%>%bind_cols(Fi)%>%bind_cols(SW)%>%bind_cols(GW)%>%mutate(P_Tot=Ri[2]+Fi[2]+P_S+P_G)%>%mutate(Penalty=rep(Pen_C,N))%>%mutate(P_Net=P_Tot-Pen_C)
   
-  InfoBits = data.frame(Gv, Sv, Rv, Fv, sum(Cr)/N, rain, round(mean(uC_G),2), round(mean(uC_S),2), round(mean(df$P_Net),2), which.max(df$P_Net), 
-                        max(df$P_Net), which.max(Gi[[2]]), which.max(Si[[2]]))
-  #1. What was the average number of fields irrigated with groundwater per player this year in our village?
+  #random player selection function
+  randomplayer = function(q){
+    number = sample(c(1:N), 1, F)
+    usage = q[number]
+  return(list(num=number, use=usage)) }
+  #Select random players' information for this year
+  GRand=randomplayer(Gi[[2]])
+  SRand=randomplayer(Si[[2]])
+  RRand=randomplayer(Ri[[2]])
+  FRand=randomplayer(Fi[[1]])
+  
+  InfoBits = list(Gv, Sv, Rv, Fv, round(sum(Cr)/N,2), ifelse((rain==2),'Good','Bad'), round(mean(uC_G),2), round(mean(uC_S),2), round(mean(df$P_Net),2), which.max(df$P_Net), 
+                        max(df$P_Net), which.max(Gi[[2]]), max(Gi[[2]]), which.max(Si[[2]]), max(Si[[2]]), c(GRand$num, GRand$use),
+                        c(SRand$num, SRand$use), c(RRand$num, RRand$use), c(FRand$num, FRand$use))
+  
+  #1. What is the average number of fields irrigated with groundwater per player this year in our village?
   #2. What was the average number of fields irrigated with surface water per player this year in our village?
   #3. What was the average number of fields irrigated with rain per player this year in our village?
   #4. What was the average number of fields left fallow per player this year in our village?
@@ -388,37 +406,36 @@ function(Wa,Cr,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS,
   #10. Which player had the highest net profit this year?
   #11. What was the maximum net profit this year?
   #12. Which player used the most groundwater this year?
+  #13. What is the maximum amount of groundwater used by a single player this year?
+  #14. Which player used the most surface water this year?
+  #15. What is the maximum amount of surface water used by a single player this year?
+  #16. Randomly show a player's number and groundwater usage.
+  #17. Randomly show a player's number and surface water usage.
+  #18. Randomly show a player's number and rain water usage.
+  #19. Randomly show a player's number and their number of fields left fallow.
   
-  # What was the maximum ground water units taken this year by a single player?
-  
-  #13. Which player used the most surface water this year?
-  
-  # What was the maximum surface water units taken this year by a single player?
-  
-  #randomly show a players play and player number
-
-  
-  ##^^LAST THING LAUREN NEEDS TO FINISH
-  
- 
-  
-
   names(InfoBits)=c('Avg. # GW Fields','Avg. # SW Fields','Avg. # RW Fields', 'Avg. # Fallow Fields', 'Avg. # High Value Crops', 'Rain Year',
-                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player # Max Profit', 'Max Village Profit', 'Player # Max GW', 
-                    'Player # Max SW') 
+                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player # Max Profit', 'Max Village Profit', 'Player # Max GW use', 'Max Individual GW use',
+                    'Player # Max SW use','Max Individual SW use', 'Random player # & GW usage', 'Random player # & SW usage', 'Random player # & RW usage', 
+                    'Random player # & # fields Fallow') 
+  
   
   #######Public information for all players in the village
   Public = InfoBits[IB==1] #Information everyone in the village paid to see 
   
   #########Individual information to display to each player
-  Private_const= data.frame(P, aR1, aR2, aS, bS1, bS2, aG, bG, bG1, bG2)
-  #probability of a good rain year, good rain unit benefit, bad rain unit benefit, unit SW benefit, SW cost parameters, unit GW benefit, GW cost parameters, 
+  Public_const= data.frame(aF, round(aR1,2), round(aR2,2), round(aS,2), round(bS1,2), round(bS2,2), round(aG,2), round(bG,2), round(bG1,2), round(bG2,2))
+  names(Public_const)=c('alphaF', 'alphaR1', 'alphaR2','alphaS','betaS1','betaS2','alphaG','betaG','betaG1','betaG2')
+  #probability of a good rain year if this year was good, probability of a good rain year if this year was bad, fallow unit benefit, good rain unit benefit, 
+    #bad rain unit benefit, unit SW benefit, SW cost parameters, unit GW benefit, GW cost parameters, 
     
-  Private_notconst = cbind(df[4], df[7], df[12], df[17], df[19], d_new)   #the profit for each type and net profits and the new depth for each player 
+  Private_notconst = cbind(df[4], df[7], df[12], df[17], df[20], round(d_new,2), rep(round(P11,2),N), rep(round(P01,2),N))   #the profit for each type and net profits and the new depth for each player 
+  names(Private_notconst)=c('Profit_R','Profit_F','Profit_S', 'Profit_G', 'Profit_Net', 'New GW Depth', 'Prob. Rain Good_Good', 'Prob. Rain Bad_Good')
   #rain profit, fallow profit, SW profit, GW profit, Net profits, and new GW depth PER PLAYER
-    
-  return(list(df, Private_const, Private_notconst, Public, rain, d_new)) 
-  #display Private_const, Private_notconst, and Public information to the respective players 
+
+  return(list(df, Public_const, Private_notconst, Public, rain, d_new)) 
+  #display Public_const, Private_notconst, and Public to the appropriate players 
+  #rain and d_new are inputs for the next round (r0 and GD)
   
 }
 

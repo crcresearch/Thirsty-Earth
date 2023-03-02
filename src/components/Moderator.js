@@ -151,9 +151,34 @@ export function Moderator({ ctx, G, moves, matchData}) {
                             G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
                         }
                     });
-                    axios.post(`${PLUMBER_URL}/calculate?Wa=${waterChoices}&Cr=${cropChoices}&IB=0&IB=1&GD=0&r0=1&P=0.5&Ld=1&dP=0&dLd=0&QFS=3&QNS=4&QNG=4&QFG=3&rhoRF=1.3&rhoRS=0.7&rhoRG=0.45&rhoR=0.5&aF=1&EPR=2&k=1.25&aCr=2&psi=1`).then((res) => {
-                        moves.advanceYear(0, res.data)
-                        // console.log(res.data)
+                    axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
+                        Wa: waterChoices,
+                        Cr: cropChoices,
+                        IB: 0,
+                        GD: 0,
+                        r0: 1,
+                        P: G.gameConfig.probabilityWetYear,
+                        Ld: G.gameConfig.avgLengthDrySpell,
+                        dP: G.gameConfig.incProbabilityWetYearAnnual,
+                        dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
+                        QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
+                        QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
+                        QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
+                        QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
+                        QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
+                        rhoRF: G.gameConfig.ratioReturnsRainVFallow,
+                        rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
+                        rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
+                        rhoR: G.gameConfig.profitMultiplierGoodBadYear,
+                        aF: G.gameConfig.profitMarginalFieldFallow,
+                        EPR: G.gameConfig.expectedGWRecharge,
+                        k: G.gameConfig.recessionConstant,
+                        aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
+                        lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
+                        Pen: G.gameConfig.profitPenaltyPerPersonPubInfo 
+                    }}).then((res) => {
+                        console.log(res.data)
+                        moves.advanceYear(0, res.data);
                     })
                 }
                 }>End Choice Period of Current Year</button>
