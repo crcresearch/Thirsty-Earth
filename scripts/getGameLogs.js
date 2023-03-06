@@ -36,7 +36,6 @@ db.fetch(matchId, {
         writeFileSync("/var/exports/outZip.txt", `outputFile="${outputDir}"`)
     } else {
         console.log(`The zip file for ${outputDir} already exists!`)
+        writeFileSync("/var/exports/outZip.txt", `outputFile=""`)
     }
-
-    console.log(`The zip file for ${outputDir} is ready to scp.`)
 })
