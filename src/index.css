@@ -251,6 +251,16 @@ code {
   background-color: #243953;
 }
 
+.is-warning {
+  border-color: #fe8b2d;
+}
+
+.alert-warning {
+  color: #572c01;
+  background-color: #ffcda9;
+  border-color: #fcaa5e;
+}
+
 .overlay {
   position: absolute;
   width: 100%;
