@@ -102,14 +102,14 @@ export const ThirstyEarth = {
       }
     }
   },
-  storeYearlyOutcomes: (G) => {
+  storeYearlyOutcomes: (G, data) => {
     let newYearlyStateObj = {};
     newYearlyStateObj["playerStats"] = JSON.parse(
       JSON.stringify(G.playerStats)
     );
     console.log(newYearlyStateObj["playerStats"][1].playerCropFields);
     newYearlyStateObj["gwDepth"] = G.currentRound * 2;
-    newYearlyStateObj["lastYearModelOutput"] = {};
+    newYearlyStateObj["lastYearModelOutput"] = data;
     G.yearlyStateRecord.push(newYearlyStateObj);
   },
   calculateNewTotals: (G, events, data) => {
@@ -196,7 +196,7 @@ export const ThirstyEarth = {
           }
           if (playerID == 0 && G.gameConfig.moderated === true) {
             ThirstyEarth.calculateNewTotals(G, ctx.events, computedData);
-            ThirstyEarth.storeYearlyOutcomes(G);
+            ThirstyEarth.storeYearlyOutcomes(G, computedData);
             ThirstyEarth.resetPlayerBoards(G);
             G.turnTimeout = 0;
             G.currentRound++;

@@ -1,10 +1,15 @@
 FROM node:16-alpine as build-stage
 
+RUN apk update && apk add zip
+
 # make the 'app' folder the current working directory
 WORKDIR /app
 
 # Copy build files.
 COPY ./package.json /app/
+
+#create exports folder.
+RUN mkdir /var/exports
 
 # Install and build.
 RUN npm install 
