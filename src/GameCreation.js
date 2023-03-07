@@ -52,7 +52,7 @@ export function CreateGame({ gameCreationPassword }) {
     const [password, setPassword] = React.useState("");
     // R parameters (basic)
     const [probabilityWetYear, setProbabilityWetYear] = React.useState(0.5); // P
-    const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1); // Ld
+    const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1.25); // Ld
     const [incProbabilityWetYearAnnual, setIncProbabilityWetYearAnnual] = React.useState(0); // dP
     const [incAvgLengthDrySpellAnnual, setIncAvgLengthDrySpellAnnual] = React.useState(0); // dLd
     const [profitMultiplierGoodBadYear, setProfitMultiplierGoodBadYear] = React.useState(0.5); // rhoR
