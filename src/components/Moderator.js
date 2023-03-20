@@ -163,8 +163,9 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                     G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
                                 }
                                 else {
-                                    waterChoices += "111122200"
-                                    cropChoices += "111111111"
+                                    // if no player has ever logged into this player ID, then fill it with optimal values for the entire village.
+                                    waterChoices += "111220000" // 4 rainwater, 3 surface water, 2 groundwater, per JIRA ticket TE-12 
+                                    cropChoices += "111111100" // 7 low value crops, 2 fallow, per JIRA ticket TE-12 
                                 }
                             }
                         });
