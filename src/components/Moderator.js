@@ -31,8 +31,8 @@ const hideButton = {
 export function Moderator({ ctx, G, moves, matchData}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
-    const waterChoices = [water_empty, well, cloud, river]
-    const cropChoices = [crop_empty, briefcase, apple, leaf]
+    const waterChoices = [cloud, river, well]
+    const cropChoices = [briefcase, leaf, apple ]
 
     return (
         <div className='container mt-4'>
@@ -141,44 +141,69 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 {ctx.phase == "playerMoves" && 
                 <div>
                 <button className='btn btn-primary' onClick={() => {
-                    let waterChoices = ""
-                    let cropChoices = ""
-                    console.log(PLUMBER_URL)
-                    matchData.map(player => {
-                        console.log(G.playerStats)
-                        if(player.name != undefined) {
-                            G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (waterChoices += String(choice)))
-                            G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
-                        }
-                    });
-                    axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
-                        Wa: waterChoices,
-                        Cr: cropChoices,
-                        IB: 0,
-                        GD: 0,
-                        r0: 1,
-                        P: G.gameConfig.probabilityWetYear,
-                        Ld: G.gameConfig.avgLengthDrySpell,
-                        dP: G.gameConfig.incProbabilityWetYearAnnual,
-                        dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
-                        QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
-                        QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
-                        QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
-                        QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
-                        QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
-                        rhoRF: G.gameConfig.ratioReturnsRainVFallow,
-                        rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
-                        rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
-                        rhoR: G.gameConfig.profitMultiplierGoodBadYear,
-                        aF: G.gameConfig.profitMarginalFieldFallow,
-                        EPR: G.gameConfig.expectedGWRecharge,
-                        k: G.gameConfig.recessionConstant,
-                        aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
-                        lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
-                        Pen: G.gameConfig.profitPenaltyPerPersonPubInfo 
-                    }}).then((res) => {
-                        console.log(res.data)
-                        moves.advanceYear(0, res.data);
+                    // break up player choices into village groups
+                    // make four calls to R code
+                    // when each call comes back, save its output
+                    // when all calls come back, merge all of the saved outputs into one 
+
+
+                    let promisesList = []
+                    for(let i = 0; i < G.gameConfig.numVillages ; i++) {
+                        let waterChoices = ""
+                        let cropChoices = ""
+                        console.log(PLUMBER_URL)
+                        let playerIDs = []
+                        let waterDepths = []
+                        matchData.map(player => {
+                            if( G.playerStats[player.id].village === i+1 ) {
+                                playerIDs.push(player.id)
+                                waterDepths.push(G.playerStats[player.id].groundwaterDepth)
+                                if(player.name != undefined  ) {
+                                    G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (waterChoices += String(choice)))
+                                    G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
+                                }
+                                else {
+                                    waterChoices += "111122200"
+                                    cropChoices += "111111111"
+                                }
+                            }
+                        });
+                        promisesList.push(axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
+                            Water: waterChoices,
+                            Crop: cropChoices,
+                            IB: 0,
+                            GD: waterDepths.join(","),
+                            r0: 1,
+                            P: G.gameConfig.probabilityWetYear,
+                            Ld: G.gameConfig.avgLengthDrySpell,
+                            dP: G.gameConfig.incProbabilityWetYearAnnual,
+                            dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
+                            QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
+                            QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
+                            QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
+                            QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
+                            QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
+                            rhoRF: G.gameConfig.ratioReturnsRainVFallow,
+                            rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
+                            rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
+                            rhoR: G.gameConfig.profitMultiplierGoodBadYear,
+                            rhoRe: G.gameConfig.groundwaterRechargeGoodBadYear,
+                            aF: G.gameConfig.profitMarginalFieldFallow,
+                            EPR: G.gameConfig.expectedGWRecharge,
+                            k: G.gameConfig.recessionConstant,
+                            aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
+                            lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
+                            Pen: G.gameConfig.profitPenaltyPerPersonPubInfo,
+                            VillageID:i+1,
+                            PlayerIDs: playerIDs.join(","),
+                            numPlayers: G.gameConfig.playersPerVillage
+                        }}).then((res) => {
+                            moves.submitVillageDataUpdate(0, res.data)
+                        }))
+                    }   
+                    
+                    Promise.all(promisesList).then(() => {
+                        moves.advanceYear(0, {})
                     })
                 }
                 }>End Choice Period of Current Year</button>

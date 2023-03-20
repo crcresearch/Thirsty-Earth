@@ -37,7 +37,8 @@ export const ThirstyEarth = {
                   playerCropFields: [...defaultField],
                   playerChoiceTally: {...defaultTally},
                   selectionsSubmitted: false,
-                  village: (setupData.moderated && i == 0) ? 0 : "unassigned"
+                  village: (setupData.moderated && i == 0) ? 0 : "unassigned",
+                  groundwaterDepth: 0
               })
           }
           return stats;
@@ -108,15 +109,16 @@ export const ThirstyEarth = {
       JSON.stringify(G.playerStats)
     );
     console.log(newYearlyStateObj["playerStats"][1].playerCropFields);
-    newYearlyStateObj["gwDepth"] = G.currentRound * 2;
-    newYearlyStateObj["lastYearModelOutput"] = data;
+    // newYearlyStateObj["lastYearModelOutput"] = data;
     G.yearlyStateRecord.push(newYearlyStateObj);
   },
   calculateNewTotals: (G, events, data) => {
     //Go through the tallies of player choices and calculate cost and revenue for each crop.
-    for (let i = 0; i < data[0].length; i++) {
-      G.playerStats[i].playerMoney =
-        G.playerStats[i].playerMoney + data[0][i].P_Net;
+    let playerIds = data[7][0].split(",")
+    for (let i = 0; i < playerIds.length; i++) {
+      G.playerStats[playerIds[i]].playerMoney =
+        G.playerStats[playerIds[i]].playerMoney + data[2][i]["Profit_Net"];
+      G.playerStats[playerIds[i]].groundwaterDepth = data[2][i]["New GW Depth"];
     }
   },
 
@@ -185,7 +187,7 @@ export const ThirstyEarth = {
             G.turnTimeout = Date.now() + G.gameConfig.turnLength;
           }
         },
-        advanceYear: (G, ctx, playerID, computedData) => {
+        submitVillageDataUpdate: (G, ctx, playerID, computedData) => {
           // console.log(G)
           // console.log("PlayerID", playerID)
           if (
@@ -196,6 +198,19 @@ export const ThirstyEarth = {
           }
           if (playerID == 0 && G.gameConfig.moderated === true) {
             ThirstyEarth.calculateNewTotals(G, ctx.events, computedData);
+          }
+        },
+        advanceYear: (G, ctx, playerID, computedData) => {
+          // console.log(G)
+          // console.log("PlayerID", playerID)
+          if (
+            G.gameConfig.moderated === false ||
+            (G.gameConfig.moderated === true && playerID != 0)
+          ) {
+            return INVALID_MOVE;
+          }
+          if (playerID == 0 && G.gameConfig.moderated === true) {
+            // ThirstyEarth.calculateNewTotals(G, ctx.events, computedData);
             ThirstyEarth.storeYearlyOutcomes(G, computedData);
             ThirstyEarth.resetPlayerBoards(G);
             G.turnTimeout = 0;
@@ -224,7 +239,8 @@ export const ThirstyEarth = {
         },
       },
       turn: {
-        activePlayers: { all: Stage.NULL, minMoves: 1, maxMoves: 2 },
+        // activePlayers: { all: Stage.NULL, minMoves: 1, maxMoves: 90 },
+        activePlayers: { all: Stage.NULL},
       },
       next: "moderatorPause",
     },

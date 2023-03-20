@@ -220,13 +220,13 @@ export function MainField({ G, moves }) {
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
                 if(gridSelections[i][j].left === cloud) {
-                    submitWaterGrid[i][j] = 2;
+                    submitWaterGrid[i][j] = 0;
                 }
                 else if(gridSelections[i][j].left === river) {
-                    submitWaterGrid[i][j] = 3;
+                    submitWaterGrid[i][j] = 1;
                 }
                 else if(gridSelections[i][j].left === well) {
-                    submitWaterGrid[i][j] = 1;
+                    submitWaterGrid[i][j] = 2;
                 }
             }
         }
@@ -238,10 +238,10 @@ export function MainField({ G, moves }) {
                     submitCropGrid[i][j] = 2;
                 }
                 else if(gridSelections[i][j].top === leaf) {
-                    submitCropGrid[i][j] = 3;
+                    submitCropGrid[i][j] = 1;
                 }
                 else if(gridSelections[i][j].top === briefcase) {
-                    submitCropGrid[i][j] = 1;
+                    submitCropGrid[i][j] = 0;
                 }
             }
         }

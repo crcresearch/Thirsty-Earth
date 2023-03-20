@@ -56,6 +56,7 @@ export function CreateGame({ gameCreationPassword }) {
     const [incProbabilityWetYearAnnual, setIncProbabilityWetYearAnnual] = React.useState(0); // dP
     const [incAvgLengthDrySpellAnnual, setIncAvgLengthDrySpellAnnual] = React.useState(0); // dLd
     const [profitMultiplierGoodBadYear, setProfitMultiplierGoodBadYear] = React.useState(0.5); // rhoR
+    const [groundwaterRechargeGoodBadYear, setGroundwaterRechargeGoodBadYear] = React.useState(0.8); // rhoRe
     const [ratioReturnsRainVFallow, setRatioReturnsRainVFallow] = React.useState(1.3); // rhoRF
     const [ratioReturnsRainVSurfaceWater, setRatioReturnsRainVSurfaceWater] = React.useState(0.35); // rhoRS
     const [ratioReturnsRainVGroundWater, setRatioReturnsRainVGroundWater] = React.useState(0.25); // rhoRG
@@ -104,6 +105,12 @@ export function CreateGame({ gameCreationPassword }) {
         label: "rhoR",
         value: profitMultiplierGoodBadYear,
         set_function: setProfitMultiplierGoodBadYear
+      },
+      {
+        id: "groundwaterRechargeGoodBadYear",
+        label: "rhoRe",
+        value: groundwaterRechargeGoodBadYear,
+        set_function: setGroundwaterRechargeGoodBadYear
       },
       {
         id: "ratioReturnsRainVFallow",
@@ -211,6 +218,7 @@ export function CreateGame({ gameCreationPassword }) {
                     incProbabilityWetYearAnnual: incProbabilityWetYearAnnual, // dP
                     incAvgLengthDrySpellAnnual: incAvgLengthDrySpellAnnual, // dLd
                     profitMultiplierGoodBadYear: profitMultiplierGoodBadYear, // rhoR
+                    groundwaterRechargeGoodBadYear: groundwaterRechargeGoodBadYear, // rhoRe
                     ratioReturnsRainVFallow: ratioReturnsRainVFallow, // rhoRF
                     ratioReturnsRainVSurfaceWater: ratioReturnsRainVSurfaceWater, // rhoRS
                     ratioReturnsRainVGroundWater: ratioReturnsRainVGroundWater, // rhoRG
@@ -395,8 +403,8 @@ export function CreateGame({ gameCreationPassword }) {
           warningText.push("Ld should be less than 5!");
           warningIds.push("avgLengthDrySpell");   
         }
-        if(dLd < (5-Ld)/3) {
-          warningText.push(`dLd should be greater than ${(5-Ld)/3}!`);
+        if(dLd > (5-Ld)/3) {
+          warningText.push(`dLd should be less than or equal to ${(5-Ld)/3}!`);
           warningIds.push(...["avgLengthDrySpell", "incAvgLengthDrySpellAnnual"]);   
         }
 
