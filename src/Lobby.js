@@ -105,7 +105,7 @@ export function EnterName() {
             }}
           ></input>
           <input className="mt-3 mx-2" type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} />
-          <label htmlFor="isModerated"> I have read and understand <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the study requirements found here</a>. </label>
+          <label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label>
 
           <div className="d-flex flex-row-reverse ">
             <button
