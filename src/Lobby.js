@@ -73,7 +73,7 @@ export function EnterName() {
       </nav>
       <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
       <div className="row">
-        <div className="col-6 offset-lg-3">
+        <div className="col-lg-6 offset-lg-3">
           <h2 className="subtitle-font text-center">Join Game</h2>
           <div className="mb-3">
             {/* <label htmlFor="roomid"  className="form-label">Room ID: </label> */}
@@ -104,13 +104,15 @@ export function EnterName() {
               setJoiningPlayerName(event.target.value);
             }}
           ></input>
-          <input className="mt-3 mx-2" type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} />
-          <label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label>
+          <div class="row row-cols-2 mt-3 ">
+            <div class="col col-1"><input type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} /></div>
+            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label></div>
+          </div>
 
           <div className="d-flex flex-row-reverse ">
             <button
               type="button"
-              disabled={!agreeTOS}
+              hidden={!agreeTOS}
               className="btn btn-block btn-primary"
               style={extraButtonStyle}
               onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
