@@ -174,7 +174,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
                             Crop: cropChoices,
                             IB: 0,
                             GD: waterDepths.join(","),
-                            r0: 1,
+                            r0: G.villageStats[i+1].r0,
                             P: G.gameConfig.probabilityWetYear,
                             Ld: G.gameConfig.avgLengthDrySpell,
                             dP: G.gameConfig.incProbabilityWetYearAnnual,

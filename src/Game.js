@@ -44,6 +44,17 @@ export const ThirstyEarth = {
           return stats;
       };
       let playerStats = generatePlayerStats();
+      
+      const generateVillageStats = () => {
+        let stats = [];
+        for(let i = 0; i < villages.length; i++) {
+            stats.push({
+                r0: 1
+            })
+        }
+        return stats;
+      };
+      let villageStats = generateVillageStats();
 
       const yearlyStateRecord = [{
           playerStats: playerStats.slice(),
@@ -54,6 +65,7 @@ export const ThirstyEarth = {
       let currentRound = 1;
       return {
           villages,
+          villageStats,
           playerStats,
           defaultField,
           defaultTally,
@@ -108,6 +120,9 @@ export const ThirstyEarth = {
     newYearlyStateObj["playerStats"] = JSON.parse(
       JSON.stringify(G.playerStats)
     );
+    newYearlyStateObj["villageStats"] = JSON.parse(
+      JSON.stringify(G.villageStats)
+    );
     console.log(newYearlyStateObj["playerStats"][1].playerCropFields);
     // newYearlyStateObj["lastYearModelOutput"] = data;
     G.yearlyStateRecord.push(newYearlyStateObj);
@@ -123,6 +138,9 @@ export const ThirstyEarth = {
         G.playerStats[playerIds[i]][key] = value;
       }
     }
+    let villageId = data[6][0];
+    G.villageStats[villageId]["r0"] = data[4][0];
+
   },
 
   totalGroundWaterCrops: (G) => {

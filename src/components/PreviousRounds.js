@@ -53,18 +53,22 @@ export function PreviousRounds({G, playerID}) {
                                     })
                                 }
                             </div>
-                            <div className="row row-cols-2 small">
-                                <div className="col">${year.playerStats[playerID].playerMoney}</div>
-                                <div className="col">GW: {year.playerStats[playerID].groundwaterDepth}</div>
+                            <div className="row small text-center">
+                                <div className="col">Rainfall: {year.villageStats[year.playerStats[playerID]["village"]].r0 == 2 ? "Good" : "Bad"}</div>
                             </div>
-                            <div className="row row-cols-2 small">
+                            <div className="row row-cols-2 small text-center">
                                 <div className="col">P_Net: {year.playerStats[playerID].Profit_Net}</div>
                                 <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
                             </div>
-                            <div className="row row-cols-2 small">
+                            <div className="row row-cols-2 small text-center">
                                 <div className="col">P_S: {year.playerStats[playerID].Profit_S}</div>
                                 <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
                             </div>
+                            <div className="row small text-center"><strong>New Values:</strong></div>
+                            <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney}</span></div>
+                            <div className="row small text-center"><span>GW Depth: {year.playerStats[playerID].groundwaterDepth}</span></div>
+
+                            <div className="row small text-center"><span>Good Rain Next Yr: {year.villageStats[year.playerStats[playerID]["village"]].r0 == 2 ? 100* year.playerStats[playerID]["Prob. Rain Good_Good"] : 100* year.playerStats[playerID]["Prob. Rain Bad_Good"]}%</span></div>
                             <hr></hr>
                         </div>
                     )
