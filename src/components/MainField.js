@@ -77,9 +77,9 @@ const leftOptions = [
 ]
 
 const topOptions = [
+    crop_empty,
     leaf,
     apple,
-    briefcase
 ]
 
 // Individual crops on the game board.
@@ -126,19 +126,19 @@ export function MainField({ G, moves }) {
     //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [gridSelections, setGridSelections] = useState([
         [
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
         ],
         [
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
         ],
         [
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
-            {left: water_empty, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
+            {left: cloud, top: crop_empty},
         ]
     ])
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
@@ -165,19 +165,19 @@ export function MainField({ G, moves }) {
     const resetOptions = () => {
         setGridSelections([
             [
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty},
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty},
             ],
             [
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty}
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty}
             ],
             [
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty},
-                {left: water_empty, top: crop_empty},
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty},
+                {left: cloud, top: crop_empty},
             ]
         ]);
 
@@ -240,7 +240,7 @@ export function MainField({ G, moves }) {
                 else if(gridSelections[i][j].top === leaf) {
                     submitCropGrid[i][j] = 1;
                 }
-                else if(gridSelections[i][j].top === briefcase) {
+                else if(gridSelections[i][j].top === crop_empty) {
                     submitCropGrid[i][j] = 0;
                 }
             }
@@ -267,7 +267,8 @@ export function MainField({ G, moves }) {
                 <div className="col-3">
                     <div className="text-left">
                         <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
-                        <h5 className="text-light"><span className="fw-bold text-white-50">Funds:</span> {G.playerStats[playerID].playerMoney.toFixed(2)}</h5>
+                        <h5 className="text-light mb-0"><span className="fw-bold text-white-50">Funds:</span> {G.playerStats[playerID].playerMoney.toFixed(2)}</h5>
+                        <h5 className="text-light"><span className="fw-bold text-white-50">GW:</span> {G.playerStats[playerID].groundwaterDepth.toFixed(2)}</h5>
                     </div>
                 </div>
                 <div className="col-4">

@@ -119,6 +119,9 @@ export const ThirstyEarth = {
       G.playerStats[playerIds[i]].playerMoney =
         G.playerStats[playerIds[i]].playerMoney + data[2][i]["Profit_Net"];
       G.playerStats[playerIds[i]].groundwaterDepth = data[2][i]["New GW Depth"];
+      for(const [key, value] of Object.entries(data[2][i])) {
+        G.playerStats[playerIds[i]][key] = value;
+      }
     }
   },
 

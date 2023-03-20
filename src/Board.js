@@ -47,6 +47,12 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                             <li className="nav-item px-2">
                                 <span class="fw-bold text-white-50">Village:</span> {G.playerStats[playerID].village}
                             </li>
+                            <li className="nav-item px-2">
+                                <span class="fw-bold text-white-50">Player ID:</span> {playerID} 
+                            </li>
+                            {/* <li className="nav-item px-2">
+                                <span class="fw-bold text-white-50">$</span>{G.playerStats[playerID].playerMoney}
+                            </li> */}
                         </ul>
                     </div>
                 </div>

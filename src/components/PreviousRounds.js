@@ -14,13 +14,13 @@ import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
 
 export function PreviousRounds({G, playerID}) {
-    const waterChoices = [water_empty, well, cloud, river]
-    const cropChoices = [crop_empty, briefcase, apple, leaf]
+    const waterChoices = [cloud, river, well]
+    const cropChoices = [crop_empty, leaf, apple]
     const prevRoundsStyle = {
         'height': '750px'
     }
     const listInfoStyle = {
-        'height': '85%',
+        'max-height': '95%',
         'overflow-y': 'auto'
     }
     return(
@@ -28,31 +28,44 @@ export function PreviousRounds({G, playerID}) {
             <div className="row bg-med-navy">
                 <h5 className="pt-1 text-center text-light">Previous Rounds</h5>
             </div>
-            <div className="row">
+            {/* <div className="row">
                 <div className="col">
                     <h5 className="pt-2 text-center">Hello, welcome to<br/>Thirsty Earth!</h5>
                 </div>
-            </div>
+            </div> */}
             <div className="row" style={listInfoStyle}>
             { 
                 [...Array(G.currentRound)].map((x, idx) => {
                     let year = (idx+1 == G.currentRound) ? G : G.yearlyStateRecord[idx+1]
-                    return (
-                        <div className='mb-3'>
-                            <p className='mb-0'>Year {idx+1} {idx+1 == G.currentRound ? " (Current)" : ""}</p>
-                            <div class="row row-cols-5">
+                    return idx+1 != G.currentRound && (
+                        <div className='mb-1'>
+                            <p className='mb-0 text-center'><strong>Year {idx+1} {idx+1 == G.currentRound ? " (Current)" : ""}</strong></p>
+                            <div class="row row-cols-9">
                                 {
                                     [...Array(9)].map((y, index) => {
                                         return (
-                                            <div className="col mb-1 p-2" key={index}>
-                                                <img className="bg-wet-dirt border-0 p-1" src={waterChoices[year.playerStats[playerID].playerWaterFields.flat(4)[index]]} width="40px"></img>
+                                            <div className="col mb-1 mx-0 px-0" key={index}>
+                                                <img className="bg-wet-dirt border-0" src={waterChoices[year.playerStats[playerID].playerWaterFields.flat(4)[index]]} width="100%"></img>
                                                 <br className="p-0 m-0" />
-                                                <img className="bg-dirt border-0 p-1" src={cropChoices[year.playerStats[playerID].playerCropFields.flat(4)[index]]} width="40px"></img>
+                                                <img className="bg-dirt border-0" src={cropChoices[year.playerStats[playerID].playerCropFields.flat(4)[index]]} width="100%"></img>
                                             </div>
                                         )
                                     })
                                 }
                             </div>
+                            <div className="row row-cols-2 small">
+                                <div className="col">${year.playerStats[playerID].playerMoney}</div>
+                                <div className="col">GW: {year.playerStats[playerID].groundwaterDepth}</div>
+                            </div>
+                            <div className="row row-cols-2 small">
+                                <div className="col">P_Net: {year.playerStats[playerID].Profit_Net}</div>
+                                <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
+                            </div>
+                            <div className="row row-cols-2 small">
+                                <div className="col">P_S: {year.playerStats[playerID].Profit_S}</div>
+                                <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
+                            </div>
+                            <hr></hr>
                         </div>
                     )
                 }

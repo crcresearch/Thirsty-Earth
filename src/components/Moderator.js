@@ -32,7 +32,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well]
-    const cropChoices = [briefcase, leaf, apple ]
+    const cropChoices = [crop_empty, leaf, apple ]
 
     return (
         <div className='container mt-4'>
