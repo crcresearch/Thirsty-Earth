@@ -31,6 +31,7 @@ cors <- function(res) {
 #* @param rhoRS:number #for surface water
 #* @param rhoRG:number #for groundwater
 #* @param rhoR:number #Multiplier for profit (and recharge) for normal crops for bad vs good rain year. 
+#* @param rhoRe:number #Multiplier for groundwater recharge in a bad vs good rain year.
 #* @param aF:number #profit from leaving one marginal field fallow 
 #* @param EPR:number #Expected groundwater recharge
 #* @param k:number #Recession constant per period.
@@ -41,7 +42,7 @@ cors <- function(res) {
 #* @param PlayerIDs:string #The list of Player IDs
 #* @param numPlayers:int #Number of players in this village
 #* @post /calculate
-ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, aF, EPR, k, aCr, lambda, Pen, VillageID, PlayerIDs, numPlayers){
+ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, rhoRe, aF, EPR, k, aCr, lambda, Pen, VillageID, PlayerIDs, numPlayers){
   
  #  #Test function with fake arguments - COMMENT OUT TO PLAY GAME:
  # 
@@ -124,6 +125,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   lambda = as.numeric(lambda)
   Pen = as.numeric(Pen)
   village = as.numeric(VillageID)
+  rhoRe = as.numeric(rhoRe)
 
   Wa = Water+5 #Add 5 so I can replace all values without overwriting others; now 5-rain, 6-surface, 7-groundwater
   Cr = Crop+5 #Add 5 so low value crops and fallow aren't both 0; Now 5-fallow, 6-low value, 7-high value
@@ -135,6 +137,85 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   
   Cr[Cr==6] = 0 #low value
   Cr[Cr==7] = 1 #high value
+ 
+ # Test the function with fake arguments - COMMENT OUT TO PLAY GAME:
+ 
+  # #Random Play Parameters + conversion:
+  # Water=matrix(sample(c(0,1,2),(54),T),ncol=9)
+  # Crop=matrix(sample(c(0,1,2),54,T),ncol=9)
+  # #IB = sample(c(1,0), 19, replace = T, prob = c(.35,.65)) #binary vector indicating which information bits to purchase
+  # 
+  #   Wa = Water+5 #Add 5 so I can replace all values without overwriting others; now 5-rain, 6-surface, 7-groundwater
+  #   Cr = Crop+5 #Add 5 so low value crops and fallow aren't both 0; Now 5-fallow, 6-low value, 7-high value
+  #   Wa[Wa==5] = 3 #rain water
+  #   Wa[Wa==6] = 2 #surface water
+  #   Wa[Wa == 7] = 1 #ground water
+  #   Wa[Cr==5] = 0 #fallow
+  #   Cr[Cr==6] = 0 #low value
+  #   Cr[Cr==7] = 1 #high value
+  # 
+  # #Bot Play Parameters, no conversion:
+  # Wa=rbind(c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0))
+  # #2 groundwater fields, 3 surface water fields, 2 rain field, 2 fallow
+  # Cr=matrix(0,nrow=6,ncol=9) #all low value crops 
+  # IB = rep(0,19)  #no information bits
+  # 
+  # #Example Play Parameters 1, no conversion:
+  # Wa=rbind(c(1,1,1,1,2,2,2,2,2),c(1,1,1,1,2,2,2,2,2), c(1,1,1,1,2,2,2,2,2), c(1,1,1,1,2,2,2,2,2), c(1,1,1,1,2,2,2,2,2) ,c(1,1,1,1,2,2,2,2,2))
+  # #Everyone takes 4 groundwater fields, 5 surface water fields
+  # Cr=matrix(0,nrow=6,ncol=9) #all low value crops 
+  # IB = rep(0,19) #no information bits
+  # 
+  # #Example Play Parameters 2, no conversion:
+  # Wa=rbind(c(1,1,1,1,1,3,3,3,3), c(1,1,1,1,1,2,2,2,2),c(1,1,1,2,2,3,3,0,0),c(1,1,2,2,2,0,0,0,0),c(1,1,1,2,2,2,3,3,0),c(1,1,1,1,1,1,0,0,0))
+  # #Person 1: 5 ground 4 rain, Person 2: 5 ground 4 Surface, Person 3: 3 ground 2 surface 2 rain 2 fallow, Person 4: 2 ground, 3 surface 4 fallow, Person 5: 3 ground 3 surface 2 rain 1 fallow, Person 6: 6 ground 3 fallow
+  # Cr=matrix(1,nrow=6,ncol=9) #all high value crops
+  # IB = rep(0,19) #no information bits
+
+  
+  # ### INITIALIZATION (Parameters passed as argument)
+  # N=nrow(Wa) #number of players
+  # GD=rep(0,N) #Starting GW depth
+  # r0=2 #rain value of previous year
+
+ ######################## FOR CRC: ############################################
+ #Game creation important parameters moderator can change: P, Ld, dP, dLd, rhoR, rhoRe, rhoRF, rhoRS, rhoRG, aCr, Pen
+ #If possible - Advanced settings option: QNS, QFS, QNG0, QNG, QFG, aF, EPR, k, lambda
+ #set current values as default parameter values
+
+ # ######### FREE CLIMATE PARAMETERS - important for game creation
+ # # Parameters for rain (by default, 50% probability of good year and no autocorrelation)
+ # P=0.5 #prob of wet/good year (also passed as argument)
+ # Ld=1.25 #average length of dry spell (also passed as argument)
+ # #Climate change
+ # dP=0 #annual increase in annual probability of wet year
+ # dLd=0 # annual increase in average length of dry spell
+ # 
+ # ########## FREE ECON PARAMETERS
+ # #Important game creation parameters:
+ # #Ratio of Utility for rain vs irrigation
+ # rhoRS=0.10 #for surface water
+ # rhoRG=0.06 #for groundwater
+ # rhoR=0.15 #Multiplier for profit of a rainfed field in a bad vs good rain year.
+ # rhoRe=0.8 #Multiplier for groundwater recharge in a bad vs good rain year.
+ # rhoRF = 1.2 #the ratio between expected unit returns from rain fed crops and outside wages
+ # aCr=2 #Multiplier for both profit and water use for high value crops.
+ # Pen=2 #Profit penalty per person for added public information (lump sum per bit)
+ # 
+ # #Advanced settings:
+ # #Optimal Fields allocation per player for surface water.
+ # QNS=4 #Nash (selfish)
+ # QFS=3 #First best (community)
+ # #Optimal Field allocation per player for groundwater
+ # QNG0=5  #Myopic Nash (period 1)
+ # QNG=3 #Sustainable Nash
+ # QFG=2 #Sustainable first best
+ # aF = 1 #profit from leaving one marginal field fallow
+ # EPR= 3 #Expected groundwater recharge
+ # k=1.75 #Recession constant per period.
+ # lambda = 0.9 #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
+ # #higher k and lambda increases max depth and the depth cost coefficient betaG, independently of expected recharge
+
   #################  #################  #################  #################  #################  #################  #################  #################
   
   #Initial Checks
@@ -153,6 +234,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   if(QNG*(k+1)<= QNG0) stop('QNG*(k+1) must be larger than QNG0')
   if(lambda<0 | lambda>=1) stop('lambda must be between 0 and 1')
   if(rhoR>1) stop('The multiplier should be higher in a good year than a bad year')
+  if(rhoRe>1) stop('The multiplier should be higher in a good year than a bad year')
   if(aCr<1) stop('High value crops should be more profitable than low value crops')
   
   #warnings:
@@ -166,7 +248,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   if(dP<(-(1-P)/10)) warning('The probability of a bad year will be 1 in 10 years')
   if(Ld>=5) warning('With P=0.5, there is a high probability (>80% for P00 and P11) that the rain year will get stuck as bad or good')
   if(dLd>(5-Ld)/3) warning('With P=0.5, The probability that the rain year will get stuck as bad or good increases past 80% (for P00 and P11) after only 3 years with this dLd')
-  
+  if(lambda<(1/k)) warning('If lambda < (1/k), the maximum depth, dm, will be smaller than the expected recharge, EPR')
   
   ##########   Rainfall year  ##########
   # Rain is a binary markov chain.
@@ -204,8 +286,8 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   bG2 = aG*RG1*RG2 #multiplier for cost of other farmers' consumption
   dm = lambda*k*EPR #max depth of aquifer
   bG = (RG3*bG1) / (k*EPR*(1-lambda))
-  r1 = EPR / (P+rhoR - (rhoR*P)) #recharge amount for a good year
-  r2 = rhoR*(EPR / (P+rhoR - (rhoR*P))) #recharge amount for a bad year
+  r1 = EPR / (P+rhoRe - (rhoRe*P)) #recharge amount for a good year
+  r2 = rhoRe*(EPR / (P+rhoRe - (rhoRe*P))) #recharge amount for a bad year
   
   #NON NEGATIVITY AND OTHER BOUNDS CONDITIONS on all parameters:
   if(R2<0 | R2>1) stop('R2 must be between 0 and 1')
@@ -272,21 +354,28 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
       re = r1 #good year recharge
     } else if (rain == 1) {
       re = r2 } #bad year recharge
+    
     for (i in 1:length(q)){
       #GW profit depends on current depth after abstractions
-      dd[i] = (bG1/bG)*q[i] + (bG2/bG)*sum(q[-i]) - re + ((dm-GD[i])/k) #change in depth, pos. change if decreasing level
+      if(dm>=GD[i]){
+        dd[i] = (bG1/bG)*q[i] + (bG2/bG)*sum(q[-i]) - re + ((dm-GD[i])/k) #change in depth, positive change if increasing depth
+      }else{
+        dd[i] = (bG1/bG)*q[i] + (bG2/bG)*sum(q[-i]) - re #If GD>dm, there will be no environmental outflow, will update d after calculating cost
+      }
       d[i] = GD[i] + dd[i] #new depth 
-      if(dm<GD[i]) warning('d>dm: negative discharge artifact')
-      if(sum(d<0)>0) warning('Should not have negative depth')
+      
+      if(sum(d<0)>0) warning('New depth is negative')
       d[which(d<0)]<-0
       
-      #here we compute the effect of pumping a vector q
-      #profit, depends on antecedent d and current pumping
-      uG[i] = ((aG-bG*d[i])*q[i] - q[i]*(q[i]*bG1+sum(q[-i])*bG2)) 
+      #profit, depends on antecedent d and current pumping (vector, q)
+      uG[i] = ((aG-(bG*d[i]))*q[i] - q[i]*(q[i]*bG1+(sum(q[-i])*bG2)))
       #Total Pumping costs 
-      uC_G[i] = (bG*d[i]*q[i]) + q[i]*(q[i]*bG1 + sum(q[-i])*bG2) }
-    
-    return(list(uG=round(uG,2), d=d, uC_G = round(uC_G)))} #sustainable groundwater utility function per player and new groundwater depth
+      uC_G[i] = (bG*d[i]*q[i]) + q[i]*(q[i]*bG1 + (sum(q[-i])*bG2)) }
+      
+      if(dm<GD[i]) warning('d>dm: New depth larger than max depth')
+      d[which(d>dm)]<-dm #cannot have a depth larger than the max depth 
+      
+    return(list(uG=round(uG,2), d=d, uC_G = round(uC_G)))} #groundwater profits, new groundwater depth, and groundwater unit cost
   
   #################  #################  #################  #################  #################  #################  #################  #################
   ### Plot the utility functions and chosen optimal values
@@ -360,7 +449,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #Fallow
   Fi = data.frame(Fi=rowSums(1*(Wa==0)), uB_F=aF)%>%
     mutate(P_F=Fi*aF)  #number of fallow fields & fallow profits
-  P_F = Fi[[1]]*aF
+  P_F = Fi[[1]]*aF #Fallow profit vector exists within Fi data frame and on its own
   Fv = round(sum(Fi[1])/N, 2) #Average number of fields left fallow per player
   
   ######## Irrigated Fields  ######## 
