@@ -31,6 +31,7 @@ export function EnterName() {
 
   const [matchIDQuery, setMatchIDQuery] = useState("");
   const [joiningPlayerName, setJoiningPlayerName] = useState("");
+  const [agreeTOS, setAgreeTOS] = useState(false);
 
   const [errorText, setErrorText] = useState("")
 
@@ -103,10 +104,13 @@ export function EnterName() {
               setJoiningPlayerName(event.target.value);
             }}
           ></input>
+          <input className="mt-3 mx-2" type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} />
+          <label htmlFor="isModerated"> I have read and understand <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the study requirements found here</a>. </label>
 
           <div className="d-flex flex-row-reverse ">
             <button
               type="button"
+              disabled={!agreeTOS}
               className="btn btn-block btn-primary"
               style={extraButtonStyle}
               onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
