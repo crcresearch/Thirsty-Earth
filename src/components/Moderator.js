@@ -187,7 +187,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
                             rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
                             rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
                             rhoR: G.gameConfig.profitMultiplierGoodBadYear,
-                            rhoRe: 0.8,
+                            rhoRe: G.gameConfig.groundwaterRechargeGoodBadYear,
                             aF: G.gameConfig.profitMarginalFieldFallow,
                             EPR: G.gameConfig.expectedGWRecharge,
                             k: G.gameConfig.recessionConstant,

@@ -218,7 +218,7 @@ export function CreateGame({ gameCreationPassword }) {
                     incProbabilityWetYearAnnual: incProbabilityWetYearAnnual, // dP
                     incAvgLengthDrySpellAnnual: incAvgLengthDrySpellAnnual, // dLd
                     profitMultiplierGoodBadYear: profitMultiplierGoodBadYear, // rhoR
-                    groundwaterRechargeGoodBadYear: groundwaterRechargeGoodBadYear, // rhoR
+                    groundwaterRechargeGoodBadYear: groundwaterRechargeGoodBadYear, // rhoRe
                     ratioReturnsRainVFallow: ratioReturnsRainVFallow, // rhoRF
                     ratioReturnsRainVSurfaceWater: ratioReturnsRainVSurfaceWater, // rhoRS
                     ratioReturnsRainVGroundWater: ratioReturnsRainVGroundWater, // rhoRG
