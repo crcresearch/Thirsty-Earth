@@ -55,11 +55,11 @@ export function CreateGame({ gameCreationPassword }) {
     const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1.25); // Ld
     const [incProbabilityWetYearAnnual, setIncProbabilityWetYearAnnual] = React.useState(0); // dP
     const [incAvgLengthDrySpellAnnual, setIncAvgLengthDrySpellAnnual] = React.useState(0); // dLd
-    const [profitMultiplierGoodBadYear, setProfitMultiplierGoodBadYear] = React.useState(0.5); // rhoR
+    const [ratioReturnsRainVSurfaceWater, setRatioReturnsRainVSurfaceWater] = React.useState(0.1); // rhoRS
+    const [ratioReturnsRainVGroundWater, setRatioReturnsRainVGroundWater] = React.useState(0.06); // rhoRG
+    const [profitMultiplierGoodBadYear, setProfitMultiplierGoodBadYear] = React.useState(0.15); // rhoR
     const [groundwaterRechargeGoodBadYear, setGroundwaterRechargeGoodBadYear] = React.useState(0.8); // rhoRe
-    const [ratioReturnsRainVFallow, setRatioReturnsRainVFallow] = React.useState(1.3); // rhoRF
-    const [ratioReturnsRainVSurfaceWater, setRatioReturnsRainVSurfaceWater] = React.useState(0.35); // rhoRS
-    const [ratioReturnsRainVGroundWater, setRatioReturnsRainVGroundWater] = React.useState(0.25); // rhoRG
+    const [ratioReturnsRainVFallow, setRatioReturnsRainVFallow] = React.useState(1.2); // rhoRF
     const [multiplierProfitWaterHighValCrops, setMultiplierProfitWaterHighValCrops] = React.useState(2); // aCr
     const [profitPenaltyPerPersonPubInfo, setProfitPenaltyPerPersonPubInfo] = React.useState(2); // Pen
     // R parameters (advanced)
@@ -69,9 +69,9 @@ export function CreateGame({ gameCreationPassword }) {
     const [optimalFieldAllocationGWSelfishSustainable, setOptimalFieldAllocationGWSelfishSustainable] = React.useState(3); // QNG
     const [optimalFieldAllocationGWCommunity, setOptimalFieldAllocationGWCommunity] = React.useState(2); // QFG
     const [profitMarginalFieldFallow, setProfitMarginalFieldFallow] = React.useState(1); // aF
-    const [expectedGWRecharge, setExpectedGWRecharge] = React.useState(5); // EPR
-    const [recessionConstant, setRecessionConstant] = React.useState(1.25); // k
-    const [ratioMaxLossesVExpectedRecharge, setRatioMaxLossesVExpectedRecharge] = React.useState(0.1); // lambda
+    const [expectedGWRecharge, setExpectedGWRecharge] = React.useState(3); // EPR
+    const [recessionConstant, setRecessionConstant] = React.useState(1.75); // k
+    const [ratioMaxLossesVExpectedRecharge, setRatioMaxLossesVExpectedRecharge] = React.useState(0.9); // lambda
 
     // const [turnTimer, setTurnTimer] = React.useState(null);
 
