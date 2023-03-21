@@ -17,7 +17,7 @@ export function PreviousRounds({G, playerID}) {
     const waterChoices = [cloud, river, well]
     const cropChoices = [crop_empty, leaf, apple]
     const prevRoundsStyle = {
-        'height': '750px'
+        'height': '950px'
     }
     const listInfoStyle = {
         'max-height': '95%',
