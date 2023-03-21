@@ -268,7 +268,8 @@ export function MainField({ G, moves }) {
                     <div className="text-left">
                         <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
                         <h5 className="text-light mb-0"><span className="fw-bold text-white-50">Funds:</span> {G.playerStats[playerID].playerMoney.toFixed(2)}</h5>
-                        <h5 className="text-light"><span className="fw-bold text-white-50">GW:</span> {G.playerStats[playerID].groundwaterDepth.toFixed(2)}</h5>
+                        <h5 className="text-light mb-0"><span className="fw-bold text-white-50">GW:</span> {G.playerStats[playerID].groundwaterDepth.toFixed(2)}</h5>
+                        <h5 className="text-light"><span className="fw-bold text-white-50">Prob Good:</span> {G.villageStats[G.playerStats[playerID]["village"]].r0 == 2 ? 100* G.playerStats[playerID]["Prob. Rain Good_Good"] : 100* G.playerStats[playerID]["Prob. Rain Bad_Good"]}%</h5>
                     </div>
                 </div>
                 <div className="col-4">
@@ -310,10 +311,18 @@ export function MainField({ G, moves }) {
                         <button 
                             disabled={G.playerStats[playerID].selectionsSubmitted ? true : false} 
                             className={G.playerStats[playerID].selectionsSubmitted ? "btn btn-secondary" : "btn btn-submit"} 
-                            onClick={() => submitMove()} style={{ marginTop: '36px'}}
+                            onClick={() => submitMove()} style={{ marginTop: '20px'}}
                         >
                             {G.playerStats[playerID].selectionsSubmitted ? "SUBMITTED SELECTIONS" : "SUBMIT"}
                         </button>
+                        
+                        <div  
+                            className="row row-cols-5 text-white small"
+                        >
+                            {Object.keys(G.publicInfo).map((val, idx) => {
+                                return (<div className="col">{val}: {G.publicInfo[val]} </div>)
+                            })}
+                        </div>
                         </div>
                     </div>
                 </div>

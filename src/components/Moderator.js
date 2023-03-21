@@ -135,6 +135,40 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 <h3>Actions for Game State: {ctx.phase}</h3>
                 {ctx.phase == "setup" && 
                 <div>
+                <button className='btn btn-primary' onClick={() => 
+                axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
+                    Water: "000000000000000000000000000000000000000000000000000000",
+                    Crop: "000000000000000000000000000000000000000000000000000000",
+                    IB: 0,
+                    GD: "0,0,0,0,0,0",
+                    r0: G.villageStats[1].r0,
+                    P: G.gameConfig.probabilityWetYear,
+                    Ld: G.gameConfig.avgLengthDrySpell,
+                    dP: G.gameConfig.incProbabilityWetYearAnnual,
+                    dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
+                    QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
+                    QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
+                    QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
+                    QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
+                    QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
+                    rhoRF: G.gameConfig.ratioReturnsRainVFallow,
+                    rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
+                    rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
+                    rhoR: G.gameConfig.profitMultiplierGoodBadYear,
+                    rhoRe: G.gameConfig.groundwaterRechargeGoodBadYear,
+                    aF: G.gameConfig.profitMarginalFieldFallow,
+                    EPR: G.gameConfig.expectedGWRecharge,
+                    k: G.gameConfig.recessionConstant,
+                    aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
+                    lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
+                    Pen: G.gameConfig.profitPenaltyPerPersonPubInfo,
+                    VillageID:1,
+                    PlayerIDs: "0,1,2,3,4,5",
+                    numPlayers: 6
+                }}).then((res) => {
+                    console.log(res.data[1][0])
+                    moves.setPublicInfo(res.data[1][0])
+                })}>Get Public Info</button>
                 <button className='btn btn-primary' onClick={() => moves.startGame()}>Start Game</button>
                 </div>
                 }

@@ -61,12 +61,15 @@ export const ThirstyEarth = {
           gwDepth: 2,
           lastYearModelOutput: {}
       }]
+
+      const publicInfo = null
       // keep track of the current round
       let currentRound = 1;
       return {
           villages,
           villageStats,
           playerStats,
+          publicInfo,
           defaultField,
           defaultTally,
           currentRound,
@@ -153,12 +156,18 @@ export const ThirstyEarth = {
   phases: {
     setup: {
       moves: {
-        //Override the player's current selections with their new selections
-        startGame: (G, ctx, newSelections, playerID) => {
+        //Start the game
+        startGame: (G, ctx) => {
+          if (G.publicInfo === null) {
+            return INVALID_MOVE;
+          }
           ctx.events.endPhase();
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
           G.playerStats[playerID].village = newSelection
+        },
+        setPublicInfo: (G, ctx, data) => {
+          G.publicInfo = data
         },
       },
       onBegin: (G, { events }) => {
