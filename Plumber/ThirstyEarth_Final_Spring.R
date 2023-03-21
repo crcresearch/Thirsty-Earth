@@ -44,59 +44,6 @@ cors <- function(res) {
 #* @post /calculate
 ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, rhoRe, aF, EPR, k, aCr, lambda, Pen, VillageID, PlayerIDs, numPlayers){
   
- #  #Test function with fake arguments - COMMENT OUT TO PLAY GAME:
- # 
- #  #Play Parameters passed as argument
- #  Water=matrix(sample(c(0,1,2),(54),T),ncol=9) 
- #  Crop=matrix(sample(c(0,1,2),54,T),ncol=9)
- #  IB = sample(c(1,0), 19, replace = T, prob = c(.35,.65)) #binary vector indicating which information bits to purchase
- # 
- #  #Test function with everyone taking the optimal amounts! (just different test fake arguments)
- #  #Wa=rbind(c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0), c(1,1,2,2,2,3,3,0,0))
- #  #2 groundwater fields, 3 surface water fields, 2 rain field, 2 fallow
- #  #Cr=matrix(0,nrow=6,ncol=9) #all low value crops to see how it goes
- #       
- #  ### INITIALIZATION (Parameters passed as argument)
- #  GD=rep(0,6) #Starting GW depth
- #  r0=1 #rain value of previous year
- # 
- # ######################## FOR CRC: ############################################
- # #Game creation important parameters moderator can change: P, Ld, dP, dLd, rhoR, rhoRF, rhoRS, rhoRG, aCr, Pen
- # #If possible - Advanced settings option: QNS, QFS, QNG0, QNG, QFG, aF, EPR, k, lambda
- # #set current values as default parameter values
- # 
- #  ######### FREE CLIMATE PARAMETERS - important for game creation
- #  # Parameters for rain (by default, 50% probability of good year and no autocorrelation)
- #  P=0.5 #prob of wet/good year (also passed as argument)
- #  Ld=1.25 #average length of dry spell (also passed as argument)
- #  #Climate change
- #  dP=0 #annual increase in annual probability of wet year
- #  dLd=0 # annual increase in average length of dry spell
- #  
- #  ########## FREE ECON PARAMETERS
- #  #Important game creation parameters:
- #  #Ratio of Utility for rain vs irrigation
- #  rhoRS=0.10 #for surface water
- #  rhoRG=0.06 #for groundwater
- #  rhoR=0.15 #Multiplier for profit (and recharge) for normal crops for bad vs good rain year.
- #  rhoRF = 1.2 #the ratio between expected unit returns from rain fed crops and outside wages
- #  aCr=2 #Multiplier for both profit and water use for high value crops.
- #  Pen=2 #Profit penalty per person for added public information (lump sum per bit)
- #  
- #  #Advanced settings:
- #  #Optimal Fields allocation per player for surface water.
- #  QNS=4 #Nash (selfish)
- #  QFS=3 #First best (community)
- #  #Optimal Field allocation per player for groundwater
- #  QNG0=5  #Myopic Nash (period 1)
- #  QNG=3 #Sustainable Nash
- #  QFG=2 #Sustainable first best
- #  aF = 1 #profit from leaving one marginal field fallow
- #  EPR= 5 #Expected groundwater recharge
- #  k=1.25 #Recession constant per period.
- #  lambda = 0.1 #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
-
-
   #################  #################  #################  #################  #################  #################  #################  #################
   ####### CRC Plumber Parameter Type Transformation #######
   numPlayers = as.numeric(numPlayers)
