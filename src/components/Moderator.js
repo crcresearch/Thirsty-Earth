@@ -33,6 +33,27 @@ export function Moderator({ ctx, G, moves, matchData}) {
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well]
     const cropChoices = [crop_empty, leaf, apple ]
+    const IBChoices = [  
+        {"value": 0, "text": "What is the average number of fields irrigated with groundwater per player this year in our village?"},
+        {"value": 1, "text": "What was the average number of fields irrigated with surface water per player this year in our village?"},
+        {"value": 2, "text": "What was the average number of fields irrigated with rain per player this year in our village?"},
+        {"value": 3, "text": "What was the average number of fields left fallow per player this year in our village?"},
+        {"value": 4, "text": "How many high value crops were planted on average per player this year in our village?"},
+        {"value": 5, "text": "Was this year a good or bad rain year?"},
+        {"value": 6, "text": "What was the average unit groundwater cost over all players in the village this year?"},
+        {"value": 7, "text": "What was the average unit surface water cost over all players in the village this year?"},
+        {"value": 8, "text": "What was the average net profit for the village this year?"},
+        {"value": 9, "text": "Which player had the highest net profit this year?"},
+        {"value": 10, "text": "What was the maximum net profit this year?"},
+        {"value": 11, "text": "Which player used the most groundwater this year?"},
+        {"value": 12, "text": "What is the maximum amount of groundwater used by a single player this year?"},
+        {"value": 13, "text": "Which player used the most surface water this year?"},
+        {"value": 14, "text": "What is the maximum amount of surface water used by a single player this year?"},
+        {"value": 15, "text": "Randomly show a player's number and groundwater usage."},
+        {"value": 16, "text": "Randomly show a player's number and surface water usage."},
+        {"value": 17, "text": "Randomly show a player's number and rain water usage."},
+        {"value": 18, "text": "Randomly show a player's number and their number of fields left fallow."}
+    ]
 
     return (
         <div className='container mt-4'>
@@ -98,7 +119,20 @@ export function Moderator({ ctx, G, moves, matchData}) {
             {G.villages.map(village => (
                 <div>
                     {(village > 0) &&
-                        <span className="h5 mt-3 mb-2">Village {village}</span>
+                        <div className="row">
+                            <div className='col-4'>
+                                <span className="h5 mt-3 mb-2">Village {village}</span>
+                            </div>
+                            <div className='col-8'>
+                                <select multiple class="form-select" size="1">
+                                    <option disabled>Scroll down to select Information Bits to purchase.</option>
+                                    {IBChoices.map(choice => (
+                                        <option value={choice.value}>{choice.text}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
                     }
                     <table className='table table-striped mb-3'>
                         { (village === 0) &&
