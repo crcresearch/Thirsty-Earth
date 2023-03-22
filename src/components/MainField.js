@@ -34,7 +34,7 @@ function useStateAndRef(initial) {
 // Various styles used in the component.
 const gameBoardStyle = {
     position: 'relative',
-    height: '950px'
+    height: '780px'
 }
 const selectionsStyle = {
     display: 'flex',
@@ -95,7 +95,7 @@ const GameTile = ({
         <div className="col" key={theKey}>
             <div className="bg-wet-dirt text-center" onClick={topClick} style={{
                     border: warning 
-                    ? 'solid orange 2px' 
+                    ? 'solid orange 4px' 
                     : undefined
                 }}>
                 <img src={topImage} className="img-fluid"/>
@@ -209,6 +209,8 @@ export function MainField({ G, moves }) {
             let tempGrid = [...gridSelections];
             tempGrid[row][col].left = selectedOption.left;
             setGridSelections(tempGrid);
+            setGridWarnings([[false, false, false], [false, false, false], [false, false, false]]);
+            setShowWarning(false);
         }
     })
 
@@ -218,6 +220,8 @@ export function MainField({ G, moves }) {
             let tempGrid = [...gridSelections];
             tempGrid[row][col].top = selectedOption.top;
             setGridSelections(tempGrid);
+            setGridWarnings([[false, false, false], [false, false, false], [false, false, false]]);
+            setShowWarning(false);
         }
     })
 
@@ -281,7 +285,7 @@ export function MainField({ G, moves }) {
                     </div>
                 </div>
             }
-            <div className="row  justify-content-center mt-4">
+            <div className="row justify-content-center mt-4">
                 <div className="col-3">
                     <div className="text-left">
                         <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
@@ -324,34 +328,44 @@ export function MainField({ G, moves }) {
                                 </div>)
                         })}
                     </div>
-                    <div class="row justify-content-center my-4">
-                        <div class="d-grid">
-                        <button 
-                            disabled={G.playerStats[playerID].selectionsSubmitted ? true : false} 
-                            className={G.playerStats[playerID].selectionsSubmitted ? "btn btn-secondary" : "btn btn-submit"} 
-                            onClick={() => submitMove(false)} style={{ marginTop: '20px'}}
-                        >
-                            {G.playerStats[playerID].selectionsSubmitted ? "SUBMITTED SELECTIONS" : "SUBMIT"}
-                        </button>
-                        </div>
-                    </div>
-                    {showWarning &&
-                    <div class="row my-4">
-                        <div className="alert alert-warning mb-2" role="alert">
-                            Warning: These fields will be considered to be Fallow. If this is correct, please select the <span className="badge bg-warning text-black">SUBMIT ANYWAY</span> button. Otherwise, change the field options and then click <span className="badge bg-primary">SUBMIT</span>.
-                        </div>
+                </div>
+            </div>
+            <div className="row justify-content-center mt-2">
+                <div className="col-9">
+                    <div class="row justify-content-center">
+                    {showWarning ?
                         <div className="d-grid">
                             <button  
                                 className="btn btn-warning"
-                                onClick={() => submitMove(true)} style={{ marginTop: '20px'}}
-                            >
+                                onClick={() => submitMove(true)}
+                                >
                                 SUBMIT ANYWAY
                             </button>
                         </div>
-                    </div>
+                    : <div class="d-grid">
+                        <button 
+                            disabled={G.playerStats[playerID].selectionsSubmitted ? true : false} 
+                            className={G.playerStats[playerID].selectionsSubmitted ? "btn btn-secondary" : "btn btn-submit"} 
+                            onClick={() => submitMove(false)}
+                            >
+                            {G.playerStats[playerID].selectionsSubmitted ? "SUBMITTED SELECTIONS" : "SUBMIT"}
+                        </button>
+                        </div>
                     }
+                    </div>
                 </div>
             </div>
+            {showWarning &&
+            <div className="row justify-content-center my-2">
+                <div className="col-12">
+                    <div class="alert alert-warning p-2" role="alert">
+                        <div class="small">
+                            Warning: These fields will be considered to be Fallow. If this is correct, please click <span className="badge bg-warning text-dark">SUBMIT ANYWAY</span>. Otherwise, change the field options and then click <span className="badge bg-primary">SUBMIT</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
         </div>
     )
 }
