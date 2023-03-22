@@ -2,14 +2,7 @@ import { PostgresStore } from "bgio-postgres";
 import { writeFileSync } from "fs";
 
 const matchId = process.argv[2]
-const csvColumns = [
-    "playerID",
-    "village",
-    "playerMoney",
-    "year",
-    "cropChoices",
-    "waterChoices"
-]
+const csvColumns = []
 
 // to run: node -r esm scripts/getGameCsv.js <matchId>
 console.log(`getting match: ${matchId}...`)
@@ -22,35 +15,47 @@ db.fetch(matchId, {
     const outputFile = `${matchId}-${matchInfo.metadata.setupData.gameLabel}.csv`;
     const yearlyStateRecord = matchInfo.state.G.yearlyStateRecord
     const setupDataKeys = Object.keys(matchInfo.metadata.setupData)
-    
-    const invidivualInfoKeys = Object.keys(yearlyStateRecord[2].lastYearModelOutput[0][1])
-    const villageInfoKeys = Object.keys(yearlyStateRecord[2].lastYearModelOutput[1][1])
-    const informationBitsKeys = Object.keys(yearlyStateRecord[2].lastYearModelOutput[2][0])
-    csvColumns.push(...setupDataKeys, ...invidivualInfoKeys, ...villageInfoKeys, ...informationBitsKeys, "rain")
+    const playerDataKeys = [
+        "playerID",
+        "village",
+        "groundwaterDepth",
+        "rain",
+        "playerMoney",
+        "Profit_F",
+        "Profit_R",
+        "Profit_S",
+        "Profit_G",
+        "Profit_Net",
+        "year",
+        "cropChoices",
+        "waterChoices"
+    ]
+    const pubInfoKeys = Object.keys(matchInfo.state.G.publicInfo)
+    csvColumns.push(...setupDataKeys, ...playerDataKeys, ...pubInfoKeys)
     let outputData = `${csvColumns.toString().replaceAll(",", "|")}\n`
     for (let i in yearlyStateRecord) {
         if (i > 0) {
-            const informationBits = yearlyStateRecord[2].lastYearModelOutput[2][0];
-            const rain = {rain: yearlyStateRecord[2].lastYearModelOutput[3][0]};
             for (let j in yearlyStateRecord[i].playerStats) {
-                const invidivualInfo = yearlyStateRecord[i].lastYearModelOutput[0][j];
-                const villageInfo = yearlyStateRecord[2].lastYearModelOutput[1][j];
                 let baseInfo = {
                     playerID: yearlyStateRecord[i].playerStats[j].pid,
                     village: yearlyStateRecord[i].playerStats[j].village,
-                    playerMoney: yearlyStateRecord[i].playerStats[j].playerMoney,
+                    groundwaterDepth: yearlyStateRecord[i].playerStats[j].groundwaterDepth,
+                    rain: yearlyStateRecord[i].villageStats[yearlyStateRecord[i].playerStats[j].village]["r0"],
+                    playerMoney: yearlyStateRecord[i].playerStats[j].playerMoney.toFixed(2),
+                    Profit_F: yearlyStateRecord[i].playerStats[j].Profit_F.toFixed(2),
+                    Profit_R: yearlyStateRecord[i].playerStats[j].Profit_R.toFixed(2),
+                    Profit_S: yearlyStateRecord[i].playerStats[j].Profit_S.toFixed(2),
+                    Profit_G: yearlyStateRecord[i].playerStats[j].Profit_G.toFixed(2),
+                    Profit_Net: yearlyStateRecord[i].playerStats[j].Profit_Net.toFixed(2),
                     year: i,
                     cropChoices: JSON.stringify(yearlyStateRecord[i].playerStats[j].playerCropFields),
                     waterChoices: JSON.stringify(yearlyStateRecord[i].playerStats[j].playerWaterFields)
                 }
                 const rowObj = Object.assign(
-                    baseInfo, 
+                    matchInfo.metadata.setupData, 
                     ...[
-                        matchInfo.metadata.setupData, 
-                        invidivualInfo, 
-                        villageInfo, 
-                        informationBits, 
-                        rain
+                        baseInfo,
+                        matchInfo.state.G.publicInfo
                     ]
                 )
                 let rowColumns = []
