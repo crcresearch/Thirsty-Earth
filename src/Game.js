@@ -56,11 +56,7 @@ export const ThirstyEarth = {
       };
       let villageStats = generateVillageStats();
 
-      const yearlyStateRecord = [{
-          playerStats: playerStats.slice(),
-          gwDepth: 2,
-          lastYearModelOutput: {}
-      }]
+      const yearlyStateRecord = []
 
       const publicInfo = null
       // keep track of the current round
@@ -143,6 +139,7 @@ export const ThirstyEarth = {
     }
     let villageId = data[6][0];
     G.villageStats[villageId]["r0"] = data[4][0];
+    G.villageStats[villageId]["modelOutput"] = data;
 
   },
 
@@ -161,6 +158,11 @@ export const ThirstyEarth = {
           if (G.publicInfo === null) {
             return INVALID_MOVE;
           }
+          G.yearlyStateRecord.push({
+            playerStats: G.playerStats.slice(),
+            gwDepth: 2,
+            lastYearModelOutput: {}
+          })
           ctx.events.endPhase();
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
@@ -215,6 +217,11 @@ export const ThirstyEarth = {
           } else {
             G.lastPlayerSubmitted = playerID;
             G.turnTimeout = Date.now() + G.gameConfig.turnLength;
+          }
+        },
+        resetSubmissions: (G, ctx) => {
+          for (let i in G.playerStats) {
+            G.playerStats[i].selectionsSubmitted = false;
           }
         },
         submitVillageDataUpdate: (G, ctx, playerID, computedData) => {

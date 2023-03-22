@@ -6,7 +6,7 @@ import { gameIDAtom } from '../atoms/gameid';
 import { playerIDAtom } from '../atoms/pid';
 
 const chatBoxStyle = {
-    height: "750px",
+    height: "780px",
 }
 const chatListStyle = {
     listStyle: 'none',

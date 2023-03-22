@@ -16,6 +16,19 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     const [showModal, setShowModal] = useState(false);
     const [moderated, setModerated] = useState(false);
 
+    const pubInfoFormatMap = {
+        'alphaF': '&alpha;<sub>F</sub>',
+        'alphaR1': '&alpha;<sub>R1</sub>',
+        'alphaR2': '&alpha;<sub>R2</sub>',
+        'alphaS': '&alpha;<sub>S</sub>',
+        'betaS1': '&beta;<sub>S1</sub>',
+        'betaS2': '&beta;<sub>S2</sub>',
+        'alphaG': '&alpha;<sub>G</sub>',
+        'betaG': '&beta;<sub>G</sub>',
+        'betaG1': '&beta;<sub>G1</sub>',
+        'betaG2': '&beta;<sub>G2</sub>'
+    }
+
     //Show the results modal if the game is over.
     useEffect(() => {
         if(ctx.gameover === true) {
@@ -68,6 +81,20 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     </div>
                     }
                     <PreviousRounds G={G} playerID={playerID}/>
+                </div>
+                <div className="row justify-content-md-center bg-navy text-light rounded-bottom">
+                    {G.publicInfo !== null &&
+                        <div className="col-md-9 align-self-center mt-2 mb-2">
+                            <div className="row row-cols-5 text-white small">
+                                {Object.keys(G.publicInfo).map((val, idx) => {
+                                    return (<div className="col"><span dangerouslySetInnerHTML={{__html: pubInfoFormatMap[val]}}></span>: {G.publicInfo[val]} </div>)
+                                })}
+                            </div>
+                        </div>
+                    }
+                    <div className="col-md-3 align-self-center mt-2 mb-2">
+                        For more information, <a className="text-light" target="_blank" href="https://drive.google.com/file/d/1UhCNF9zYWDqmRvvIPv5VtrsD5_XdFDk2/view?usp=sharing">click here</a>.
+                    </div>
                 </div>
             </div>}
         </div>

@@ -44,7 +44,7 @@ export function CreateGame({ gameCreationPassword }) {
     const [idsWithWarnings, setIdsWithWarnings] = useState([]);
     const [ignoreWarnings, setIgnoreWarnings] = useState(false);
 
-    const [moderated, setModerated] = React.useState(false);
+    const [moderated, setModerated] = React.useState(true);
     const [numVillages, setNumVillages] = React.useState("");
     const [numPlayers, setNumPlayers] = React.useState("");
     const [numYears, setNumYears] = React.useState("");
@@ -78,49 +78,49 @@ export function CreateGame({ gameCreationPassword }) {
     let basicRParameters = [
       {
         id: "probabilityWetYear",
-        label: "P",
+        label: "Probability of good rain year (P)",
         value: probabilityWetYear,
         set_function: setProbabilityWetYear
       },
       {
         id: "avgLengthDrySpell",
-        label: "Ld",
+        label: "Average length of dry spell (Ld)",
         value: avgLengthDrySpell,
         set_function: setAvgLengthDrySpell
       },
       {
         id: "incProbabilityWetYearAnnual",
-        label: "dP",
+        label: "Annual increase in P (dP)",
         value: incProbabilityWetYearAnnual,
         set_function: setIncProbabilityWetYearAnnual
       },
       {
         id: "incAvgLengthDrySpellAnnual",
-        label: "dLd",
+        label: "Annual increase in Ld (dLd)",
         value: incAvgLengthDrySpellAnnual,
         set_function: setIncAvgLengthDrySpellAnnual
       },
       {
         id: "profitMultiplierGoodBadYear",
-        label: "rhoR",
+        label: "Ratio of rainfed profits & groundwater recharge in a bad vs. good rain year (rhoR)",
         value: profitMultiplierGoodBadYear,
         set_function: setProfitMultiplierGoodBadYear
       },
       {
         id: "groundwaterRechargeGoodBadYear",
-        label: "rhoRe",
+        label: "Groundwater recharge for a good vs bad year (rhoRe)",
         value: groundwaterRechargeGoodBadYear,
         set_function: setGroundwaterRechargeGoodBadYear
       },
       {
         id: "ratioReturnsRainVFallow",
-        label: "rhoRF",
+        label: "Ratio of utilities for rainfed crops and outside wages (rhoRF)",
         value: ratioReturnsRainVFallow,
         set_function: setRatioReturnsRainVFallow
       },
       {
         id: "ratioReturnsRainVSurfaceWater",
-        label: "rhoRS",
+        label: "Ratio of utilities for rainfed crops and surface water crops (rhoRS)",
         value: ratioReturnsRainVSurfaceWater,
         set_function: setRatioReturnsRainVSurfaceWater,
         min: "",
@@ -128,19 +128,19 @@ export function CreateGame({ gameCreationPassword }) {
       },
       {
         id: "ratioReturnsRainVGroundWater",
-        label: "rhoRG",
+        label: "Ratio of utilities for rainfed crops and groundwater crops (rhoRG)",
         value: ratioReturnsRainVGroundWater,
         set_function: setRatioReturnsRainVGroundWater
       },
       {
         id: "multiplierProfitWaterHighValCrops",
-        label: "aCr",
+        label: "High value crop multiplier (aCr)",
         value: multiplierProfitWaterHighValCrops,
         set_function: setMultiplierProfitWaterHighValCrops
       },
       {
         id: "profitPenaltyPerPersonPubInfo",
-        label: "Pen",
+        label: "Profit penalty per person based on public information (Pen)",
         value: profitPenaltyPerPersonPubInfo,
         set_function: setProfitPenaltyPerPersonPubInfo
       },
@@ -149,55 +149,55 @@ export function CreateGame({ gameCreationPassword }) {
     let advancedRParameters = [
       {
         id: "optimalFieldAllocationSWSelfish",
-        label: "QNS",
+        label: "Nash optimal surface water fields (QNS)",
         value: optimalFieldAllocationSWSelfish,
         set_function: setOptimalFieldAllocationSWSelfish
       },
       {
         id: "optimalFieldAllocationSWCommunity",
-        label: "QFS",
+        label: "First Best optimal surface water fields (QFS)",
         value: optimalFieldAllocationSWCommunity,
         set_function: setOptimalFieldAllocationSWCommunity
       },
       {
         id: "optimalFieldAllocationGWSelfishMyopic",
-        label: "QNG0",
+        label: "Myopic Nash optimal groundwater fields (QNG0)",
         value: optimalFieldAllocationGWSelfishMyopic,
         set_function: setOptimalFieldAllocationGWSelfishMyopic
       },
       {
         id: "optimalFieldAllocationGWSelfishSustainable",
-        label: "QNG",
+        label: "Sustainable Nash optimal groundwater fields (QNG)",
         value: optimalFieldAllocationGWSelfishSustainable,
         set_function: setOptimalFieldAllocationGWSelfishSustainable
       },
       {
         id: "optimalFieldAllocationGWCommunity",
-        label: "QFG",
+        label: "Sustainable First Best optimal groundwater fields (QFG)",
         value: optimalFieldAllocationGWCommunity,
         set_function: setOptimalFieldAllocationGWCommunity
       },
       {
         id: "profitMarginalFieldFallow",
-        label: "aF",
+        label: "Fallow unit profit (aF)",
         value: profitMarginalFieldFallow,
         set_function: setProfitMarginalFieldFallow
       },
       {
         id: "expectedGWRecharge",
-        label: "EPR",
+        label: "Expected groundwater recharge (EPR)",
         value: expectedGWRecharge,
         set_function: setExpectedGWRecharge
       },
       {
         id: "recessionConstant",
-        label: "k",
+        label: "Groundwater recession constant (k)",
         value: recessionConstant,
         set_function: setRecessionConstant
       },
       {
         id: "ratioMaxLossesVExpectedRecharge",
-        label: "lambda",
+        label: "Steady state water level ratio (lambda)",
         value: ratioMaxLossesVExpectedRecharge,
         set_function: setRatioMaxLossesVExpectedRecharge
       }
@@ -269,9 +269,8 @@ export function CreateGame({ gameCreationPassword }) {
 
     function checkEntries(P, dP, Ld, dLd, QFS, QNS, QFG, QNG, QNG0, k, rhoRS, rhoRG, rhoRF, lambda, rhoR, aCr, playerName, password) {
       resetErrorsWarnings();
-      console.log(gameCreationPassword)
       let error = submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr, password);
-      let warning = submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG);
+      let warning = submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG, lambda, k);
 
       if (error.text.length == 0 && (warning.text.length == 0 || ignoreWarnings)) {
         createMatch(playerName);
@@ -356,7 +355,7 @@ export function CreateGame({ gameCreationPassword }) {
           errorIds.push("ratioMaxLossesVExpectedRecharge")  
         }
         if(rhoR>1) {
-          errorText.push("rhoR must be lesss than 1!"); 
+          errorText.push("rhoR must be less than 1!"); 
           errorIds.push("profitMultiplierGoodBadYear") 
         }
         if(aCr<1) {
@@ -371,7 +370,7 @@ export function CreateGame({ gameCreationPassword }) {
         return {text: errorText, ids: uniqueErrorIds};
     }
 
-    function submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG) {
+    function submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG, lambda, k) {
         let warningText = [];
         let warningIds = [];
 
@@ -407,6 +406,10 @@ export function CreateGame({ gameCreationPassword }) {
           warningText.push(`dLd should be less than or equal to ${(5-Ld)/3}!`);
           warningIds.push(...["avgLengthDrySpell", "incAvgLengthDrySpellAnnual"]);   
         }
+        if (lambda<(1/k)) {
+          warningText.push(`lambda should be greater than ${1/k}!`);
+          warningIds.push(...["ratioMaxLossesVExpectedRecharge", "recessionConstant"]);
+        }
 
         let uniqueWarningIds = warningIds.filter((id, pos) => {
           return warningIds.indexOf(id) == pos; 
@@ -425,67 +428,77 @@ export function CreateGame({ gameCreationPassword }) {
             <div className="row">
                 <div className="col-6 offset-lg-3">
                   <h2 className="subtitle-font text-center">Create Game</h2>
-                  <input
-                    type="text"
-                    id="name"
-                    className="form-control mb-2"
-                    placeholder="Your Name"
-                    required
-                    style={inputStyle}
-                    value={creatingPlayerName}
-                    onChange={(event) => {
-                      setCreatingPlayerName(event.target.value)
-                    }}
-                  ></input>
-                  <input
-                    type="number"
-                    id="numVillages"
-                    className="form-control  mb-2"
-                    placeholder="Number of Villages"
-                    required
-                    style={inputStyle}
-                    value={numVillages}
-                    onChange={(event) => {
-                      setNumVillages(event.target.valueAsNumber)
-                    }}
-                  ></input>
-                  <input
-                    type="number"
-                    id="playersPerVillage"
-                    className="form-control  mb-2"
-                    placeholder="Players Per Village"
-                    style={inputStyle}
-                    value={numPlayers}
-                    onChange={(event) => {
-                      setNumPlayers(event.target.valueAsNumber)
-                    }}
-                  ></input>
-                  <input
-                    type="number"
-                    id="numYears"
-                    className="form-control mb-2"
-                    placeholder="Number Of Years"
-                    required
-                    style={inputStyle}
-                    value={numYears}
-                    onChange={(event) => {
-                      setNumYears(event.target.valueAsNumber)
-                    }}
-                  ></input>
-                  <input
-                    type="text"
-                    id="gameLabel"
-                    className="form-control mb-2"
-                    placeholder="My Game Nickname"
-                    style={inputStyle}
-                    value={gameLabel}
-                    onChange={(event) => {
-                      setGameLabel(event.target.value)
-                    }}
-                  ></input>
-                  <div className="row mt-3">
+                  <div>
+                    <label htmlFor="name">Your Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      className="form-control mb-2"
+                      required
+                      style={inputStyle}
+                      value={creatingPlayerName}
+                      onChange={(event) => {
+                        setCreatingPlayerName(event.target.value)
+                      }}
+                    ></input>
+                  </div>
+                  <div>
+                    <label htmlFor="numVillages">Number of Villages:</label>
+                    <input
+                      type="number"
+                      id="numVillages"
+                      className="form-control mb-2"
+                      required
+                      style={inputStyle}
+                      value={numVillages}
+                      onChange={(event) => {
+                        setNumVillages(event.target.valueAsNumber)
+                      }}
+                    ></input>
+                  </div>
+                  <div>
+                    <label htmlFor="playersPerVillage">Players Per Village:</label>
+                    <input
+                      type="number"
+                      id="playersPerVillage"
+                      className="form-control mb-2"
+                      style={inputStyle}
+                      value={numPlayers}
+                      onChange={(event) => {
+                        setNumPlayers(event.target.valueAsNumber)
+                      }}
+                    ></input>
+                  </div>
+                  <div>
+                    <label htmlFor="numYears">Number Of Years:</label>
+                    <input
+                      type="number"
+                      id="numYears"
+                      className="form-control mb-2"
+                      required
+                      style={inputStyle}
+                      value={numYears}
+                      onChange={(event) => {
+                        setNumYears(event.target.valueAsNumber)
+                      }}
+                    ></input>
+                  </div>
+                  <div>
+                    <label htmlFor="gameLabel">My Game Nickname:</label>
+                    <input
+                      type="text"
+                      id="gameLabel"
+                      className="form-control mb-2"
+                      style={inputStyle}
+                      value={gameLabel}
+                      onChange={(event) => {
+                        setGameLabel(event.target.value)
+                      }}
+                    ></input>
+                  </div>
+                  <div className="row">
                     {basicRParameters.map(input => (
-                      <div className="col-6">
+                      <div>
                         <label htmlFor={input.id}>{input.label}:</label>
                         <input
                           type="number"
@@ -502,18 +515,20 @@ export function CreateGame({ gameCreationPassword }) {
                       </div>
                     ))}
                   </div>
-                  <input
-                    type="password"
-                    id="password"
-                    className={getValidState("password")}
-                    placeholder="Enter Password"
-                    style={inputStyle}
-                    value={password}
-                    onChange={(event) => {
-                      setPassword(event.target.value)
-                    }}
-                  ></input>
-                  <input className="mt-3" type="checkbox" id="isModerated" value={moderated} onChange={e => setModerated(e.target.checked)} />
+                  <div>
+                    <label htmlFor="password">Enter Password: </label>
+                    <input
+                      type="password"
+                      id="password"
+                      className={getValidState("password")}
+                      style={inputStyle}
+                      value={password}
+                      onChange={(event) => {
+                        setPassword(event.target.value)
+                      }}
+                    ></input>
+                  </div>
+                  <input className="mt-3" checked={moderated} type="checkbox" id="isModerated" value={moderated} onChange={e => setModerated(e.target.checked)} />
                   <label htmlFor="isModerated"> Moderated Game</label>
                   <div className="d-flex flex-row-reverse ">
                     <button
@@ -558,7 +573,7 @@ export function CreateGame({ gameCreationPassword }) {
                     <div className="card card-body mb-3">
                       <div className="row">
                         {advancedRParameters.map(input => (
-                          <div className="col-4">
+                          <div>
                             <label htmlFor={input.id}>{input.label}:</label>
                             <input
                             type="number"

@@ -13,7 +13,7 @@ const App = () => (
     <Routes>
       <Route path="/game/:gameID" element={<GameHub/>} />
       <Route path="/" element={<EnterName/>} />
-      <Route path="/game-creation" element={<CreateGame gameCreationPassword="testpassword"/>} />
+      <Route path="/game-creation" element={<CreateGame gameCreationPassword="EHCarrier"/>} />
       <Route path="/error" element={<GameIDError/>}/>
       <Route path="/game" element={<Navigate to="/error"/>}/>
     </Routes>

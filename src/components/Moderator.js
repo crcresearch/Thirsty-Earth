@@ -28,6 +28,10 @@ const hideButton = {
     visibility: "hidden"
 }
 
+const buttonSpacing = {
+    marginLeft: "10px"
+}
+
 export function Moderator({ ctx, G, moves, matchData}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
@@ -169,7 +173,12 @@ export function Moderator({ ctx, G, moves, matchData}) {
                     console.log(res.data[1][0])
                     moves.setPublicInfo(res.data[1][0])
                 })}>Get Public Info</button>
-                <button className='btn btn-primary' onClick={() => moves.startGame()}>Start Game</button>
+                <button 
+                    disabled={matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0} 
+                    className='btn btn-primary'
+                    style={buttonSpacing}
+                    onClick={() => moves.startGame()}
+                >Start Game</button>
                 </div>
                 }
                 {ctx.phase == "playerMoves" && 
@@ -242,6 +251,11 @@ export function Moderator({ ctx, G, moves, matchData}) {
                     })
                 }
                 }>End Choice Period of Current Year</button>
+                <button 
+                className='btn btn-secondary'
+                style={buttonSpacing}
+                onClick={() => moves.resetSubmissions()}
+                >Unlock Choices</button>
                 </div>
                 }
                 {ctx.phase == "moderatorPause" && 
