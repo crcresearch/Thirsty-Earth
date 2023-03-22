@@ -3,7 +3,7 @@
 import React from 'react';
 
 const resultsStyle = {
-    'height': '750px'
+    'height': '780px'
 }
 
 export function ResultsPage({ G, playerID }) {
