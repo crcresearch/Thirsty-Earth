@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { ChatBox } from './components/ChatBox';
 import { PreviousRounds } from './components/PreviousRounds';
 import { MainField } from './components/MainField';
-import { ResultsModal } from './components/ResultsModal'
+import { ResultsPage } from './components/ResultsPage'
 import { Moderator } from './components/Moderator'
 
 import { playerIDAtom } from './atoms/pid';
@@ -30,8 +30,6 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     }, [G.gameConfig.moderated, moderated])
     return (
         <div>
-            <ResultsModal showModal={showModal} playerStats={G.playerStats} />
-
             {(moderated && playerID == 0) ? 
              <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData}/>
             : <div className="container mt-4">
@@ -56,7 +54,9 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                         </ul>
                     </div>
                 </div>
-                <div className="row">
+                { ctx.gameover ?
+                <ResultsPage G={G} />
+                : <div className="row">
                     {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
                     { ctx.phase == "playerMoves" ?
@@ -70,6 +70,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     }
                     <PreviousRounds G={G} playerID={playerID}/>
                 </div>
+                }
             </div>}
         </div>
     )
