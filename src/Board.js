@@ -55,7 +55,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     </div>
                 </div>
                 { ctx.gameover ?
-                <ResultsPage G={G} />
+                <ResultsPage G={G} playerID={playerID}/>
                 : <div className="row">
                     {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
