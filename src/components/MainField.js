@@ -34,7 +34,7 @@ function useStateAndRef(initial) {
 // Various styles used in the component.
 const gameBoardStyle = {
     position: 'relative',
-    height: '750px'
+    height: '780px'
 }
 const selectionsStyle = {
     display: 'flex',
@@ -88,12 +88,17 @@ const GameTile = ({
     topImage,
     bottomImage,
     topClick,
-    bottomClick
+    bottomClick,
+    warning
 }) => {
     return(
         <div className="col" key={theKey}>
-            <div className="bg-wet-dirt text-center" onClick={topClick}>
-                <img src={topImage} className="img-fluid" />
+            <div className="bg-wet-dirt text-center" onClick={topClick} style={{
+                    border: warning 
+                    ? 'solid orange 4px' 
+                    : undefined
+                }}>
+                <img src={topImage} className="img-fluid"/>
             </div>
             <div className="bg-dirt text-center" onClick={bottomClick}>
                 <img src={bottomImage} className="img-fluid"/>
@@ -144,11 +149,12 @@ export function MainField({ G, moves }) {
     const [selectedOption, setSelectedOption] = useState({left: '', top: ''});
     const [turnTimeLeft, setTurnTimeLeft] = useState(0);
     const [turnEnd, setTurnEnd, refTurnEnd] = useStateAndRef(0);
+    const [gridWarnings, setGridWarnings] = useState([[false, false, false], [false, false, false], [false, false, false]])
+    const [showWarning, setShowWarning] = useState(false)
     const playerID = useRecoilValue(playerIDAtom);
 
     useEffect(() => {
         const interval = setInterval(() => {
-          console.log()
           setTurnTimeLeft(refTurnEnd.current != 0 ? Math.floor((refTurnEnd.current - Date.now())/1000) : 0)
         }, 1000);
         return () =>  clearInterval(interval);
@@ -203,6 +209,8 @@ export function MainField({ G, moves }) {
             let tempGrid = [...gridSelections];
             tempGrid[row][col].left = selectedOption.left;
             setGridSelections(tempGrid);
+            setGridWarnings([[false, false, false], [false, false, false], [false, false, false]]);
+            setShowWarning(false);
         }
     })
 
@@ -212,10 +220,13 @@ export function MainField({ G, moves }) {
             let tempGrid = [...gridSelections];
             tempGrid[row][col].top = selectedOption.top;
             setGridSelections(tempGrid);
+            setGridWarnings([[false, false, false], [false, false, false], [false, false, false]]);
+            setShowWarning(false);
         }
     })
 
-    const submitMove = (() => {
+    const submitMove = ((ignoreWarning) => {
+        let tempGridWarnings = [[false, false, false], [false, false, false], [false, false, false]]
         let submitWaterGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
@@ -242,16 +253,27 @@ export function MainField({ G, moves }) {
                 }
                 else if(gridSelections[i][j].top === crop_empty) {
                     submitCropGrid[i][j] = 0;
+                    if (submitWaterGrid[i][j] !== 0) {
+                        tempGridWarnings[i][j] = true;
+                    }
                 }
             }
         }
-        moves.makeSelection(submitWaterGrid, submitCropGrid, playerID);
-        let now = Date.now()
-        let timerFunc = function (time, round) {
-            console.log("Sending timer func")
-            moves.advanceTimer(playerID, time, round)
-        };
-        // setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
+
+        setGridWarnings(tempGridWarnings);
+        if (!tempGridWarnings.flat(4).includes(true) || ignoreWarning) {
+            moves.makeSelection(submitWaterGrid, submitCropGrid, playerID);
+            let now = Date.now()
+            let timerFunc = function (time, round) {
+                console.log("Sending timer func")
+                moves.advanceTimer(playerID, time, round)
+            };
+            setGridWarnings([[false, false, false], [false, false, false], [false, false, false]]);
+            setShowWarning(false);
+            // setTimeout(timerFunc, G.gameConfig.turnLength+1000, now, G.currentRound)
+        } else {
+            setShowWarning(true);
+        }
     })
 
     return (
@@ -263,7 +285,7 @@ export function MainField({ G, moves }) {
                     </div>
                 </div>
             }
-            <div className="row  justify-content-center mt-4">
+            <div className="row justify-content-center mt-4">
                 <div className="col-3">
                     <div className="text-left">
                         <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
@@ -301,32 +323,49 @@ export function MainField({ G, moves }) {
                             return (
                                 <div className="row row-cols-3" key={i}>
                                     {subArray.map((crop, j) => {
-                                        return (<GameTile key={crop} topImage={gridSelections[i][j].left} bottomImage={gridSelections[i][j].top} topClick={() => {selectLeftCrop(i, j)}} bottomClick={() => selectTopCrop(i, j)}/>)
+                                        return (<GameTile key={crop} warning={gridWarnings[i][j]} topImage={gridSelections[i][j].left} bottomImage={gridSelections[i][j].top} topClick={() => {selectLeftCrop(i, j)}} bottomClick={() => selectTopCrop(i, j)}/>)
                                     })}
                                 </div>)
                         })}
                     </div>
-                    <div class="row justify-content-center my-4">
-                        <div class="d-grid">
+                </div>
+            </div>
+            <div className="row justify-content-center mt-2">
+                <div className="col-9">
+                    <div class="row justify-content-center">
+                    {showWarning ?
+                        <div className="d-grid">
+                            <button  
+                                className="btn btn-warning"
+                                onClick={() => submitMove(true)}
+                                >
+                                SUBMIT ANYWAY
+                            </button>
+                        </div>
+                    : <div class="d-grid">
                         <button 
                             disabled={G.playerStats[playerID].selectionsSubmitted ? true : false} 
                             className={G.playerStats[playerID].selectionsSubmitted ? "btn btn-secondary" : "btn btn-submit"} 
-                            onClick={() => submitMove()} style={{ marginTop: '20px'}}
-                        >
+                            onClick={() => submitMove(false)}
+                            >
                             {G.playerStats[playerID].selectionsSubmitted ? "SUBMITTED SELECTIONS" : "SUBMIT"}
                         </button>
-                        
-                        <div  
-                            className="row row-cols-5 text-white small"
-                        >
-                            {Object.keys(G.publicInfo).map((val, idx) => {
-                                return (<div className="col">{val}: {G.publicInfo[val]} </div>)
-                            })}
                         </div>
+                    }
+                    </div>
+                </div>
+            </div>
+            {showWarning &&
+            <div className="row justify-content-center my-2">
+                <div className="col-12">
+                    <div class="alert alert-warning p-2" role="alert">
+                        <div class="small">
+                            Warning: These fields will be considered to be Fallow. If this is correct, please click <span className="badge bg-warning text-dark">SUBMIT ANYWAY</span>. Otherwise, change the field options and then click <span className="badge bg-primary">SUBMIT</span>.
                         </div>
                     </div>
                 </div>
             </div>
+            }
         </div>
     )
 }

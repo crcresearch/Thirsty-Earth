@@ -54,6 +54,11 @@ code {
   border-color: #145424;
 }
 
+.btn-primary:disabled{
+  background-color: #226633;
+  border-color: #226633;
+}
+
 .btn-primary:active {
   background-color: #145424;
   border-color: #145424;
@@ -62,6 +67,10 @@ code {
 .btn-primary:focus {
   background-color: #145424;
   border-color: #145424;
+}
+
+.bg-primary {
+  background-color: #145424 !important;
 }
 
 .card{
@@ -204,8 +213,6 @@ code {
   Opacity: .75;
 }
 
-.water-summary {
-}
 .water-summary img {
   background: #5f7f91;
   width: 17%;
@@ -259,6 +266,35 @@ code {
   color: #572c01;
   background-color: #ffcda9;
   border-color: #fcaa5e;
+}
+
+.btn-warning {
+  background-color: #f18e32;
+  border-color: #f18e32;
+}
+
+.btn-warning:hover {
+  background-color: #e47a17;
+  border-color: #e47a17;
+}
+
+.btn-warning:disabled{
+  background-color: #fba351;
+  border-color: #fba351;
+}
+
+.btn-warning:active {
+  background-color: #e47a17;
+  border-color: #e47a17;
+}
+
+.btn-warning:focus {
+  background-color: #e47a17;
+  border-color: #e47a17;
+}
+
+.bg-warning {
+  background-color: #f18e32 !important;
 }
 
 .overlay {

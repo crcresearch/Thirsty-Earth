@@ -17,7 +17,7 @@ export function PreviousRounds({G, playerID}) {
     const waterChoices = [cloud, river, well]
     const cropChoices = [crop_empty, leaf, apple]
     const prevRoundsStyle = {
-        'height': '750px'
+        'height': '780px'
     }
     const listInfoStyle = {
         'max-height': '95%',
@@ -53,9 +53,6 @@ export function PreviousRounds({G, playerID}) {
                                     })
                                 }
                             </div>
-                            <div className="row small text-center">
-                                <div className="col">Rainfall: {year.villageStats[year.playerStats[playerID]["village"]].r0 == 2 ? "Good" : "Bad"}</div>
-                            </div>
                             <div className="row row-cols-2 small text-center">
                                 <div className="col">P_Net: {year.playerStats[playerID].Profit_Net}</div>
                                 <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
@@ -68,7 +65,8 @@ export function PreviousRounds({G, playerID}) {
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>
                             <div className="row small text-center"><span>GW Depth: {year.playerStats[playerID].groundwaterDepth}</span></div>
 
-                            <div className="row small text-center"><span>Good Rain Next Yr: {year.villageStats[year.playerStats[playerID]["village"]].r0 == 2 ? 100* year.playerStats[playerID]["Prob. Rain Good_Good"] : 100* year.playerStats[playerID]["Prob. Rain Bad_Good"]}%</span></div>
+                            <div className="row small text-center"><span>Probability of Good Rain Year to Good Rain Year: {100* year.playerStats[playerID]["Prob. Rain Good_Good"]}%</span></div>
+                            <div className="row small text-center"><span>Probability of Bad Rain Year to Good Rain Year: {100* year.playerStats[playerID]["Prob. Rain Bad_Good"]}%</span></div>
                             <hr></hr>
                         </div>
                     )
