@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { ChatBox } from './components/ChatBox';
 import { PreviousRounds } from './components/PreviousRounds';
 import { MainField } from './components/MainField';
-import { ResultsModal } from './components/ResultsModal'
+import { ResultsPage } from './components/ResultsPage'
 import { Moderator } from './components/Moderator'
 
 import { playerIDAtom } from './atoms/pid';
@@ -43,8 +43,6 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     }, [G.gameConfig.moderated, moderated])
     return (
         <div>
-            <ResultsModal showModal={showModal} playerStats={G.playerStats} />
-
             {(moderated && playerID == 0) ? 
              <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData}/>
             : <div className="container mt-4">
@@ -71,15 +69,16 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                 </div>
                 <div className="row">
                     {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
-                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
-                    { ctx.phase == "playerMoves" ?
+                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G} ctx={ctx}/>
+                    { ctx.gameover ?
+                        <ResultsPage G={G} playerID={playerID}/>
+                    : ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
-                        :
-                        <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                            <div className='d-flex align-items-center' style={{height: "100%"}}>
-                                <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
-                            </div>
+                    : <div className="col-lg-7 border-navy border-start-0 border-end-0">
+                        <div className='d-flex align-items-center' style={{height: "100%"}}>
+                            <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
                         </div>
+                    </div>
                     }
                     <PreviousRounds G={G} playerID={playerID}/>
                 </div>

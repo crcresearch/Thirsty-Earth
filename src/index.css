@@ -49,6 +49,11 @@ code {
   border-color: #145424;
 }
 
+.btn-primary:disabled {
+  background-color: #206932;
+  border-color: #206932;
+}
+
 .btn-primary:hover {
   background-color: #145424;
   border-color: #145424;
