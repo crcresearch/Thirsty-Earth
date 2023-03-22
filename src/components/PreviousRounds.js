@@ -65,7 +65,8 @@ export function PreviousRounds({G, playerID}) {
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>
                             <div className="row small text-center"><span>GW Depth: {year.playerStats[playerID].groundwaterDepth}</span></div>
 
-                            <div className="row small text-center"><span>Probability of Good Rain Next Yr: {year.villageStats[year.playerStats[playerID]["village"]].r0 == 2 ? 100* year.playerStats[playerID]["Prob. Rain Good_Good"] : 100* year.playerStats[playerID]["Prob. Rain Bad_Good"]}%</span></div>
+                            <div className="row small text-center"><span>Probability of Good Rain Year to Good Rain Year: {100* year.playerStats[playerID]["Prob. Rain Good_Good"]}%</span></div>
+                            <div className="row small text-center"><span>Probability of Bad Rain Year to Good Rain Year: {100* year.playerStats[playerID]["Prob. Rain Bad_Good"]}%</span></div>
                             <hr></hr>
                         </div>
                     )
