@@ -43,6 +43,8 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     }, [G.gameConfig.moderated, moderated])
     return (
         <div>
+            <ResultsModal showModal={showModal} playerStats={G.playerStats} />
+
             {(moderated && playerID == 0) ? 
              <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData}/>
             : <div className="container mt-4">
