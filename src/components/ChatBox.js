@@ -14,7 +14,7 @@ const chatListStyle = {
 }
 
 
-export function ChatBox({ sendMessageFn, chatMessages, G }) {
+export function ChatBox({ sendMessageFn, chatMessages, G, ctx }) {
     const [message, setMessage] = useState('');
     const [playerData, setPlayerData] = useState('');
     const gameID = useRecoilValue(gameIDAtom);
@@ -83,6 +83,7 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
                         <input 
                             type="text" 
                             className="form-control" 
+                            disabled={ctx.gameover}
                             placeholder="Type your message here..."
                             value={message}
                             onChange={(event) => {
@@ -90,7 +91,7 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
                             }}
                             onKeyPress={handleKeyPress}
                         />
-                        <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
+                        <button className="btn btn-primary" disabled={ctx.gameover} type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
                     </div>
                 </div>
             </div>      
@@ -100,6 +101,7 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
                         <input 
                             type="text" 
                             className="form-control" 
+                            disabled={ctx.gameover}
                             placeholder="Type your message here..."
                             value={message}
                             onChange={(event) => {
@@ -107,7 +109,7 @@ export function ChatBox({ sendMessageFn, chatMessages, G }) {
                             }}
                             onKeyPress={handleKeyPress}
                         />
-                        <button className="btn btn-primary" type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
+                        <button className="btn btn-primary" disabled={ctx.gameover} type="button" onClick={() =>{handleSubmit(message)}} >Send</button>
                     </div>
                 </div>
             </div>

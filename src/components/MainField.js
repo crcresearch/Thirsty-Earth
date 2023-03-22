@@ -269,7 +269,6 @@ export function MainField({ G, moves }) {
                         <h5 className="text-light mt-2 mb-0"><span className="fw-bold text-white-50">Year:</span> {G.currentRound}</h5>
                         <h5 className="text-light mb-0"><span className="fw-bold text-white-50">Funds:</span> {G.playerStats[playerID].playerMoney.toFixed(2)}</h5>
                         <h5 className="text-light mb-0"><span className="fw-bold text-white-50">GW:</span> {G.playerStats[playerID].groundwaterDepth.toFixed(2)}</h5>
-                        <h5 className="text-light"><span className="fw-bold text-white-50">Prob Good:</span> {G.villageStats[G.playerStats[playerID]["village"]].r0 == 2 ? 100* G.playerStats[playerID]["Prob. Rain Good_Good"] : 100* G.playerStats[playerID]["Prob. Rain Bad_Good"]}%</h5>
                     </div>
                 </div>
                 <div className="col-4">

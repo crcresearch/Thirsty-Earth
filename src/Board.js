@@ -54,23 +54,21 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                         </ul>
                     </div>
                 </div>
-                { ctx.gameover ?
-                <ResultsPage G={G} playerID={playerID}/>
-                : <div className="row">
+                <div className="row">
                     {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
-                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G}/>
-                    { ctx.phase == "playerMoves" ?
+                    <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G} ctx={ctx}/>
+                    { ctx.gameover ?
+                        <ResultsPage G={G} playerID={playerID}/>
+                    : ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
-                        :
-                        <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                            <div className='d-flex align-items-center' style={{height: "100%"}}>
-                                <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
-                            </div>
+                    : <div className="col-lg-7 border-navy border-start-0 border-end-0">
+                        <div className='d-flex align-items-center' style={{height: "100%"}}>
+                            <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
                         </div>
+                    </div>
                     }
                     <PreviousRounds G={G} playerID={playerID}/>
                 </div>
-                }
             </div>}
         </div>
     )
