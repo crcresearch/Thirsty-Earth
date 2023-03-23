@@ -17,6 +17,7 @@ export function ResultsPage({ G, playerID }) {
             </div>
             <div className='d-flex align-items-center justify-content-center' style={{height: "90%"}}>
                 <ul className="list-group">
+                    <li className="list-group-item border-0 bg-tan text-center fw-bold h3">Fallow Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_F, 0).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h3">Rain Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_R, 0).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h3">River Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_S, 0).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h3">Groundwater Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_G, 0).toFixed(2)}</li>

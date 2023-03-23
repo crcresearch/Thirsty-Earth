@@ -25,7 +25,6 @@ export function GameHub() {
         numPlayers: 2,
         board: ButtonBoard,
         multiplayer: SocketIO({ server: BASE_URL }),
-        debug: {impl: Debug} 
     });
 
     const gameID = useRecoilValue(gameIDAtom);

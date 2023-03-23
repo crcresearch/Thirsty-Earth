@@ -53,13 +53,14 @@ export function PreviousRounds({G, playerID}) {
                                     })
                                 }
                             </div>
+                            <div className="row small text-center"><strong>Yearly Profit: {year.playerStats[playerID].Profit_Net}</strong></div>
                             <div className="row row-cols-2 small text-center">
-                                <div className="col">P_Net: {year.playerStats[playerID].Profit_Net}</div>
-                                <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
+                                <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
+                                <div className="col">P_R: {year.playerStats[playerID].Profit_R}</div>
                             </div>
                             <div className="row row-cols-2 small text-center">
                                 <div className="col">P_S: {year.playerStats[playerID].Profit_S}</div>
-                                <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
+                                <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
                             </div>
                             <div className="row small text-center"><strong>New Values:</strong></div>
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>

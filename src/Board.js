@@ -6,6 +6,7 @@ import { ChatBox } from './components/ChatBox';
 import { PreviousRounds } from './components/PreviousRounds';
 import { MainField } from './components/MainField';
 import { ResultsPage } from './components/ResultsPage'
+import { YearlyReview } from './components/YearlyReview';
 import { Moderator } from './components/Moderator'
 
 import { playerIDAtom } from './atoms/pid';
@@ -15,6 +16,10 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     const playerID = useRecoilValue(playerIDAtom);
     const [showModal, setShowModal] = useState(false);
     const [moderated, setModerated] = useState(false);
+    const [confirmedYearSummary, setconfirmedYearSummary] = useState(false);
+    const confirmViewedYearlySummary = () => {
+        setconfirmedYearSummary(true)
+    }
 
     const pubInfoFormatMap = {
         'alphaF': '&alpha;<sub>F</sub>',
@@ -35,6 +40,12 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
             setShowModal(true);
         }
     }, [ctx.gameover, showModal])
+    
+    useEffect(() => {
+        if(ctx.phase === "moderatorPause") {
+            setconfirmedYearSummary(false);
+        }
+    }, [ctx.phase])
 
     useEffect(() => {
         if(G.gameConfig.moderated === true) {
@@ -72,13 +83,16 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G} ctx={ctx}/>
                     { ctx.gameover ?
                         <ResultsPage G={G} playerID={playerID}/>
-                    : ctx.phase == "playerMoves" ?
+                    : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
+                        <YearlyReview G={G} ctx={ctx} playerID={playerID} confirmFunc={confirmViewedYearlySummary}/>
+                        : ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
-                    : <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                        <div className='d-flex align-items-center' style={{height: "100%"}}>
-                            <h3>The game is currently in an instructor setup or moderation phase. The game board will appear here when players are able to make moves.</h3>
+                        : 
+                        <div className="col-lg-7 border-navy border-start-0 border-end-0">
+                            <div className='d-flex align-items-center' style={{height: "100%"}}>
+                                <h3>The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
+                            </div>
                         </div>
-                    </div>
                     }
                     <PreviousRounds G={G} playerID={playerID}/>
                 </div>
