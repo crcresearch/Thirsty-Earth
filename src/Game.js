@@ -219,9 +219,14 @@ export const ThirstyEarth = {
             G.turnTimeout = Date.now() + G.gameConfig.turnLength;
           }
         },
-        resetSubmissions: (G, ctx) => {
-          for (let i in G.playerStats) {
-            G.playerStats[i].selectionsSubmitted = false;
+        resetSubmissions: (G, ctx, playerId=null) => {
+          if(playerId !== null) {
+            G.playerStats[playerId].selectionsSubmitted = false;
+          }
+          else {
+            for (let i in G.playerStats) {
+              G.playerStats[i].selectionsSubmitted = false;
+            }
           }
         },
         submitVillageDataUpdate: (G, ctx, playerID, computedData) => {
