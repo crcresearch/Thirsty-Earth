@@ -174,7 +174,10 @@ export function Moderator({ ctx, G, moves, matchData}) {
                     moves.setPublicInfo(res.data[1][0])
                 })}>Get Public Info</button>
                 <button 
-                    disabled={matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0} 
+                    disabled={
+                        G.playerStats.reduce(
+                            (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
+                    } 
                     className='btn btn-primary'
                     style={buttonSpacing}
                     onClick={() => moves.startGame()}
