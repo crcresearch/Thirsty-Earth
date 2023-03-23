@@ -175,7 +175,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 })}>Get Public Info</button>
                 <button 
                     disabled={
-                        G.playerStats.reduce(
+                        G.publicInfo === null || G.playerStats.reduce(
                             (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
                     } 
                     className='btn btn-primary'
