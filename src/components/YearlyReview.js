@@ -1,8 +1,5 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { playerIDAtom } from '../atoms/pid';
 
 // left-hand side options
 import cloud from '../img/cloud.png';
@@ -11,26 +8,10 @@ import well from '../img/well.png';
 
 // top options "toptions", if you will.
 import leaf from '../img/leaf.png';
-import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
-
-// background image.
-import grass from "../img/grass.png";
 
 // Empty tile (default for irrigation method)
 import crop_empty from "../img/crop_empty.png";
-import water_empty from "../img/water_empty.png";
-
-//reset icon
-import reset from "../img/reset_icon.png"
-
-function useStateAndRef(initial) {
-    const [value, setValue] = useState(initial);
-    const valueRef = useRef(value);
-    valueRef.current = value;
-    return [value, setValue, valueRef];
-  }
-
 
 // Various styles used in the component.
 const gameBoardStyle = {

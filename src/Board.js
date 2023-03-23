@@ -16,7 +16,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     const playerID = useRecoilValue(playerIDAtom);
     const [showModal, setShowModal] = useState(false);
     const [moderated, setModerated] = useState(false);
-    const [confirmedYearSummary, setconfirmedYearSummary] = useState(false);
+    const [confirmedYearSummary, setconfirmedYearSummary] = useState(true);
     const confirmViewedYearlySummary = () => {
         setconfirmedYearSummary(true)
     }
