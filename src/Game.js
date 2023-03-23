@@ -35,7 +35,7 @@ export const ThirstyEarth = {
           for(let i = 0; i < ctx.numPlayers; i++) {
               stats.push({
                   pid: i,
-                  playerMoney: 100,
+                  playerMoney: 0,
                   playerWaterFields: [...defaultField],
                   playerCropFields: [...defaultField],
                   playerChoiceTally: {...defaultTally},
