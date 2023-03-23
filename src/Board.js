@@ -55,7 +55,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     return (
         <div>
             {(moderated && playerID == 0) ? 
-             <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData}/>
+             <Moderator ctx={ctx} G={G} moves={moves} matchData={matchData} chatMessages={chatMessages}/>
             : <div className="container mt-4">
                 <div className="row justify-content-md-center bg-navy text-light rounded-top">
                     <div className="col-md-6 align-self-center">

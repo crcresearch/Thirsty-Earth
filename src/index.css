@@ -108,6 +108,11 @@ code {
   overflow-y: auto;
 }
 
+.moderator-chat-scroll {
+  height: 87%;
+  overflow-y: auto;
+}
+
 /*modal styling borrowed from https://github.com/timbrownls20/Demo/blob/master/React/bootstrap-modal/src/css/modal.css*/
 .modal{
   display: block;

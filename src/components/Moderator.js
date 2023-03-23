@@ -8,6 +8,8 @@ import { gameIDAtom } from '../atoms/gameid';
 import axios from 'axios'
 import { PLUMBER_URL } from "../config";
 
+import { ModeratorChatBox } from './ModeratorChatBox';
+
 // left-hand side options
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
@@ -32,7 +34,7 @@ const buttonSpacing = {
     marginLeft: "10px"
 }
 
-export function Moderator({ ctx, G, moves, matchData}) {
+export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well]
@@ -175,8 +177,10 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 })}>Get Public Info</button>
                 <button 
                     disabled={
-                        G.publicInfo === null || G.playerStats.reduce(
-                            (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
+                        G.publicInfo === null || 
+                        G.playerStats.reduce(
+                            (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 
+                        ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
                     } 
                     className='btn btn-primary'
                     style={buttonSpacing}
@@ -273,6 +277,9 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 </div>
                 }
             </div>
+            <hr></hr>
+
+            <ModeratorChatBox chatMessages={chatMessages}></ModeratorChatBox>
         </div>
       
 
