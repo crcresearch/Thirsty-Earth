@@ -6,6 +6,11 @@ const resultsStyle = {
     'height': '780px'
 }
 
+const tableScroll = {
+    'height': '450px',
+    'overflow-y': 'auto'
+}
+
 export function ResultsPage({ G, playerID }) {
     const countWaterAmounts = (statsRecord, water_enum) => {
         let playerCropChoices = statsRecord.playerCropFields.flat(4)
@@ -92,49 +97,51 @@ export function ResultsPage({ G, playerID }) {
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">Total Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_Net, 0).toFixed(2)}</li>
                 </ul>
             </div>
-            <table class="table table-success table-striped mt-3">
-            <thead>
-    <tr>
-      <th scope="col">Year</th>
-      <th scope="col"># F</th>
-      <th scope="col">P_F</th>
-      <th scope="col"># R</th>
-      <th scope="col">P_R</th>
-      <th scope="col"># S</th>
-      <th scope="col">P_S</th>
-      <th scope="col"># G</th>
-      <th scope="col">P_G</th>
-      <th scope="col">P_Net</th>
-    </tr>
-  </thead>
-  <tbody>
-    {G.yearlyStateRecord.map((x, idx) => {
-        let yearFallow = countFallowCrops(x.playerStats[playerID])
-        let yearRain = countWaterAmounts(x.playerStats[playerID], 0)
-        let yearSurface = countWaterAmounts(x.playerStats[playerID], 1)
-        let yearGround = countWaterAmounts(x.playerStats[playerID], 2)
-        return idx > 0 && <tr>
-            <td>{idx}</td>
-            <td>{yearFallow}</td>
-            <td>{x.playerStats[playerID].Profit_F}</td>
-            <td>{yearRain}</td>
-            <td>{x.playerStats[playerID].Profit_R}</td>
-            <td>{yearSurface}</td>
-            <td>{x.playerStats[playerID].Profit_S}</td>
-            <td>{yearGround}</td>
-            <td>{x.playerStats[playerID].Profit_G}</td>
-            <td>{x.playerStats[playerID].Profit_Net}</td>
-        </tr>
-    })}
-    {generateSummaryRow(G.yearlyStateRecord)}
-    {/* <tr>
-      <th scope="row">Ground</th>
-      <td>{countWaterAmounts(2,1)}</td>
-      <td>{countWaterAmounts(2,2)}</td>
-      <td>{year.playerStats[playerID].Profit_G}</td>
-    </tr> */}
-  </tbody>
-            </table>
+            <div style={tableScroll}>
+                <table class="table table-success table-striped mt-3">
+                <thead>
+                    <tr>
+                    <th scope="col">Year</th>
+                    <th scope="col"># F</th>
+                    <th scope="col">P_F</th>
+                    <th scope="col"># R</th>
+                    <th scope="col">P_R</th>
+                    <th scope="col"># S</th>
+                    <th scope="col">P_S</th>
+                    <th scope="col"># G</th>
+                    <th scope="col">P_G</th>
+                    <th scope="col">P_Net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {G.yearlyStateRecord.map((x, idx) => {
+                        let yearFallow = countFallowCrops(x.playerStats[playerID])
+                        let yearRain = countWaterAmounts(x.playerStats[playerID], 0)
+                        let yearSurface = countWaterAmounts(x.playerStats[playerID], 1)
+                        let yearGround = countWaterAmounts(x.playerStats[playerID], 2)
+                        return idx > 0 && <tr>
+                            <td>{idx}</td>
+                            <td>{yearFallow}</td>
+                            <td>{x.playerStats[playerID].Profit_F}</td>
+                            <td>{yearRain}</td>
+                            <td>{x.playerStats[playerID].Profit_R}</td>
+                            <td>{yearSurface}</td>
+                            <td>{x.playerStats[playerID].Profit_S}</td>
+                            <td>{yearGround}</td>
+                            <td>{x.playerStats[playerID].Profit_G}</td>
+                            <td>{x.playerStats[playerID].Profit_Net}</td>
+                        </tr>
+                })}
+                {generateSummaryRow(G.yearlyStateRecord)}
+                {/* <tr>
+                    <th scope="row">Ground</th>
+                    <td>{countWaterAmounts(2,1)}</td>
+                    <td>{countWaterAmounts(2,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_G}</td>
+                </tr> */}
+                </tbody>
+                </table>
+            </div>
         </div>
     )
 
