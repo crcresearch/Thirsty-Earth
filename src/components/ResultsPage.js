@@ -53,7 +53,7 @@ export function ResultsPage({ G, playerID }) {
                         case 0: 
                             numR++;
                             break;
-                        case 2: 
+                        case 1: 
                             numS++;
                             break;
                         case 2: 
@@ -97,9 +97,9 @@ export function ResultsPage({ G, playerID }) {
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">Total Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_Net, 0).toFixed(2)}</li>
                 </ul>
             </div>
-            <div style={tableScroll}>
-                <table class="table table-success table-striped mt-3">
-                <thead>
+            <div className="mt-3" style={tableScroll}>
+                <table class="table table-success table-striped table-sm">
+                <thead className="sticky-top">
                     <tr>
                     <th scope="col">Year</th>
                     <th scope="col"># F</th>
