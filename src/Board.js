@@ -97,17 +97,20 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     <PreviousRounds G={G} playerID={playerID}/>
                 </div>
                 <div className="row justify-content-md-center bg-navy text-light rounded-bottom">
-                    {G.publicInfo !== null &&
-                        <div className="col-md-9 align-self-center mt-2 mb-2">
-                            <div className="row row-cols-5 text-white small">
-                                {Object.keys(G.publicInfo).map((val, idx) => {
-                                    return (<div className="col"><span dangerouslySetInnerHTML={{__html: pubInfoFormatMap[val]}}></span>: {G.publicInfo[val]} </div>)
-                                })}
+                    <div className="row small text-center mt-2 mb-2"><span>Probability of good rain year (P): {100* G.gameConfig.probabilityWetYear}%</span></div>
+                    <div className="row">
+                        {G.publicInfo !== null &&
+                            <div className="col-md-9 align-self-center mt-2 mb-2">
+                                <div className="row row-cols-5 text-white small">
+                                    {Object.keys(G.publicInfo).map((val, idx) => {
+                                        return (<div className="col"><span dangerouslySetInnerHTML={{__html: pubInfoFormatMap[val]}}></span>: {G.publicInfo[val]} </div>)
+                                    })}
+                                </div>
                             </div>
+                        }
+                        <div className="col-md-3 align-self-center mt-2 mb-2">
+                            For more information, <a className="text-light" target="_blank" href="https://drive.google.com/file/d/1UhCNF9zYWDqmRvvIPv5VtrsD5_XdFDk2/view?usp=sharing">click here</a>.
                         </div>
-                    }
-                    <div className="col-md-3 align-self-center mt-2 mb-2">
-                        For more information, <a className="text-light" target="_blank" href="https://drive.google.com/file/d/1UhCNF9zYWDqmRvvIPv5VtrsD5_XdFDk2/view?usp=sharing">click here</a>.
                     </div>
                 </div>
             </div>}
