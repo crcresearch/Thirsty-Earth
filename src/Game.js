@@ -1,6 +1,20 @@
 import { GAME_NAME } from "./config";
 import { INVALID_MOVE, Stage } from "boardgame.io/core";
 
+
+const defaultField = [
+  [0, 0, 0], 
+  [0, 0, 0], 
+  [0, 0, 0]
+];
+
+const defaultTally = {
+  fallow: 0,
+  groundWater: 0,
+  rainWater: 0,
+  riverWater: 0
+}
+
 export const ThirstyEarth = {
   name: GAME_NAME,
   // The minimum and maximum number of players supported
@@ -13,17 +27,6 @@ export const ThirstyEarth = {
       const GROUNDWATER = 1;
       const RAINWATER = 2;
       const RIVERWATER = 3;
-      const defaultField = [
-        [0, 0, 0], 
-        [0, 0, 0], 
-        [0, 0, 0]
-      ];
-      const defaultTally = {
-          fallow: 0,
-          groundWater: 0,
-          rainWater: 0,
-          riverWater: 0
-      }
       const turnTimeout = 0;
       const playerOffset = setupData.moderated ? 1 : 0
       const villages = [...Array(setupData.numVillages + 1).keys()]
@@ -32,7 +35,7 @@ export const ThirstyEarth = {
           for(let i = 0; i < ctx.numPlayers; i++) {
               stats.push({
                   pid: i,
-                  playerMoney: 100,
+                  playerMoney: 0,
                   playerWaterFields: [...defaultField],
                   playerCropFields: [...defaultField],
                   playerChoiceTally: {...defaultTally},
@@ -56,11 +59,7 @@ export const ThirstyEarth = {
       };
       let villageStats = generateVillageStats();
 
-      const yearlyStateRecord = [{
-          playerStats: playerStats.slice(),
-          gwDepth: 2,
-          lastYearModelOutput: {}
-      }]
+      const yearlyStateRecord = []
 
       const publicInfo = null
       // keep track of the current round
@@ -143,6 +142,7 @@ export const ThirstyEarth = {
     }
     let villageId = data[6][0];
     G.villageStats[villageId]["r0"] = data[4][0];
+    G.villageStats[villageId]["modelOutput"] = data;
 
   },
 
@@ -161,6 +161,11 @@ export const ThirstyEarth = {
           if (G.publicInfo === null) {
             return INVALID_MOVE;
           }
+          G.yearlyStateRecord.push({
+            playerStats: G.playerStats.slice(),
+            gwDepth: 2,
+            lastYearModelOutput: {}
+          })
           ctx.events.endPhase();
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
@@ -215,6 +220,22 @@ export const ThirstyEarth = {
           } else {
             G.lastPlayerSubmitted = playerID;
             G.turnTimeout = Date.now() + G.gameConfig.turnLength;
+          }
+        },
+        resetSubmissions: (G, ctx, playerId=null) => {
+          if(playerId !== null) {
+            G.playerStats[playerId].selectionsSubmitted = false;
+            G.playerStats[playerId].playerWaterFields = [...defaultField];
+            G.playerStats[playerId].playerCropFields = [...defaultField];
+            G.playerStats[playerId].playerChoiceTally = {...defaultTally};
+          }
+          else {
+            for (let i in G.playerStats) {
+              G.playerStats[i].selectionsSubmitted = false;
+              G.playerStats[i].playerWaterFields = [...defaultField];
+              G.playerStats[i].playerCropFields = [...defaultField];
+              G.playerStats[i].playerChoiceTally = {...defaultTally};
+            }
           }
         },
         submitVillageDataUpdate: (G, ctx, playerID, computedData) => {
