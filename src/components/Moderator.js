@@ -35,10 +35,11 @@ const buttonSpacing = {
 }
 
 export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
+    const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages).fill(""));
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
-    const waterChoices = [cloud, river, well]
-    const cropChoices = [crop_empty, leaf, apple ]
+    const waterChoices = [cloud, river, well];
+    const cropChoices = [crop_empty, leaf, apple];
     const IBChoices = [  
         {"value": 0, "text": "What is the average number of fields irrigated with groundwater per player this year in our village?"},
         {"value": 1, "text": "What was the average number of fields irrigated with surface water per player this year in our village?"},
@@ -60,6 +61,23 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 17, "text": "Randomly show a player's number and rain water usage."},
         {"value": 18, "text": "Randomly show a player's number and their number of fields left fallow."}
     ]
+
+    function pushVillageIB(selections, village) {
+        console.log(selections);
+        let tempIBArray = informationBits;
+        let binaryChoiceString = ""
+        for (let i in IBChoices) {
+            let choiceValue = IBChoices[i].value;
+            if (selections.includes(choiceValue.toString())) {
+                binaryChoiceString += "1"
+            } else {
+                binaryChoiceString += "0"
+            }
+        }
+        tempIBArray[village] = binaryChoiceString;
+        setInformationBits(tempIBArray);
+        console.log(informationBits);
+    }
 
     return (
         <div className='container mt-4'>
@@ -124,22 +142,31 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             }
             {G.villages.map(village => (
                 <div>
-                    {(village > 0) &&
-                        <div className="row">
+                        <div className="row mt-3 mb-2">
                             <div className='col-4'>
-                                <span className="h5 mt-3 mb-2">Village {village}</span>
+                                <span className="h5">Village {village}</span>
                             </div>
+                            {(village > 0 && ctx.phase == "setup") &&
                             <div className='col-8'>
-                                <select multiple class="form-select" size="1">
-                                    <option disabled>Scroll down to select Information Bits to purchase.</option>
-                                    {IBChoices.map(choice => (
-                                        <option value={choice.value}>{choice.text}</option>
-                                    ))}
-                                </select>
+                                <div class="input-group">
+                                    <select multiple className="form-select" id={`select-information-${village}`} size="3" name="informationBits" 
+                                    onChange={(event) => pushVillageIB([].slice.call(event.target.selectedOptions).map(item => item.value), village)}>
+                                        <option disabled>Scroll down to select Information Bits to purchase.</option>
+                                        {IBChoices.map(choice => (
+                                            <option value={choice.value}>{choice.text}</option>
+                                        ))}
+                                    </select>
+                                    <button 
+                                        className="btn btn-primary" type="submit"
+                                        disabled={G.villageStats[village].infoBits != "0000000000000000000"} 
+                                        onClick={() => moves.setInfoBits(informationBits[village], village)}
+                                    >
+                                        Confirm Selections
+                                    </button>
+                                </div>
                             </div>
+                            }
                         </div>
-
-                    }
                     <table className='table table-striped mb-3'>
                         { (village === 0) &&
                             <thead>
@@ -256,7 +283,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                         promisesList.push(axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
                             Water: waterChoices,
                             Crop: cropChoices,
-                            IB: 0,
+                            IB: G.villageStats[i+1].infoBits,
                             GD: waterDepths.join(","),
                             r0: G.villageStats[i+1].r0,
                             P: G.gameConfig.probabilityWetYear,

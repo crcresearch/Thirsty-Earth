@@ -49,7 +49,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   numPlayers = as.numeric(numPlayers)
   Water = matrix(as.numeric(str_split_1(Water,"")), ncol=9, byrow=TRUE)
   Crop = matrix(as.numeric(str_split_1(Crop,"")), ncol=9, byrow=TRUE)
-  IB = rep(0,19) #sample(c(1,0), 6, replace = T, prob = c(.35,.65))
+  IB = matrix(as.numeric(str_split_1(IB,"")), ncol=19, byrow=TRUE) #sample(c(1,0), 6, replace = T, prob = c(.35,.65))
   GD = matrix(as.numeric(str_split_1(GD,",")), ncol=numPlayers, byrow=TRUE)
   r0=as.integer(r0)   
   P = as.numeric(P) 

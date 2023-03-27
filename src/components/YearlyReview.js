@@ -91,40 +91,40 @@ export function YearlyReview({ G, ctx, playerID, confirmFunc }) {
             </div>
             <div class="row mx-2">
             <table class="table table-success table-striped mt-3">
-            <thead>
-    <tr>
-      <th scope="col">Crop Source</th>
-      <th scope="col">Low Val</th>
-      <th scope="col">High Val</th>
-      <th scope="col">Profit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Fallow</th>
-      <td>-</td>
-      <td>-</td>
-      <td>{year.playerStats[playerID].Profit_F}</td>
-    </tr>
-    <tr>
-      <th scope="row">Rain</th>
-      <td>{count_water_amounts(0,1)}</td>
-      <td>{count_water_amounts(0,2)}</td>
-      <td>{year.playerStats[playerID].Profit_R}</td>
-    </tr>
-    <tr>
-      <th scope="row">Surface</th>
-      <td>{count_water_amounts(1,1)}</td>
-      <td>{count_water_amounts(1,2)}</td>
-      <td>{year.playerStats[playerID].Profit_S}</td>
-    </tr>
-    <tr>
-      <th scope="row">Ground</th>
-      <td>{count_water_amounts(2,1)}</td>
-      <td>{count_water_amounts(2,2)}</td>
-      <td>{year.playerStats[playerID].Profit_G}</td>
-    </tr>
-  </tbody>
+                <thead>
+                  <tr>
+                    <th scope="col">Crop Source</th>
+                    <th scope="col">Low Val</th>
+                    <th scope="col">High Val</th>
+                    <th scope="col">Profit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Fallow</th>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>{year.playerStats[playerID].Profit_F}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Rain</th>
+                    <td>{count_water_amounts(0,1)}</td>
+                    <td>{count_water_amounts(0,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_R}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Surface</th>
+                    <td>{count_water_amounts(1,1)}</td>
+                    <td>{count_water_amounts(1,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_S}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Ground</th>
+                    <td>{count_water_amounts(2,1)}</td>
+                    <td>{count_water_amounts(2,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_G}</td>
+                  </tr>
+                </tbody>
             </table>
             </div>
             <div className="row row-cols-3">
@@ -146,6 +146,24 @@ export function YearlyReview({ G, ctx, playerID, confirmFunc }) {
                    <div className="mb-1">{year.playerStats[playerID].groundwaterDepth}</div>
                 </div>
             </div>
+            </div>
+            <div className="row mx-2">
+            <table class="table table-success table-striped mt-3">
+                <thead>
+                  <tr>
+                    <th scope="col">Information Bit</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
+                  <tr>
+                    <td>{key}</td>
+                    <td>{JSON.stringify(year.villageStats[G.playerStats[playerID].village].IBOutput[key])}</td>
+                  </tr>
+                ))}
+                </tbody>
+            </table>
             </div>
             <div className="col col-md-8 offset-md-2">
             <div className="d-grid mt-4">

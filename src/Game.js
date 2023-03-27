@@ -52,7 +52,8 @@ export const ThirstyEarth = {
         let stats = [];
         for(let i = 0; i < villages.length; i++) {
             stats.push({
-                r0: 1
+                r0: 1,
+                infoBits: "0000000000000000000"
             })
         }
         return stats;
@@ -142,6 +143,7 @@ export const ThirstyEarth = {
     }
     let villageId = data[6][0];
     G.villageStats[villageId]["r0"] = data[4][0];
+    G.villageStats[villageId]["IBOutput"] = data[3];
     G.villageStats[villageId]["modelOutput"] = data;
 
   },
@@ -170,6 +172,10 @@ export const ThirstyEarth = {
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
           G.playerStats[playerID].village = newSelection
+        },
+        setInfoBits: (G, ctx, informationBits, villageID) => {
+          G.villageStats[villageID].infoBits = informationBits
+          console.log(G.villageStats[villageID].infoBits)
         },
         setPublicInfo: (G, ctx, data) => {
           G.publicInfo = data
