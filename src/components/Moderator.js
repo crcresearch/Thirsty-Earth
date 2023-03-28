@@ -15,11 +15,9 @@ import cloud from '../img/cloud.png';
 import river from '../img/river.png';
 import well from '../img/well.png';
 import crop_empty from "../img/crop_empty.png";
-import water_empty from "../img/water_empty.png";
 
 // top options "toptions", if you will.
 import leaf from '../img/leaf.png';
-import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
 
 const tableStyle = {
@@ -35,7 +33,8 @@ const buttonSpacing = {
 }
 
 export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
-    const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages).fill(""));
+    const [selectedBits, setSelectedBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill(""));
+    const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill([]));
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well];
@@ -46,7 +45,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 2, "text": "What was the average number of fields irrigated with rain per player this year in our village?"},
         {"value": 3, "text": "What was the average number of fields left fallow per player this year in our village?"},
         {"value": 4, "text": "How many high value crops were planted on average per player this year in our village?"},
-        {"value": 5, "text": "Was this year a good or bad rain year?"},
+        {"value": 5, "text": "What is the probability of next year being a good year given this years' rain type?"},
         {"value": 6, "text": "What was the average unit groundwater cost over all players in the village this year?"},
         {"value": 7, "text": "What was the average unit surface water cost over all players in the village this year?"},
         {"value": 8, "text": "What was the average net profit for the village this year?"},
@@ -62,21 +61,26 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 18, "text": "Randomly show a player's number and their number of fields left fallow."}
     ]
 
-    function pushVillageIB(selections, village) {
-        console.log(selections);
+    function pushSelectedBit(selection, village) {
+        let tempSelected = selectedBits;
+        tempSelected[village] = selection;
+        setSelectedBits(tempSelected);
+        console.log(selectedBits);
+    }
+
+    function pushVillageIB(selection, village) {
+        console.log(village)
         let tempIBArray = informationBits;
-        let binaryChoiceString = ""
-        for (let i in IBChoices) {
-            let choiceValue = IBChoices[i].value;
-            if (selections.includes(choiceValue.toString())) {
-                binaryChoiceString += "1"
-            } else {
-                binaryChoiceString += "0"
-            }
-        }
-        tempIBArray[village] = binaryChoiceString;
+        tempIBArray[village] = [...tempIBArray[village], selection]
+        setInformationBits(tempIBArray);
+        moves.setInfoBits(informationBits[village], village);
+    }
+    function removeInfoBit(bit, village) {
+        let tempIBArray = informationBits;
+        tempIBArray[village] = tempIBArray[village].filter(el => el !== bit)
         setInformationBits(tempIBArray);
         console.log(informationBits);
+        moves.setInfoBits(informationBits[village], village);
     }
 
     return (
@@ -142,31 +146,60 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             }
             {G.villages.map(village => (
                 <div>
-                        <div className="row mt-3 mb-2">
-                            <div className='col-4'>
-                                <span className="h5">Village {village}</span>
-                            </div>
-                            {(village > 0 && ctx.phase == "setup") &&
-                            <div className='col-8'>
-                                <div class="input-group">
-                                    <select multiple className="form-select" id={`select-information-${village}`} size="3" name="informationBits" 
-                                    onChange={(event) => pushVillageIB([].slice.call(event.target.selectedOptions).map(item => item.value), village)}>
-                                        <option disabled>Scroll down to select Information Bits to purchase.</option>
-                                        {IBChoices.map(choice => (
-                                            <option value={choice.value}>{choice.text}</option>
-                                        ))}
-                                    </select>
-                                    <button 
-                                        className="btn btn-primary" type="submit"
-                                        disabled={G.villageStats[village].infoBits != "0000000000000000000"} 
-                                        onClick={() => moves.setInfoBits(informationBits[village], village)}
-                                    >
-                                        Confirm Selections
-                                    </button>
-                                </div>
-                            </div>
-                            }
+                    {(village > 0) &&
+                    <div className="row mt-3 mb-2">
+                        <div className='col-4'>
+                            <span className="h5">Village {village}</span>
                         </div>
+                        {(ctx.phase == "setup") &&
+                        <div className='col-8'>
+                            <div class="input-group">
+                                <select className="form-select" id={`select-information-${village}`} name="selectedBit" 
+                                onChange={(event) => pushSelectedBit(event.target.value, village)}>
+                                    <option disabled selected>Select Information Bit to purchase.</option>
+                                    {IBChoices.map(choice => (
+                                        <option disabled={informationBits[village].includes(choice.value.toString())} value={choice.value}>{choice.text}</option>
+                                    ))}
+                                </select>
+                                <button 
+                                    className="btn btn-primary" type="submit"
+                                    id={`submit-ib-${village}`}
+                                    onClick={() => pushVillageIB(selectedBits[village], village)}
+                                    disabled={informationBits[village].length >= 6}
+                                >
+                                    Add Information Bit
+                                </button>
+                            </div>
+                        </div>
+                        }
+                        {informationBits[village].length > 0 &&
+                        <table className='table table-striped mt-2'>
+                            <thead>
+                                <th>Purchased Information</th>
+                            </thead>
+                            <tbody>
+                                {informationBits[village].map(bitIndex => (
+                                    <tr>
+                                        <td>
+                                            <span class="mr-3">{IBChoices[bitIndex].text}</span> 
+                                        </td>
+                                        {(ctx.phase == "setup") &&
+                                        <td>
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm" type="submit"
+                                                onClick={() => removeInfoBit(bitIndex, village)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </td>
+                                        }
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        }
+                    </div>
+                    }
                     <table className='table table-striped mb-3'>
                         { (village === 0) &&
                             <thead>

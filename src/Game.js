@@ -174,7 +174,15 @@ export const ThirstyEarth = {
           G.playerStats[playerID].village = newSelection
         },
         setInfoBits: (G, ctx, informationBits, villageID) => {
-          G.villageStats[villageID].infoBits = informationBits
+          let binaryChoiceString = ""
+          for (let i in Array(19).fill("")) {
+              if (informationBits.includes(i.toString())) {
+                  binaryChoiceString += "1"
+              } else {
+                  binaryChoiceString += "0"
+              }
+          }
+          G.villageStats[villageID].infoBits = binaryChoiceString
           console.log(G.villageStats[villageID].infoBits)
         },
         setPublicInfo: (G, ctx, data) => {
@@ -327,7 +335,7 @@ export const ThirstyEarth = {
           G.currentRound = yearToRewind;
           G.playerStats = JSON.parse(
             JSON.stringify(
-              G.yearlyStateRecord[yearToRewind - 1].playerStats.slice()
+              G.yearlyStateRecord[yearToRewind - 1].playerStats.slice().forEach(el => el.selectionsSubmitted = false)
             )
           );
           G.yearlyStateRecord = JSON.parse(

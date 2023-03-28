@@ -13,7 +13,7 @@ import leaf from '../img/leaf.png';
 import briefcase from '../img/briefcase.png';
 import apple from '../img/apple.png';
 
-export function PreviousRounds({G, playerID}) {
+export function PreviousRounds({G, matchData, playerID}) {
     const waterChoices = [cloud, river, well]
     const cropChoices = [crop_empty, leaf, apple]
     const prevRoundsStyle = {
@@ -23,6 +23,15 @@ export function PreviousRounds({G, playerID}) {
         'max-height': '95%',
         'overflow-y': 'auto'
     }
+
+    const getPlayerName = (stats, infoBit) => {
+        const villagePlayerID = stats[G.playerStats[playerID].village].IBOutput[infoBit][0];
+        const villagePlayers = stats[G.playerStats[playerID].village].modelOutput[7][0].split(",");
+        const gamePlayerID = villagePlayers[villagePlayerID-1];
+        const playerName = matchData[gamePlayerID].name ? matchData[gamePlayerID].name : "BOT"
+        return playerName
+    }
+
     return(
         <div className="col-lg bg-lt-navy border-navy" style={prevRoundsStyle}>
             <div className="row bg-med-navy">
@@ -54,7 +63,7 @@ export function PreviousRounds({G, playerID}) {
                                 }
                             </div>
                             <div className="row small text-center"><strong>Rainfall: {year.villageStats[G.playerStats[playerID].village].r0 == 2 ? "Good" : "Bad"}</strong></div>
-                            <div className="row small text-center"><strong>Yearly Profit: {year.playerStats[playerID].Profit_Net}</strong></div>
+                            <div className="row small text-center"><strong>Yearly Profit: ${year.playerStats[playerID].Profit_Net.toFixed(2)}</strong></div>
                             <div className="row row-cols-2 small text-center">
                                 <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
                                 <div className="col">P_R: {year.playerStats[playerID].Profit_R}</div>
@@ -66,6 +75,16 @@ export function PreviousRounds({G, playerID}) {
                             <div className="row small text-center"><strong>New Values:</strong></div>
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>
                             <div className="row small text-center"><span>GW Depth: {year.playerStats[playerID].groundwaterDepth}</span></div>
+                            
+                            <div className="row small text-center"><strong>Purchased Information:</strong></div>
+                            {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
+                                <div className="row small text-center">
+                                {(year.villageStats[G.playerStats[playerID].village].IBOutput[key].length > 1) ? 
+                                <span>{key}: {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}</span>
+                                : <span>{key}: {key.includes("Profit") && "$"}{key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}</span>
+                                }
+                                </div>
+                            ))}
                             <hr></hr>
                         </div>
                     )
