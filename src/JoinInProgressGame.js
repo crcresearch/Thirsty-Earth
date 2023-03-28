@@ -74,7 +74,7 @@ export function EnterName() {
       <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
       <div className="row">
         <div className="col-lg-6 offset-lg-3">
-          <h4 className="text-center">If you are here to join the game that began on 03/27/2023, <a href="/game/2GSl6NFNuel">click here</a>!</h4>
+          <h4 className="text-center">If you are here to join the game that began on 03/27/2023, <a href="/game/2gSI6NFNuel">click here</a>!</h4>
         </div>
       </div>
     </div>
