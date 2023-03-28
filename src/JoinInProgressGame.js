@@ -23,7 +23,7 @@ const inputStyle = {
 
 const lobbyClient = new LobbyClient({ server: API_URL });
 
-export function JoinGame() {
+export function EnterName() {
   const setGameID = useSetRecoilState(gameIDAtom);
   const setPlayerID = useSetRecoilState(playerIDAtom);
   const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
@@ -74,52 +74,7 @@ export function JoinGame() {
       <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
       <div className="row">
         <div className="col-lg-6 offset-lg-3">
-          <h2 className="subtitle-font text-center">Join Game</h2>
-          <div className="mb-3">
-            {/* <label htmlFor="roomid"  className="form-label">Room ID: </label> */}
-            {alert}
-            <input
-              type="text"
-              className="form-control"
-              id="roomid"
-              aria-describedby="roomid-input"
-              required
-              style={inputStyle}
-              value={matchIDQuery}
-              onChange={(event) => {
-                setMatchIDQuery(event.target.value);
-              }}
-              placeholder="Room ID"
-            ></input>
-          </div>
-          <input
-            type="text"
-            id="name"
-            placeholder="Your name"
-            required
-            className="form-control"
-            style={inputStyle}
-            value={joiningPlayerName}
-            onChange={(event) => {
-              setJoiningPlayerName(event.target.value);
-            }}
-          ></input>
-          <div class="row row-cols-2 mt-3 ">
-            <div class="col col-1"><input type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} /></div>
-            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label></div>
-          </div>
-
-          <div className="d-flex flex-row-reverse ">
-            <button
-              type="button"
-              hidden={!agreeTOS}
-              className="btn btn-block btn-primary"
-              style={extraButtonStyle}
-              onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
-            >
-              Join
-            </button>
-          </div>
+          <h4 className="text-center">If you are here to join the game that began on 03/27/2023, <a href="/game/2GSl6NFNuel">click here</a>!</h4>
         </div>
       </div>
     </div>
