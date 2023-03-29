@@ -86,7 +86,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
                         <YearlyReview G={G} ctx={ctx} playerID={playerID} matchData={matchData} confirmFunc={confirmViewedYearlySummary}/>
                         : ctx.phase == "playerMoves" ?
-                        <MainField G={G} moves={moves}/>
+                        <MainField G={G} moves={moves} matchData={matchData}/>
                         : 
                         <div className="col-lg-7 border-navy border-start-0 border-end-0">
                             <div className='d-flex align-items-center' style={{height: "100%"}}>

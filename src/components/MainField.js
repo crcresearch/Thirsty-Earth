@@ -10,9 +10,9 @@ import river from '../img/river.png';
 import well from '../img/well.png';
 
 // top options "toptions", if you will.
-import leaf from '../img/leaf.png';
+import crop_low from '../img/crop_one.png';
 import briefcase from '../img/briefcase.png';
-import apple from '../img/apple.png';
+import crop_high from '../img/crop_two.png';
 
 // background image.
 import grass from "../img/grass.png";
@@ -78,8 +78,8 @@ const leftOptions = [
 
 const topOptions = [
     crop_empty,
-    leaf,
-    apple,
+    crop_low,
+    crop_high,
 ]
 
 // Individual crops on the game board.
@@ -125,10 +125,9 @@ const SelectAction = ({
             onClick={onClick} />)
 }
 
-export function MainField({ G, moves }) {
+export function MainField({ G, moves, matchData }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
     const gameGrid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-    //const [gridSelections, setGridSelections] = useState([[leaf, leaf, leaf], [leaf, leaf, leaf], [leaf, leaf, leaf]]);
     const [gridSelections, setGridSelections] = useState([
         [
             {left: cloud, top: crop_empty},
@@ -245,10 +244,10 @@ export function MainField({ G, moves }) {
         let submitCropGrid = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
         for(let i = 0; i < gridSelections.length; i++) {
             for(let j = 0; j < gridSelections[i].length; j++) {
-                if(gridSelections[i][j].top === apple) {
+                if(gridSelections[i][j].top === crop_high) {
                     submitCropGrid[i][j] = 2;
                 }
-                else if(gridSelections[i][j].top === leaf) {
+                else if(gridSelections[i][j].top === crop_low) {
                     submitCropGrid[i][j] = 1;
                 }
                 else if(gridSelections[i][j].top === crop_empty) {
@@ -313,6 +312,9 @@ export function MainField({ G, moves }) {
             <div className="row justify-content-center my-3">
                 <div className="col-9">
                     <div className="row justify-content-center mb-1">
+                        <div className="text-white">
+                            Players Submitted: {G.playerStats.filter(stat => stat.selectionsSubmitted == true).length}/{matchData.filter(player => ((!G.gameConfig.moderated || player.id != 0 ) && player.name != undefined && player.isConnected != undefined && player.isConnected == true)).length}
+                        </div>
                         <div className="text-white text-end">
                             Clear all fields <img src={reset} alt="reset button" onClick={resetOptions} className="img-icon" /> 
                         </div>

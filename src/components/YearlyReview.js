@@ -7,8 +7,8 @@ import river from '../img/river.png';
 import well from '../img/well.png';
 
 // top options "toptions", if you will.
-import leaf from '../img/leaf.png';
-import apple from '../img/apple.png';
+import crop_low from '../img/crop_one.png';
+import crop_high from '../img/crop_two.png';
 
 // Empty tile (default for irrigation method)
 import crop_empty from "../img/crop_empty.png";
@@ -53,7 +53,7 @@ const miniTileStyle = {
 }
 
 const waterChoices = [cloud, river, well]
-const cropChoices = [crop_empty, leaf, apple]
+const cropChoices = [crop_empty, crop_low, crop_high]
 
 export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
     
@@ -156,9 +156,11 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
                 </div>
             </div>
             </div>
-            <div className="row justify-content-center text-center">
-                <h5 className="text-light mt-3 mb-0">Purchased Information</h5>
-            </div>
+            {year.villageStats[G.playerStats[playerID].village].infoSelections.length > 0 &&
+                <div className="row justify-content-center text-center">
+                    <h5 className="text-light mt-3 mb-0">Purchased Information</h5>
+                </div>
+            }
             <div className="row row-cols-3">
             {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
                 <div className="col col-md-4 mt-1">
@@ -169,7 +171,7 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
                             {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}
                         </div>
                         : <div className="mb-1">
-                            {key.includes("Profit") && "$"}{key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}
+                            {key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}
                         </div>
                         }
                     </div>

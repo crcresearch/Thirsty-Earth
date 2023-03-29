@@ -41,6 +41,7 @@ export const ThirstyEarth = {
                   playerChoiceTally: {...defaultTally},
                   selectionsSubmitted: false,
                   village: (setupData.moderated && i == 0) ? 0 : "unassigned",
+                  Profit_Net: 0,
                   groundwaterDepth: 0
               })
           }
@@ -53,7 +54,9 @@ export const ThirstyEarth = {
         for(let i = 0; i < villages.length; i++) {
             stats.push({
                 r0: 1,
-                infoBits: "0000000000000000000"
+                infoSelections: [],
+                infoBits: "0000000000000000000",
+                IBOutput: {}
             })
         }
         return stats;
@@ -166,7 +169,8 @@ export const ThirstyEarth = {
           G.yearlyStateRecord.push({
             playerStats: G.playerStats.slice(),
             gwDepth: 2,
-            lastYearModelOutput: {}
+            lastYearModelOutput: {},
+            villageStats: G.villageStats
           })
           ctx.events.endPhase();
         },
@@ -182,8 +186,8 @@ export const ThirstyEarth = {
                   binaryChoiceString += "0"
               }
           }
-          G.villageStats[villageID].infoBits = binaryChoiceString
-          console.log(G.villageStats[villageID].infoBits)
+          G.villageStats[villageID].infoSelections = informationBits;
+          G.villageStats[villageID].infoBits = binaryChoiceString;
         },
         setPublicInfo: (G, ctx, data) => {
           G.publicInfo = data
@@ -333,14 +337,15 @@ export const ThirstyEarth = {
             return INVALID_MOVE;
           }
           G.currentRound = yearToRewind;
-          G.playerStats = JSON.parse(
-            JSON.stringify(
-              G.yearlyStateRecord[yearToRewind - 1].playerStats.slice().forEach(el => el.selectionsSubmitted = false)
-            )
+          let rewoundStats = JSON.parse(
+            JSON.stringify(G.yearlyStateRecord[yearToRewind - 1].playerStats.slice())
           );
+          rewoundStats.forEach(el => el.selectionsSubmitted = false)
+          G.playerStats = rewoundStats;
           G.yearlyStateRecord = JSON.parse(
             JSON.stringify(G.yearlyStateRecord.slice(0, yearToRewind))
           );
+          ctx.events.endPhase();
         },
       },
       turn: {

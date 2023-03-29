@@ -9,13 +9,13 @@ import crop_empty from "../img/crop_empty.png";
 import water_empty from "../img/water_empty.png";
 
 // top options "toptions", if you will.
-import leaf from '../img/leaf.png';
+import crop_low from '../img/crop_one.png';
 import briefcase from '../img/briefcase.png';
-import apple from '../img/apple.png';
+import crop_high from '../img/crop_two.png';
 
 export function PreviousRounds({G, matchData, playerID}) {
     const waterChoices = [cloud, river, well]
-    const cropChoices = [crop_empty, leaf, apple]
+    const cropChoices = [crop_empty, crop_low, crop_high]
     const prevRoundsStyle = {
         'height': '780px'
     }
@@ -75,13 +75,14 @@ export function PreviousRounds({G, matchData, playerID}) {
                             <div className="row small text-center"><strong>New Values:</strong></div>
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>
                             <div className="row small text-center"><span>GW Depth: {year.playerStats[playerID].groundwaterDepth}</span></div>
-                            
-                            <div className="row small text-center"><strong>Purchased Information:</strong></div>
+                            {year.villageStats[G.playerStats[playerID].village].infoSelections.length > 0 &&
+                                <div className="row small text-center"><strong>Purchased Information:</strong></div>
+                            }
                             {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
                                 <div className="row small text-center">
                                 {(year.villageStats[G.playerStats[playerID].village].IBOutput[key].length > 1) ? 
                                 <span>{key}: {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}</span>
-                                : <span>{key}: {key.includes("Profit") && "$"}{key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}</span>
+                                : <span>{key}: {key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}</span>
                                 }
                                 </div>
                             ))}
