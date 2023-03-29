@@ -83,14 +83,29 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G} ctx={ctx}/>
                     { ctx.gameover ?
                         <ResultsPage G={G} playerID={playerID}/>
-                    : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
+                        : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
                         <YearlyReview G={G} ctx={ctx} playerID={playerID} confirmFunc={confirmViewedYearlySummary}/>
                         : ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves}/>
-                        : 
+                        : (G.playerStats[playerID].village == "unassigned" && ctx.phase == "setup") ?
                         <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                            <div className='d-flex align-items-center' style={{height: "100%"}}>
-                                <h3>The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
+                            <div className="d-flex align-items-end" style={{height: "50%"}}>
+                                <h3 className="justify-content-center">The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
+                            </div>
+                            <div class="form-group mt-4 mx-2">
+                                <label>Do you know what village you are assigned to? Select below:</label>
+                                <select id={`select-${playerID}`} name="village" class="form-select" onChange={(event) => moves.setVillageAssignment(event.target.value, playerID)}>
+                                    <option disabled selected>Select an option from the dropdown list</option>
+                                    {G.villages.filter(el => el !== 0).map(village => (
+                                        <option disabled={matchData.filter(el => G.playerStats[el.id].village === village).length == G.gameConfig.playersPerVillage} key={village} value={village}>Village {village}</option>
+                                        ))}
+                                </select>
+                            </div>
+                        </div>
+                        :
+                        <div className="col-lg-7 border-navy border-start-0 border-end-0">
+                            <div className="d-flex align-items-center" style={{height: "100%"}}>
+                                <h3 className="justify-content-center">The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
                             </div>
                         </div>
                     }
