@@ -8,6 +8,8 @@ import { gameIDAtom } from '../atoms/gameid';
 import axios from 'axios'
 import { PLUMBER_URL } from "../config";
 
+import { ModeratorChatBox } from './ModeratorChatBox';
+
 // left-hand side options
 import cloud from '../img/cloud.png';
 import river from '../img/river.png';
@@ -32,7 +34,7 @@ const buttonSpacing = {
     marginLeft: "10px"
 }
 
-export function Moderator({ ctx, G, moves, matchData}) {
+export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well]
@@ -110,7 +112,7 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                 <td>Player ID</td>
                                 <td>Player Name</td>
                                 <td>Is Connected</td>
-                                <td>Money</td>
+                                <td>Funds</td>
                                 <td>Turn Submitted</td>
                                 {ctx.phase == "setup" &&
                                     <td>Unassign</td>
@@ -123,8 +125,8 @@ export function Moderator({ ctx, G, moves, matchData}) {
                                     <td className="align-middle" style={tableStyle}>{player.id} { (village === 0) && "(Moderator)" }</td>
                                     <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
-                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney}</td>
-                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"}</td>
+                                    <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney.toFixed(2)}</td>
+                                    <td onClick={() => moves.resetSubmissions(player.id)} className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div style={{cursor:"not-allowed"}}> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"} </td>
                                     {ctx.phase == "setup" &&
                                         <td className="align-middle" style={tableStyle}><button class="btn btn-primary" style={(player.id === 0) ? hideButton : {}} onClick={() => moves.setVillageAssignment('unassigned', player.id)}>Unassign</button></td>
                                     }
@@ -174,7 +176,12 @@ export function Moderator({ ctx, G, moves, matchData}) {
                     moves.setPublicInfo(res.data[1][0])
                 })}>Get Public Info</button>
                 <button 
-                    disabled={matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0} 
+                    disabled={
+                        G.publicInfo === null || 
+                        G.playerStats.reduce(
+                            (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 
+                        ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
+                    } 
                     className='btn btn-primary'
                     style={buttonSpacing}
                     onClick={() => moves.startGame()}
@@ -270,6 +277,9 @@ export function Moderator({ ctx, G, moves, matchData}) {
                 </div>
                 }
             </div>
+            <hr></hr>
+
+            <ModeratorChatBox chatMessages={chatMessages}></ModeratorChatBox>
         </div>
       
 
