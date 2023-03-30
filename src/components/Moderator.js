@@ -21,10 +21,10 @@ import crop_low from '../img/crop_one.png';
 import crop_high from '../img/crop_two.png';
 
 const tableStyle = {
-    width: "20%"
+    width: "16.7%"
 }
 
-const hideButton = {
+const hide = {
     visibility: "hidden"
 }
 
@@ -136,7 +136,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                     <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
                                     <td className="align-middle" style={tableStyle}>
-                                        <select id={`select-${player.id}`} name="village" class="form-select" onChange={(event) => moves.setVillageAssignment(Number(event.target.value), player.id)}>
+                                        <select id={`select-${player.id}`} name="village" class="form-select" onChange={(event) => moves.setVillageAssignment(event.target.value, player.id)}>
                                             <option disabled selected>Select an option from the dropdown list</option>
                                             {G.villages.filter(el => el !== 0).map(village => (
                                                 <option disabled={matchData.filter(el => G.playerStats[el.id].village === village).length == G.gameConfig.playersPerVillage} key={village} value={village}>Village {village}</option>
@@ -217,7 +217,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                 <td>Funds</td>
                                 <td>Turn Submitted</td>
                                 {ctx.phase == "setup" &&
-                                    <td>Unassign</td>
+                                    <td>Change Assignment</td>
                                 }
                             </thead>
                         }
@@ -230,7 +230,15 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                     <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney.toFixed(2)}</td>
                                     <td onClick={() => moves.resetSubmissions(player.id)} className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div style={{cursor:"not-allowed"}}> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"} </td>
                                     {ctx.phase == "setup" &&
-                                        <td className="align-middle" style={tableStyle}><button class="btn btn-primary" style={(player.id === 0) ? hideButton : {}} onClick={() => moves.setVillageAssignment('unassigned', player.id)}>Unassign</button></td>
+                                        <td className="align-middle" style={tableStyle}>
+                                        <select style={(player.id === 0) ? hide : {}} id={`select-${player.id}`} name="village" class="form-select" onChange={(event) => moves.setVillageAssignment(event.target.value, player.id)}>
+                                            <option disabled selected>Select option...</option>
+                                            {G.villages.filter(el => el !== 0 && el !== G.playerStats[player.id].village).map(village => (
+                                                <option disabled={matchData.filter(el => G.playerStats[el.id].village === village).length == G.gameConfig.playersPerVillage} key={village} value={village}>Village {village}</option>
+                                            ))}
+                                            <option value="unassigned">Unassign</option>
+                                        </select>
+                                        </td>
                                     }
                                 </tr>
                             ))}
@@ -275,7 +283,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                     numPlayers: 6
                 }}).then((res) => {
                     console.log(res.data[1][0])
-                    moves.setPublicInfo(res.data[1][0])
+                    moves.setPublicInfo(res.data[1][0], playerID)
                 })}>Get Public Info</button>
                 <button 
                     disabled={
@@ -286,7 +294,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                     } 
                     className='btn btn-primary'
                     style={buttonSpacing}
-                    onClick={() => moves.startGame()}
+                    onClick={() => moves.startGame(playerID)}
                 >Start Game</button>
                 </div>
                 }

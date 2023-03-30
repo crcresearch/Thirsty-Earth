@@ -162,7 +162,13 @@ export const ThirstyEarth = {
     setup: {
       moves: {
         //Start the game
-        startGame: (G, ctx) => {
+        startGame: (G, ctx, playerID) => {
+          if (
+            G.gameConfig.moderated === false ||
+            (G.gameConfig.moderated === true && playerID != 0)
+          ) {
+            return INVALID_MOVE;
+          }
           if (G.publicInfo === null) {
             return INVALID_MOVE;
           }
@@ -175,7 +181,7 @@ export const ThirstyEarth = {
           ctx.events.endPhase();
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
-          G.playerStats[playerID].village = newSelection
+          G.playerStats[playerID].village = newSelection == "unassigned" ? newSelection : Number(newSelection)
         },
         setInfoBits: (G, ctx, informationBits, villageID) => {
           let binaryChoiceString = ""
@@ -189,7 +195,13 @@ export const ThirstyEarth = {
           G.villageStats[villageID].infoSelections = informationBits;
           G.villageStats[villageID].infoBits = binaryChoiceString;
         },
-        setPublicInfo: (G, ctx, data) => {
+        setPublicInfo: (G, ctx, data, playerID) => {
+          if (
+            G.gameConfig.moderated === false ||
+            (G.gameConfig.moderated === true && playerID != 0)
+          ) {
+            return INVALID_MOVE;
+          }
           G.publicInfo = data
         },
       },
@@ -199,7 +211,7 @@ export const ThirstyEarth = {
         }
       },
       turn: {
-        activePlayers: [0],
+        activePlayers: { all: Stage.NULL },
       },
       start: true,
       next: "playerMoves",
