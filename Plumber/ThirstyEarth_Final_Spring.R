@@ -49,7 +49,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   numPlayers = as.numeric(numPlayers)
   Water = matrix(as.numeric(str_split_1(Water,"")), ncol=9, byrow=TRUE)
   Crop = matrix(as.numeric(str_split_1(Crop,"")), ncol=9, byrow=TRUE)
-  IB = rep(0,19) #sample(c(1,0), 6, replace = T, prob = c(.35,.65))
+  IB = matrix(as.numeric(str_split_1(IB,"")), ncol=19, byrow=TRUE) #sample(c(1,0), 6, replace = T, prob = c(.35,.65))
   GD = matrix(as.numeric(str_split_1(GD,",")), ncol=numPlayers, byrow=TRUE)
   r0=as.integer(r0)   
   P = as.numeric(P) 
@@ -147,7 +147,6 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
  # rhoRe=0.8 #Multiplier for groundwater recharge in a bad vs good rain year.
  # rhoRF = 1.2 #the ratio between expected unit returns from rain fed crops and outside wages
  # aCr=2 #Multiplier for both profit and water use for high value crops.
- # Pen=2 #Profit penalty per person for added public information (lump sum per bit)
  # 
  # #Advanced settings:
  # #Optimal Fields allocation per player for surface water.
@@ -162,7 +161,8 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
  # k=1.75 #Recession constant per period.
  # lambda = 0.9 #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
  # #higher k and lambda increases max depth and the depth cost coefficient betaG, independently of expected recharge
-
+ # aPen=0.50 #percentage of the profit if all fields were fallow 
+ # Pen = aPen*9*aF #Lump sum profit penalty per person per bit for added public information
   #################  #################  #################  #################  #################  #################  #################  #################
   
   #Initial Checks
@@ -444,7 +444,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   RRand=randomplayer(Ri[[2]])
   FRand=randomplayer(Fi[[1]])
   
-  InfoBits = list(Gv, Sv, Rv, Fv, round(sum(Cr)/N,2), ifelse((rain==2),'Good','Bad'), round(mean(uC_G),2), round(mean(uC_S),2), round(mean(df$P_Net),2), which.max(df$P_Net), 
+  InfoBits = list(Gv, Sv, Rv, Fv, round(sum(Cr)/N,2), ifelse((rain==2),round(P11,2),round(P01,2)), round(mean(uC_G),2), round(mean(uC_S),2), round(mean(df$P_Net),2), which.max(df$P_Net), 
                         max(df$P_Net), which.max(Gi[[2]]), max(Gi[[2]]), which.max(Si[[2]]), max(Si[[2]]), c(GRand$num, GRand$use),
                         c(SRand$num, SRand$use), c(RRand$num, RRand$use), c(FRand$num, FRand$use))
   
@@ -453,7 +453,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #3. What was the average number of fields irrigated with rain per player this year in our village?
   #4. What was the average number of fields left fallow per player this year in our village?
   #5. How many high value crops were planted on average per player this year in our village?
-  #6. Was this year a good or bad rain year?
+  #6. What is the probability of next year being a good year given this years' rain type?
   #7. What was the average unit groundwater cost over all players in the village this year? 
   #8. What was the average unit surface water cost over all players in the village this year?  
   #9. What was the average net profit for the village this year? 
@@ -468,10 +468,10 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #18. Randomly show a player's number and rain water usage.
   #19. Randomly show a player's number and their number of fields left fallow.
   
-  names(InfoBits)=c('Avg. # GW Fields','Avg. # SW Fields','Avg. # RW Fields', 'Avg. # Fallow Fields', 'Avg. # High Value Crops', 'Rain Year',
-                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player # Max Profit', 'Max Village Profit', 'Player # Max GW use', 'Max Individual GW use',
-                    'Player # Max SW use','Max Individual SW use', 'Random player # & GW usage', 'Random player # & SW usage', 'Random player # & RW usage', 
-                    'Random player # & # fields Fallow') 
+  names(InfoBits)=c('Avg. # GW Fields','Avg. # SW Fields','Avg. # RW Fields', 'Avg. # Fallow Fields', 'Avg. # High Value Crops', 'Prob. of Good Rain Next Year',
+                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player Max Profit', 'Max Village Profit', 'Player Max GW use', 'Max Individual GW use',
+                    'Player Max SW use','Max Individual SW use', 'Random player/GW usage', 'Random player/SW usage', 'Random player/RW usage', 
+                    'Random player/# fields Fallow') 
   
   
   #######Public information for all players in the village

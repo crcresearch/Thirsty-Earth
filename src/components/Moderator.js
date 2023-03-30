@@ -15,12 +15,10 @@ import cloud from '../img/cloud.png';
 import river from '../img/river.png';
 import well from '../img/well.png';
 import crop_empty from "../img/crop_empty.png";
-import water_empty from "../img/water_empty.png";
 
 // top options "toptions", if you will.
-import leaf from '../img/leaf.png';
-import briefcase from '../img/briefcase.png';
-import apple from '../img/apple.png';
+import crop_low from '../img/crop_one.png';
+import crop_high from '../img/crop_two.png';
 
 const tableStyle = {
     width: "20%"
@@ -35,10 +33,55 @@ const buttonSpacing = {
 }
 
 export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
+    const [selectedBits, setSelectedBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill(""));
+    const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill([]));
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
-    const waterChoices = [cloud, river, well]
-    const cropChoices = [crop_empty, leaf, apple ]
+    const waterChoices = [cloud, river, well];
+    const cropChoices = [crop_empty, crop_low, crop_high];
+    const IBChoices = [  
+        {"value": 0, "text": "What is the average number of fields irrigated with groundwater per player this year in our village?"},
+        {"value": 1, "text": "What was the average number of fields irrigated with surface water per player this year in our village?"},
+        {"value": 2, "text": "What was the average number of fields irrigated with rain per player this year in our village?"},
+        {"value": 3, "text": "What was the average number of fields left fallow per player this year in our village?"},
+        {"value": 4, "text": "How many high value crops were planted on average per player this year in our village?"},
+        {"value": 5, "text": "What is the probability of next year being a good year given this years' rain type?"},
+        {"value": 6, "text": "What was the average unit groundwater cost over all players in the village this year?"},
+        {"value": 7, "text": "What was the average unit surface water cost over all players in the village this year?"},
+        {"value": 8, "text": "What was the average net profit for the village this year?"},
+        {"value": 9, "text": "Which player had the highest net profit this year?"},
+        {"value": 10, "text": "What was the maximum net profit this year?"},
+        {"value": 11, "text": "Which player used the most groundwater this year?"},
+        {"value": 12, "text": "What is the maximum amount of groundwater used by a single player this year?"},
+        {"value": 13, "text": "Which player used the most surface water this year?"},
+        {"value": 14, "text": "What is the maximum amount of surface water used by a single player this year?"},
+        {"value": 15, "text": "Randomly show a player's number and groundwater usage."},
+        {"value": 16, "text": "Randomly show a player's number and surface water usage."},
+        {"value": 17, "text": "Randomly show a player's number and rain water usage."},
+        {"value": 18, "text": "Randomly show a player's number and their number of fields left fallow."}
+    ]
+
+    function pushSelectedBit(selection, village) {
+        let tempSelected = selectedBits;
+        tempSelected[village] = selection;
+        setSelectedBits(tempSelected);
+    }
+
+    function pushVillageIB(selection, village) {
+        if (selection != "") {
+            let tempIBArray = informationBits;
+            tempIBArray[village] = [...tempIBArray[village], selection];
+            setInformationBits(tempIBArray);
+            moves.setInfoBits(informationBits[village], village);
+        }
+    }
+
+    function removeInfoBit(bit, village) {
+        let tempIBArray = informationBits;
+        tempIBArray[village] = tempIBArray[village].filter(el => el !== bit)
+        setInformationBits(tempIBArray);
+        moves.setInfoBits(informationBits[village], village);
+    }
 
     return (
         <div className='container mt-4'>
@@ -68,6 +111,11 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 </tbody>
             </table>
             <hr/>
+            {ctx.phase == "playerMoves" &&
+            <div className="my-2">
+                <span>Players Submitted: {G.playerStats.filter(stat => stat.selectionsSubmitted == true).length}/{matchData.filter(player => ((!G.gameConfig.moderated || player.id != 0 ) && player.name != undefined && player.isConnected != undefined && player.isConnected == true)).length}</span>
+            </div>
+            }
             <div className="text-center">
                 <h3>Players</h3>
             </div>
@@ -104,7 +152,61 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             {G.villages.map(village => (
                 <div>
                     {(village > 0) &&
-                        <span className="h5 mt-3 mb-2">Village {village}</span>
+                    <div className="row mt-3 mb-2">
+                        <div className='col-4'>
+                            <span className="h5">Village {village}</span>
+                        </div>
+                        {(ctx.phase == "setup") &&
+                        <div className='col-8'>
+                            <div class="input-group">
+                                <select className="form-select" id={`select-information-${village}`} name="selectedBits" 
+                                onChange={(event) => pushSelectedBit(event.target.value, village)}>
+                                    <option disabled selected>Select Information Bit to purchase.</option>
+                                    {IBChoices.map(choice => (
+                                        <option 
+                                            disabled={informationBits[village].includes(choice.value.toString())} 
+                                            value={choice.value}>{choice.text}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button 
+                                    className="btn btn-primary" type="submit"
+                                    id={`submit-ib-${village}`}
+                                    onClick={() => pushVillageIB(selectedBits[village], village)}
+                                    disabled={informationBits[village].length >= 6}
+                                >
+                                    Add Information Bit
+                                </button>
+                            </div>
+                        </div>
+                        }
+                        {G.villageStats[village].infoSelections.length > 0 &&
+                        <table className='table table-striped mt-2'>
+                            <thead>
+                                <th>Purchased Information</th>
+                            </thead>
+                            <tbody>
+                                {G.villageStats[village].infoSelections.map(bitIndex => (
+                                    <tr>
+                                        <td>
+                                            <span class="mr-3">{IBChoices[bitIndex].text}</span> 
+                                        </td>
+                                        {(ctx.phase == "setup") &&
+                                        <td>
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm" type="submit"
+                                                onClick={() => removeInfoBit(bitIndex, village)}
+                                            >
+                                                Remove
+                                            </button>
+                                        </td>
+                                        }
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        }
+                    </div>
                     }
                     <table className='table table-striped mb-3'>
                         { (village === 0) &&
@@ -222,7 +324,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                         promisesList.push(axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
                             Water: waterChoices,
                             Crop: cropChoices,
-                            IB: 0,
+                            IB: G.villageStats[i+1].infoBits,
                             GD: waterDepths.join(","),
                             r0: G.villageStats[i+1].r0,
                             P: G.gameConfig.probabilityWetYear,
@@ -268,7 +370,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 {ctx.phase == "moderatorPause" && 
                 <div>
                 <button className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Advance to Next Choice Period</button> <br/>
-                {[...Array(G.currentRound)].map(function(x, i) {
+                {[...Array(G.currentRound - 1)].map(function(x, i) {
                  return <><button className='btn btn-primary mb-2' onClick={() => moves.rewind(0,i+1)}>Rewind to Beginning of Year {i+1}</button><br/></>
                 })
                  }
