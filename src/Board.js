@@ -89,8 +89,11 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                         <MainField G={G} moves={moves} matchData={matchData}/>
                         : (G.playerStats[playerID].village == "unassigned" && ctx.phase == "setup") ?
                         <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                            <div className="d-flex align-items-end" style={{height: "50%"}}>
-                                <h3 className="justify-content-center">The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
+                            <div className="d-flex align-items-end justify-content-center mb-2" style={{height: "40%"}}>
+                                <h5>Awaiting Village Assignment...</h5>
+                            </div>
+                            <div className="d-flex align-items-start justify-content-center mt-2" style={{height: "10%"}}>
+                                <h3>The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
                             </div>
                             <div class="form-group mt-4 mx-2">
                                 <label>Do you know what village you are assigned to? Select below:</label>
@@ -104,8 +107,11 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                         </div>
                         :
                         <div className="col-lg-7 border-navy border-start-0 border-end-0">
-                            <div className="d-flex align-items-center" style={{height: "100%"}}>
-                                <h3 className="justify-content-center">The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
+                            <div className="d-flex align-items-end justify-content-center mb-2" style={{height: "50%"}}>
+                                <h5>You joined Village {G.playerStats[playerID].village}!</h5>
+                            </div>
+                            <div className="d-flex align-items-start justify-content-center mt-2" style={{height: "50%"}}>
+                                <h3>The game is currently in an instructor setup phase. The game board will appear here when players are able to make moves.</h3>
                             </div>
                         </div>
                     }
