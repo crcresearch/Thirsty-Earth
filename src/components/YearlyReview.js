@@ -7,8 +7,8 @@ import river from '../img/river.png';
 import well from '../img/well.png';
 
 // top options "toptions", if you will.
-import leaf from '../img/leaf.png';
-import apple from '../img/apple.png';
+import crop_low from '../img/crop_one.png';
+import crop_high from '../img/crop_two.png';
 
 // Empty tile (default for irrigation method)
 import crop_empty from "../img/crop_empty.png";
@@ -53,9 +53,9 @@ const miniTileStyle = {
 }
 
 const waterChoices = [cloud, river, well]
-const cropChoices = [crop_empty, leaf, apple]
+const cropChoices = [crop_empty, crop_low, crop_high]
 
-export function YearlyReview({ G, ctx, playerID, confirmFunc }) {
+export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
     
     let year = G.yearlyStateRecord[G.currentRound-1]
     let playerCropChoices = year.playerStats[playerID].playerCropFields.flat(4)
@@ -68,87 +68,118 @@ export function YearlyReview({ G, ctx, playerID, confirmFunc }) {
         },
         0
     )}
+
+    const getPlayerName = (stats, infoBit) => {
+        const villagePlayerID = stats[G.playerStats[playerID].village].IBOutput[infoBit][0];
+        const villagePlayers = stats[G.playerStats[playerID].village].modelOutput[7][0].split(",");
+        const gamePlayerID = villagePlayers[villagePlayerID-1];
+        const playerName = matchData[gamePlayerID].name ? matchData[gamePlayerID].name : "BOT"
+        return playerName
+    }
+
     return (
         <div className="col-lg-7 bg-green border-navy border-start-0 border-end-0 text-light" style={gameBoardStyle}>
-            <div className="row justify-content-center mt-4 text-center">
-                        <h2 className="text-light mt-2 mb-0 text-uppercase">Year {G.currentRound - 1} Review </h2>
+            <div className="row justify-content-center mt-2 text-center">
+                        <h2 className="text-light mb-0 text-uppercase">Year {G.currentRound - 1} Review </h2>
             </div>
-            <div className="row justify-content-center mt-4 mb-2 text-center">
-                        <h4 className="text-light mt-2 mb-0">Your Choices</h4>
+            <div className="row justify-content-center mt-2 mb-2 text-center">
+                        <h4 className="text-light mb-0">Your Choices</h4>
             </div>
             <div class="row row-cols-9 mx-2">
-                                {
-                                    [...Array(9)].map((y, index) => {   
-                                        return (
-                                            <div className="col mb-1 mx-0 px-0" key={index}>
-                                                <img className="bg-wet-dirt border-0" src={waterChoices[year.playerStats[playerID].playerWaterFields.flat(4)[index]]} width="100%"></img>
-                                                <br className="p-0 m-0" />
-                                                <img className="bg-dirt border-0" src={cropChoices[year.playerStats[playerID].playerCropFields.flat(4)[index]]} width="100%"></img>
-                                            </div>
-                                        )
-                                    })
-                                }
+                {
+                    [...Array(9)].map((y, index) => {   
+                        return (
+                            <div className="col mb-1 mx-0 px-0" key={index}>
+                                <img className="bg-wet-dirt border-0" src={waterChoices[year.playerStats[playerID].playerWaterFields.flat(4)[index]]} width="100%"></img>
+                                <br className="p-0 m-0" />
+                                <img className="bg-dirt border-0" src={cropChoices[year.playerStats[playerID].playerCropFields.flat(4)[index]]} width="100%"></img>
+                            </div>
+                        )
+                    })
+                }
             </div>
             <div class="row mx-2">
-            <table class="table table-success table-striped mt-3">
-            <thead>
-    <tr>
-      <th scope="col">Crop Source</th>
-      <th scope="col">Low Val</th>
-      <th scope="col">High Val</th>
-      <th scope="col">Profit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Fallow</th>
-      <td>-</td>
-      <td>-</td>
-      <td>{year.playerStats[playerID].Profit_F}</td>
-    </tr>
-    <tr>
-      <th scope="row">Rain</th>
-      <td>{count_water_amounts(0,1)}</td>
-      <td>{count_water_amounts(0,2)}</td>
-      <td>{year.playerStats[playerID].Profit_R}</td>
-    </tr>
-    <tr>
-      <th scope="row">Surface</th>
-      <td>{count_water_amounts(1,1)}</td>
-      <td>{count_water_amounts(1,2)}</td>
-      <td>{year.playerStats[playerID].Profit_S}</td>
-    </tr>
-    <tr>
-      <th scope="row">Ground</th>
-      <td>{count_water_amounts(2,1)}</td>
-      <td>{count_water_amounts(2,2)}</td>
-      <td>{year.playerStats[playerID].Profit_G}</td>
-    </tr>
-  </tbody>
+            <table class="table table-success table-striped mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">Crop Source</th>
+                    <th scope="col">Low Val</th>
+                    <th scope="col">High Val</th>
+                    <th scope="col">Profit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Fallow</th>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>{year.playerStats[playerID].Profit_F}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Rain</th>
+                    <td>{count_water_amounts(0,1)}</td>
+                    <td>{count_water_amounts(0,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_R}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Surface</th>
+                    <td>{count_water_amounts(1,1)}</td>
+                    <td>{count_water_amounts(1,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_S}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Ground</th>
+                    <td>{count_water_amounts(2,1)}</td>
+                    <td>{count_water_amounts(2,2)}</td>
+                    <td>{year.playerStats[playerID].Profit_G}</td>
+                  </tr>
+                </tbody>
             </table>
             </div>
             <div className="row row-cols-3">
-            <div className="col col-md-4 mt-3">
+            <div className="col col-md-4">
                 <div className="bg-dirt-bank text-center">
                     <h6 className="text-white-50 mt-1 mb-0">Yearly Profit</h6>
-                    <div className="mb-1">{year.playerStats[playerID].Profit_Net}</div>
+                    <div className="mb-1">${year.playerStats[playerID].Profit_Net.toFixed(2)}</div>
                 </div>
             </div>
-            <div className="col col-md-4 mt-3">
+            <div className="col col-md-4">
                 <div className="bg-dirt-bank text-center">
                     <h6 className="text-white-50 mt-1 mb-0">Total Funds</h6>
-                    <div className="mb-1">{year.playerStats[playerID].playerMoney.toFixed(2)}</div>
+                    <div className="mb-1">${year.playerStats[playerID].playerMoney.toFixed(2)}</div>
                 </div>
             </div>
-            <div className="col col-md-4 mt-3">
+            <div className="col col-md-4">
                 <div className="bg-dirt-bank text-center">
                     <h6 className="text-white-50 mt-1 mb-0">Water Depth</h6>
                    <div className="mb-1">{year.playerStats[playerID].groundwaterDepth}</div>
                 </div>
             </div>
             </div>
+            {year.villageStats[G.playerStats[playerID].village].infoSelections.length > 0 &&
+                <div className="row justify-content-center text-center">
+                    <h5 className="text-light mt-3 mb-0">Purchased Information</h5>
+                </div>
+            }
+            <div className="row row-cols-3">
+            {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
+                <div className="col col-md-4 mt-1">
+                    <div className="bg-dirt-bank text-center">
+                        <h6 className="text-white-50 mt-1 mb-0">{key}</h6>
+                        {(year.villageStats[G.playerStats[playerID].village].IBOutput[key].length > 1) ? 
+                        <div className="mb-1">
+                            {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}
+                        </div>
+                        : <div className="mb-1">
+                            {key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}
+                        </div>
+                        }
+                    </div>
+                </div>
+            ))}
+            </div>
             <div className="col col-md-8 offset-md-2">
-            <div className="d-grid mt-4">
+            <div className="d-grid mt-3">
             { ctx.phase == "playerMoves" ?
             <button 
                             className="btn btn-danger text-white text-uppercase"

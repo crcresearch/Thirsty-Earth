@@ -84,9 +84,9 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     { ctx.gameover ?
                         <ResultsPage G={G} playerID={playerID}/>
                         : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
-                        <YearlyReview G={G} ctx={ctx} playerID={playerID} confirmFunc={confirmViewedYearlySummary}/>
+                        <YearlyReview G={G} ctx={ctx} playerID={playerID} matchData={matchData} confirmFunc={confirmViewedYearlySummary}/>
                         : ctx.phase == "playerMoves" ?
-                        <MainField G={G} moves={moves}/>
+                        <MainField G={G} moves={moves} matchData={matchData}/>
                         : (G.playerStats[playerID].village == "unassigned" && ctx.phase == "setup") ?
                         <div className="col-lg-7 border-navy border-start-0 border-end-0">
                             <div className="d-flex align-items-end" style={{height: "50%"}}>
@@ -109,7 +109,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                             </div>
                         </div>
                     }
-                    <PreviousRounds G={G} playerID={playerID}/>
+                    <PreviousRounds G={G} playerID={playerID} matchData={matchData}/>
                 </div>
                 <div className="row justify-content-md-center bg-navy text-light rounded-bottom">
                     <div className="row small text-center mt-2 mb-2"><span>Probability of good rain year (P): {100* G.gameConfig.probabilityWetYear}%</span></div>

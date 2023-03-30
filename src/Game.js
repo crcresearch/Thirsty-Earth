@@ -41,6 +41,7 @@ export const ThirstyEarth = {
                   playerChoiceTally: {...defaultTally},
                   selectionsSubmitted: false,
                   village: (setupData.moderated && i == 0) ? 0 : "unassigned",
+                  Profit_Net: 0,
                   groundwaterDepth: 0
               })
           }
@@ -52,7 +53,10 @@ export const ThirstyEarth = {
         let stats = [];
         for(let i = 0; i < villages.length; i++) {
             stats.push({
-                r0: 1
+                r0: 1,
+                infoSelections: [],
+                infoBits: "0000000000000000000",
+                IBOutput: {}
             })
         }
         return stats;
@@ -142,6 +146,7 @@ export const ThirstyEarth = {
     }
     let villageId = data[6][0];
     G.villageStats[villageId]["r0"] = data[4][0];
+    G.villageStats[villageId]["IBOutput"] = data[3];
     G.villageStats[villageId]["modelOutput"] = data;
 
   },
@@ -170,12 +175,25 @@ export const ThirstyEarth = {
           G.yearlyStateRecord.push({
             playerStats: G.playerStats.slice(),
             gwDepth: 2,
-            lastYearModelOutput: {}
+            lastYearModelOutput: {},
+            villageStats: G.villageStats
           })
           ctx.events.endPhase();
         },
         setVillageAssignment: (G, ctx, newSelection, playerID) => {
           G.playerStats[playerID].village = newSelection == "unassigned" ? newSelection : Number(newSelection)
+        },
+        setInfoBits: (G, ctx, informationBits, villageID) => {
+          let binaryChoiceString = ""
+          for (let i in Array(19).fill("")) {
+              if (informationBits.includes(i.toString())) {
+                  binaryChoiceString += "1"
+              } else {
+                  binaryChoiceString += "0"
+              }
+          }
+          G.villageStats[villageID].infoSelections = informationBits;
+          G.villageStats[villageID].infoBits = binaryChoiceString;
         },
         setPublicInfo: (G, ctx, data, playerID) => {
           if (
@@ -331,14 +349,15 @@ export const ThirstyEarth = {
             return INVALID_MOVE;
           }
           G.currentRound = yearToRewind;
-          G.playerStats = JSON.parse(
-            JSON.stringify(
-              G.yearlyStateRecord[yearToRewind - 1].playerStats.slice()
-            )
+          let rewoundStats = JSON.parse(
+            JSON.stringify(G.yearlyStateRecord[yearToRewind - 1].playerStats.slice())
           );
+          rewoundStats.forEach(el => el.selectionsSubmitted = false)
+          G.playerStats = rewoundStats;
           G.yearlyStateRecord = JSON.parse(
             JSON.stringify(G.yearlyStateRecord.slice(0, yearToRewind))
           );
+          ctx.events.endPhase();
         },
       },
       turn: {
