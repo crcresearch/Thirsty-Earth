@@ -208,7 +208,7 @@ export function CreateGame({ gameCreationPassword }) {
     function createMatch(playerName) {
         lobbyClient
             .createMatch(GAME_NAME, {
-                numPlayers: numPlayers * numVillages + (moderated ? 1: 0) + (2 * numVillages), 
+                numPlayers: numPlayers * numVillages + (moderated ? 1: 0) + (1 * numVillages), 
                 setupData: {
                     numYears: numYears, 
                     playersPerVillage: numPlayers, 
