@@ -255,7 +255,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
                     Water: "000000000000000000000000000000000000000000000000000000",
                     Crop: "000000000000000000000000000000000000000000000000000000",
-                    IB: 0,
+                    IB: "0000000000000000000",
                     GD: "0,0,0,0,0,0",
                     r0: G.villageStats[1].r0,
                     P: G.gameConfig.probabilityWetYear,
