@@ -65,12 +65,12 @@ export function PreviousRounds({G, matchData, playerID}) {
                             <div className="row small text-center"><strong>Rainfall: {year.villageStats[G.playerStats[playerID].village].r0 == 2 ? "Good" : "Bad"}</strong></div>
                             <div className="row small text-center"><strong>Yearly Profit: ${year.playerStats[playerID].Profit_Net.toFixed(2)}</strong></div>
                             <div className="row row-cols-2 small text-center">
-                                <div className="col">P_F: {year.playerStats[playerID].Profit_F}</div>
-                                <div className="col">P_R: {year.playerStats[playerID].Profit_R}</div>
+                                <div className="col">P<sub>F</sub>: ${year.playerStats[playerID].Profit_F.toFixed(2)}</div>
+                                <div className="col">P<sub>R</sub>: ${year.playerStats[playerID].Profit_R.toFixed(2)}</div>
                             </div>
                             <div className="row row-cols-2 small text-center">
-                                <div className="col">P_S: {year.playerStats[playerID].Profit_S}</div>
-                                <div className="col">P_G: {year.playerStats[playerID].Profit_G}</div>
+                                <div className="col">P<sub>S</sub>: ${year.playerStats[playerID].Profit_S.toFixed(2)}</div>
+                                <div className="col">P<sub>G</sub>: ${year.playerStats[playerID].Profit_G.toFixed(2)}</div>
                             </div>
                             <div className="row small text-center"><strong>New Values:</strong></div>
                             <div className="row small text-center"><span>Funds: ${year.playerStats[playerID].playerMoney.toFixed(2)}</span></div>
@@ -78,14 +78,20 @@ export function PreviousRounds({G, matchData, playerID}) {
                             {year.villageStats[G.playerStats[playerID].village].infoSelections.length > 0 &&
                                 <div className="row small text-center"><strong>Purchased Information:</strong></div>
                             }
-                            {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
-                                <div className="row small text-center">
-                                {(year.villageStats[G.playerStats[playerID].village].IBOutput[key].length > 1) ? 
-                                <span>{key}: {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}</span>
-                                : <span>{key}: {key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}</span>
-                                }
-                                </div>
-                            ))}
+                            <table class="table table-striped table-sm mt-1">
+                                <tbody>
+                                {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
+                                    <tr>
+                                        <td className="small">
+                                        {(year.villageStats[G.playerStats[playerID].village].IBOutput[key].length > 1) ? 
+                                        <span>{key}: {getPlayerName(year.villageStats, key)}, {year.villageStats[G.playerStats[playerID].village].IBOutput[key][1]}</span>
+                                        : <span>{key}: {key.includes("Player") ? getPlayerName(year.villageStats, key) : year.villageStats[G.playerStats[playerID].village].IBOutput[key][0]}</span>
+                                        }
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
                             <hr></hr>
                         </div>
                     )

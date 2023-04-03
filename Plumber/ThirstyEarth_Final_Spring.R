@@ -505,8 +505,8 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #19. Randomly show a player's number and their number of fields left fallow.
   
   names(InfoBits)=c('Avg. # GW Fields','Avg. # SW Fields','Avg. # RW Fields', 'Avg. # Fallow Fields', 'Avg. # High Value Crops', 'Prob. of Good Rain Next Year',
-                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player /w Max Profit', 'Max Village Profit', 'Player /w Max GW use', 'Max Individual GW use',
-                    'Player /w Max SW use','Max Individual SW use', 'Random player/GW usage', 'Random player/SW usage', 'Random player/RW usage', 
+                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player w/ Max Profit', 'Max Village Profit', 'Player w/ Max GW use', 'Max Individual GW use',
+                    'Player w/ Max SW use','Max Individual SW use', 'Random player/GW usage', 'Random player/SW usage', 'Random player/RW usage', 
                     'Random player/# fields Fallow') 
   
   

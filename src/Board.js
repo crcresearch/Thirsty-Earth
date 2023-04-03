@@ -32,7 +32,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
         'betaG': '&beta;<sub>G</sub>',
         'betaG1': '&beta;<sub>G1</sub>',
         'betaG2': '&beta;<sub>G2</sub>',
-        'Unit Penalty': 'Penalty per Information Bit (Pen)'
+        'Unit Penalty': 'Penalty per Purchased Information (Pen)'
     }
 
     //Show the results modal if the game is over.
