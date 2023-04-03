@@ -311,7 +311,7 @@ export function CreateGame({ gameCreationPassword }) {
         let errorIds = [];
 
         if (numPlayers * numVillages + (moderated ? 1: 0) + (1 * numVillages) > 40) {
-          errorText.push("The number of active players (players per village times number of villages) plus the moderator, if moderated, (1) plus the number of extra players (1 per village) must be less than 40.");
+          errorText.push("The number of active players (players per village times number of villages) plus the moderator, if moderated, (1) plus the number of extra players (1 per village) must be less than or equal to 40.");
           errorIds.push("playersPerVillage", "numVillages")
         }
         if (password !== gameCreationPassword) {
