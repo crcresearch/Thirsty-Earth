@@ -136,7 +136,7 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
                 </tbody>
             </table>
             </div>
-            <div className="row row-cols-3">
+            <div className="row row-cols-3 gx-2">
             <div className="col col-md-4">
                 <div className="bg-dirt-bank text-center">
                     <h6 className="text-white-50 mt-1 mb-0">Yearly Profit</h6>
@@ -161,7 +161,7 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
                     <h5 className="text-light mt-3 mb-0">Purchased Information</h5>
                 </div>
             }
-            <div className="row row-cols-3">
+            <div className="row row-cols-3 gx-2">
             {Object.keys(year.villageStats[G.playerStats[playerID].village].IBOutput).map((key) => (
                 <div className="col col-md-4 mt-1">
                     <div className="bg-dirt-bank text-center">

@@ -31,7 +31,8 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
         'alphaG': '&alpha;<sub>G</sub>',
         'betaG': '&beta;<sub>G</sub>',
         'betaG1': '&beta;<sub>G1</sub>',
-        'betaG2': '&beta;<sub>G2</sub>'
+        'betaG2': '&beta;<sub>G2</sub>',
+        'Unit Penalty': 'Penalty per Information Bit (Pen)'
     }
 
     //Show the results modal if the game is over.
@@ -118,12 +119,19 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                     <PreviousRounds G={G} playerID={playerID} matchData={matchData}/>
                 </div>
                 <div className="row justify-content-md-center bg-navy text-light rounded-bottom">
-                    <div className="row small text-center mt-2 mb-2"><span>Probability of good rain year (P): {100* G.gameConfig.probabilityWetYear}%</span></div>
+                    <div className="row text-white small justify-content-center text-center">
+                        <div className="col-3"></div>
+                        <div className="col"><span>Probability of good rain year (P): {100*G.gameConfig.probabilityWetYear}%</span></div>
+                        {G.publicInfo !== null &&
+                            <div className="col"><span>{pubInfoFormatMap["Unit Penalty"]}: {G.publicInfo["Unit Penalty"]}</span></div>
+                        }
+                        <div className="col-3"></div>
+                    </div>
                     <div className="row">
                         {G.publicInfo !== null &&
                             <div className="col-md-9 align-self-center mt-2 mb-2">
                                 <div className="row row-cols-5 text-white small">
-                                    {Object.keys(G.publicInfo).map((val, idx) => {
+                                    {Object.keys(G.publicInfo).filter(el => el !== "Unit Penalty").map((val, idx) => {
                                         return (<div className="col"><span dangerouslySetInnerHTML={{__html: pubInfoFormatMap[val]}}></span>: {G.publicInfo[val]} </div>)
                                     })}
                                 </div>

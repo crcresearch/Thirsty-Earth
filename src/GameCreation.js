@@ -61,7 +61,7 @@ export function CreateGame({ gameCreationPassword }) {
     const [groundwaterRechargeGoodBadYear, setGroundwaterRechargeGoodBadYear] = React.useState(0.8); // rhoRe
     const [ratioReturnsRainVFallow, setRatioReturnsRainVFallow] = React.useState(1.2); // rhoRF
     const [multiplierProfitWaterHighValCrops, setMultiplierProfitWaterHighValCrops] = React.useState(2); // aCr
-    const [profitPenaltyPerPersonPubInfo, setProfitPenaltyPerPersonPubInfo] = React.useState(0.5); // Pen
+    const [profitPenaltyPerPersonPubInfo, setProfitPenaltyPerPersonPubInfo] = React.useState(0.5); // aPen
     // R parameters (advanced)
     const [optimalFieldAllocationSWSelfish, setOptimalFieldAllocationSWSelfish] = React.useState(4); // QNS
     const [optimalFieldAllocationSWCommunity, setOptimalFieldAllocationSWCommunity] = React.useState(3); // QFS
@@ -306,10 +306,14 @@ export function CreateGame({ gameCreationPassword }) {
       }
     }
 
-    function submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr, password) {
+    function submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr) {
         let errorText = [];
         let errorIds = [];
 
+        if (numPlayers * numVillages + (moderated ? 1: 0) + (1 * numVillages) > 40) {
+          errorText.push("The number of active players (players per village time number of villages) plus the moderator, if moderated, (1) plus the number of extra players (1 per village) must be less than 40.");
+          errorIds.push("playersPerVillage", "numVillages")
+        }
         if (password !== gameCreationPassword) {
           errorText.push("Password entered is invalid!");
           errorIds.push("password")
@@ -447,7 +451,7 @@ export function CreateGame({ gameCreationPassword }) {
                     <input
                       type="number"
                       id="numVillages"
-                      className="form-control mb-2"
+                      className={getValidState("numVillages")}
                       required
                       style={inputStyle}
                       value={numVillages}
@@ -461,7 +465,7 @@ export function CreateGame({ gameCreationPassword }) {
                     <input
                       type="number"
                       id="playersPerVillage"
-                      className="form-control mb-2"
+                      className={getValidState("playersPerVillage")}
                       style={inputStyle}
                       value={numPlayers}
                       onChange={(event) => {

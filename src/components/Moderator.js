@@ -55,10 +55,10 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 12, "text": "What is the maximum amount of groundwater used by a single player this year?"},
         {"value": 13, "text": "Which player used the most surface water this year?"},
         {"value": 14, "text": "What is the maximum amount of surface water used by a single player this year?"},
-        {"value": 15, "text": "Randomly show a player's number and groundwater usage."},
-        {"value": 16, "text": "Randomly show a player's number and surface water usage."},
-        {"value": 17, "text": "Randomly show a player's number and rain water usage."},
-        {"value": 18, "text": "Randomly show a player's number and their number of fields left fallow."}
+        {"value": 15, "text": "Randomly show a player's name and groundwater usage."},
+        {"value": 16, "text": "Randomly show a player's name and surface water usage."},
+        {"value": 17, "text": "Randomly show a player's name and rain water usage."},
+        {"value": 18, "text": "Randomly show a player's name and their number of fields left fallow."}
     ]
 
     function pushSelectedBit(selection, village) {
