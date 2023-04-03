@@ -42,6 +42,10 @@ export const ThirstyEarth = {
                   selectionsSubmitted: false,
                   village: (setupData.moderated && i == 0) ? 0 : "unassigned",
                   Profit_Net: 0,
+                  Profit_F: 0,
+                  Profit_R: 0,
+                  Profit_S: 0,
+                  Profit_G: 0,
                   groundwaterDepth: 0
               })
           }
