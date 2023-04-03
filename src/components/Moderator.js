@@ -45,7 +45,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 2, "text": "What was the average number of fields irrigated with rain per player this year in our village?"},
         {"value": 3, "text": "What was the average number of fields left fallow per player this year in our village?"},
         {"value": 4, "text": "How many high value crops were planted on average per player this year in our village?"},
-        {"value": 5, "text": "What is the probability of next year being a good year given this years' rain type?"},
+        {"value": 5, "text": "What is the probability of next year being a good year given this year's rain type?"},
         {"value": 6, "text": "What was the average unit groundwater cost over all players in the village this year?"},
         {"value": 7, "text": "What was the average unit surface water cost over all players in the village this year?"},
         {"value": 8, "text": "What was the average net profit for the village this year?"},
@@ -68,11 +68,12 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     }
 
     function pushVillageIB(selection, village) {
-        if (selection != "") {
-            let tempIBArray = informationBits;
+        let tempIBArray = informationBits;
+        if (selection != "" && !tempIBArray[village].includes(selection)) {
             tempIBArray[village] = [...tempIBArray[village], selection];
             setInformationBits(tempIBArray);
             moves.setInfoBits(informationBits[village], village);
+            pushSelectedBit("", village);
         }
     }
 

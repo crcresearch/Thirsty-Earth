@@ -146,7 +146,7 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
             <div className="col col-md-6">
                 <div className="bg-dirt-bank text-center">
                     <h6 className="text-white-50 mt-1 mb-0">Yearly Profit (P<sub>R</sub> + P<sub>S</sub> + P<sub>G</sub> + P<sub>F</sub> - ({G.villageStats[G.playerStats[playerID].village].infoSelections.length}*Pen))</h6>
-                    <div className="mb-1">${Number(year.playerStats[playerID].Profit_R.toFixed(2))+Number(year.playerStats[playerID].Profit_S.toFixed(2))+Number(year.playerStats[playerID].Profit_G.toFixed(2))+Number(year.playerStats[playerID].Profit_F.toFixed(2))} - ${(G.publicInfo["Unit Penalty"]*G.villageStats[G.playerStats[playerID].village].infoSelections.length).toFixed(2)} = <b>${year.playerStats[playerID].Profit_Net.toFixed(2)}</b></div>
+                    <div className="mb-1">${(Number(year.playerStats[playerID].Profit_R)+Number(year.playerStats[playerID].Profit_S)+Number(year.playerStats[playerID].Profit_G)+Number(year.playerStats[playerID].Profit_F)).toFixed(2)} - ${(G.publicInfo["Unit Penalty"]*G.villageStats[G.playerStats[playerID].village].infoSelections.length).toFixed(2)} = <b>${year.playerStats[playerID].Profit_Net.toFixed(2)}</b></div>
                 </div>
             </div> 
             <div className="col col-md-3">
