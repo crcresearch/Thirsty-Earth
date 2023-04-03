@@ -37,12 +37,13 @@ cors <- function(res) {
 #* @param k:number #Recession constant per period.
 #* @param aCr:number #Multiplier for both profit and water use for high value crops.
 #* @param lambda:number #the ratio of maximum losses to expected recharge; describes relative water level at steady state; 1 = completely full at steady state
-#* @param Pen:number #Profit penalty per person for added public information (lump sum per bit)
+#* @param aPen:number #percentage of the profit if all fields were fallow
 #* @param VillageID:number #Village that is being called
 #* @param PlayerIDs:string #The list of Player IDs
+#* @param isHumanPlayer:string #a bit string of whether the player position is a human or bot
 #* @param numPlayers:int #Number of players in this village
 #* @post /calculate
-ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, rhoRe, aF, EPR, k, aCr, lambda, Pen, VillageID, PlayerIDs, numPlayers){
+ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG, QFG, rhoRF, rhoRS, rhoRG, rhoR, rhoRe, aF, EPR, k, aCr, lambda, aPen, VillageID, PlayerIDs, isHumanPlayer, numPlayers){
   
   #################  #################  #################  #################  #################  #################  #################  #################
   ####### CRC Plumber Parameter Type Transformation #######
@@ -70,9 +71,10 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   k = as.numeric(k)
   aCr = as.numeric(aCr)
   lambda = as.numeric(lambda)
-  Pen = as.numeric(Pen)
+  aPen = as.numeric(aPen)
   village = as.numeric(VillageID)
   rhoRe = as.numeric(rhoRe)
+  IsHumanPlayer = matrix(as.numeric(str_split_1(isHumanPlayer,"")), ncol=numPlayers, byrow=TRUE) 
 
   Wa = Water+5 #Add 5 so I can replace all values without overwriting others; now 5-rain, 6-surface, 7-groundwater
   Cr = Crop+5 #Add 5 so low value crops and fallow aren't both 0; Now 5-fallow, 6-low value, 7-high value
@@ -84,6 +86,8 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   
   Cr[Cr==6] = 0 #low value
   Cr[Cr==7] = 1 #high value
+
+  Pen = aPen*9*aF #Lump sum profit penalty per person per bit for added public information
  
  # Test the function with fake arguments - COMMENT OUT TO PLAY GAME:
  
@@ -163,7 +167,7 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
  # #higher k and lambda increases max depth and the depth cost coefficient betaG, independently of expected recharge
  # aPen=0.50 #percentage of the profit if all fields were fallow 
  # Pen = aPen*9*aF #Lump sum profit penalty per person per bit for added public information
-  #################  #################  #################  #################  #################  #################  #################  #################
+   #################  #################  #################  #################  #################  #################  #################  #################
   
   #Initial Checks
   if(max(Wa)>3) stop('Wa must be between 0 and 3')
@@ -388,7 +392,6 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #Rain fed
   Ri = data.frame(Ri=rowSums(1*Wa==3), RiCr=rowSums((aCr*Cr+!Cr)*(Wa==3))) #Number rain fields
   P_R = uR(Ri[[2]])$uR
-  Rv = round(sum(Ri[1])/N, 2) ##Average number of fields irrigated with RW per player
   ERP = aR1*P + aR2*(1-P) #expected rain profits 
   RW = data.frame(Ri, ERP, round(P_R,2))
   names(RW)=c('Ri','RiCr','E[uB_R]','P_R')
@@ -397,15 +400,12 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   Fi = data.frame(Fi=rowSums(1*(Wa==0)), uB_F=aF)%>%
     mutate(P_F=Fi*aF)  #number of fallow fields & fallow profits
   P_F = Fi[[1]]*aF #Fallow profit vector exists within Fi data frame and on its own
-  Fv = round(sum(Fi[1])/N, 2) #Average number of fields left fallow per player
   
   ######## Irrigated Fields  ######## 
   
   ##### Groundwater ##### 
   #Individual data 
   Gi = data.frame(Gi=rowSums(1*(Wa==1)),GiCr=rowSums((aCr*Cr+!Cr)*(Wa==1))) #Extract groundwater fields from action matrix
-  #Village data
-  Gv=round(sum(Gi[1])/N, 2) #Average number of fields irrigated with GW per player not accounting for high value crops
   
   #sustainable GW profits equation per player
   Gfun = uG(Gi[[2]],GD)
@@ -416,7 +416,6 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   
   ##### Surface Water ##### 
   Si = data.frame(Si=rowSums(1*(Wa==2)),SiCr=rowSums((aCr*Cr+!Cr)*(Wa==2)))
-  Sv=round(sum(Si[1])/N, 2) #Average number of fields irrigated with SW per player not accounting for high value crops
   
   #Surface water profits equation per player
   Sfun = uS(Si[[2]])
@@ -433,10 +432,48 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   ########Gather important info: player decisions, profits, penalties, net profit
   df = RW%>%bind_cols(Fi)%>%bind_cols(SW)%>%bind_cols(GW)%>%mutate(P_Tot=P_R+P_F+P_S+P_G)%>%mutate(Penalty=rep(Pen_C,N))%>%mutate(P_Net=P_Tot-Pen_C)
   
+  
+  #################  #################  #################  #################  #################  #################  #################  #################
+  ##### Exclude BOTS from the information bits #####
+
+  HumanIndex = which((IsHumanPlayer == 1)) #Use the human index to select the rows of human players 
+  Nhuman = length(HumanIndex)
+    
+  #Village data
+  Gv=round(sum(Gi[HumanIndex,1])/Nhuman, 2) #Average number of fields irrigated with GW per player not accounting for high value crops
+  Sv=round(sum(Si[HumanIndex,1])/Nhuman, 2) #Average number of fields irrigated with SW per player not accounting for high value crops
+  Rv = round(sum(Ri[HumanIndex,1])/Nhuman, 2) ##Average number of fields irrigated with RW per player
+  Fv = round(sum(Fi[HumanIndex,1])/Nhuman, 2) #Average number of fields left fallow per player
+  HVCr = round(sum(Cr[HumanIndex,])/Nhuman,2)
+  
+  
+  #For the maximums, if multiple players have the same values, choose a random maximum/player 
+  maxidx_prof = which(df$P_Net[HumanIndex] == max(df$P_Net[HumanIndex]))
+  if (length(maxidx_prof)>1)
+    {MaxProfPlayer=sample(maxidx_prof,1)} else {
+    MaxProfPlayer=maxidx_prof}
+  MaxProf = max(df$P_Net[HumanIndex])
+  
+  maxidx_GW = which(Gi[HumanIndex,2] == max(Gi[HumanIndex,2]))
+  if (length(maxidx_GW)>1)
+  {MaxGWPlayer=sample(maxidx_GW,1)}else {
+    MaxGWPlayer=maxidx_GW}
+  MaxGW = max(Gi[HumanIndex,2])
+  
+  maxidx_SW = which(Si[HumanIndex,2] == max(Si[HumanIndex,2]))
+  if (length(maxidx_SW)>1)
+  {MaxSWPlayer=sample(maxidx_SW,1)} else {
+    MaxSWPlayer=maxidx_SW}
+  MaxSW = max(Si[HumanIndex,2])
+  
+  
   #random player selection function
   randomplayer = function(q){
-    number = sample(c(1:N), 1, F)
-    usage = q[number]
+    q = cbind(q, 1:N) #store choices and player number
+    players = q[HumanIndex,] #human players and their player numbers
+    samp = sample(c(1:Nhuman), 1, F) #choose the random player
+    usage = q[,1][samp] #find their usage
+    number = q[,2][samp] #find their player number
   return(list(num=number, use=usage)) }
   #Select random players' information for this year
   GRand=randomplayer(Gi[[2]])
@@ -444,16 +481,15 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   RRand=randomplayer(Ri[[2]])
   FRand=randomplayer(Fi[[1]])
   
-  InfoBits = list(Gv, Sv, Rv, Fv, round(sum(Cr)/N,2), ifelse((rain==2),round(P11,2),round(P01,2)), round(mean(uC_G),2), round(mean(uC_S),2), round(mean(df$P_Net),2), which.max(df$P_Net), 
-                        max(df$P_Net), which.max(Gi[[2]]), max(Gi[[2]]), which.max(Si[[2]]), max(Si[[2]]), c(GRand$num, GRand$use),
+  InfoBits = list(Gv, Sv, Rv, Fv, HVCr, ifelse((rain==2),round(P11,2),round(P01,2)), round(mean(uC_G[HumanIndex]),2), round(mean(uC_S[HumanIndex]),2), round(mean(df$P_Net[HumanIndex]),2), MaxProfPlayer, 
+                        MaxProf, MaxGWPlayer, MaxGW, MaxSWPlayer, MaxSW, c(GRand$num, GRand$use),
                         c(SRand$num, SRand$use), c(RRand$num, RRand$use), c(FRand$num, FRand$use))
-  
   #1. What is the average number of fields irrigated with groundwater per player this year in our village?
   #2. What was the average number of fields irrigated with surface water per player this year in our village?
   #3. What was the average number of fields irrigated with rain per player this year in our village?
   #4. What was the average number of fields left fallow per player this year in our village?
   #5. How many high value crops were planted on average per player this year in our village?
-  #6. What is the probability of next year being a good year given this years' rain type?
+  #6. What is the probability of next year being a good year given this years' rain type?   X
   #7. What was the average unit groundwater cost over all players in the village this year? 
   #8. What was the average unit surface water cost over all players in the village this year?  
   #9. What was the average net profit for the village this year? 
@@ -469,17 +505,17 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   #19. Randomly show a player's number and their number of fields left fallow.
   
   names(InfoBits)=c('Avg. # GW Fields','Avg. # SW Fields','Avg. # RW Fields', 'Avg. # Fallow Fields', 'Avg. # High Value Crops', 'Prob. of Good Rain Next Year',
-                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player Max Profit', 'Max Village Profit', 'Player Max GW use', 'Max Individual GW use',
-                    'Player Max SW use','Max Individual SW use', 'Random player/GW usage', 'Random player/SW usage', 'Random player/RW usage', 
-                    'Random player/# fields Fallow') 
+                    'Avg. GW Unit Cost','Avg. SW Unit Cost','Village Avg. Profit','Player # Max Profit', 'Max Village Profit', 'Player # Max GW use', 'Max Individual GW use',
+                    'Player # Max SW use','Max Individual SW use', 'Random player # & GW usage', 'Random player # & SW usage', 'Random player # & RW usage', 
+                    'Random player # & # fields Fallow') 
   
   
   #######Public information for all players in the village
   Public = InfoBits[IB==1] #Information everyone in the village paid to see 
   
   #########Individual information to display to each player
-  Public_const= data.frame(aF, round(aR1,2), round(aR2,2), round(aS,2), round(bS1,2), round(bS2,2), round(aG,2), round(bG,2), round(bG1,2), round(bG2,2))
-  names(Public_const)=c('alphaF', 'alphaR1', 'alphaR2','alphaS','betaS1','betaS2','alphaG','betaG','betaG1','betaG2')
+  Public_const= data.frame(aF, round(aR1,2), round(aR2,2), round(aS,2), round(bS1,2), round(bS2,2), round(aG,2), round(bG,2), round(bG1,2), round(bG2,2), Pen)
+  names(Public_const)=c('alphaF', 'alphaR1', 'alphaR2','alphaS','betaS1','betaS2','alphaG','betaG','betaG1','betaG2','Unit Penalty')
   #probability of a good rain year if this year was good, probability of a good rain year if this year was bad, fallow unit benefit, good rain unit benefit, 
     #bad rain unit benefit, unit SW benefit, SW cost parameters, unit GW benefit, GW cost parameters, 
     

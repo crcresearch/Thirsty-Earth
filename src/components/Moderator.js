@@ -251,12 +251,14 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 <h3>Actions for Game State: {ctx.phase}</h3>
                 {ctx.phase == "setup" && 
                 <div>
-                <button className='btn btn-primary' onClick={() => 
+                <button className='btn btn-primary' onClick={() => {
+                const playNum = G.gameConfig.playersPerVillage
+
                 axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
-                    Water: "000000000000000000000000000000000000000000000000000000",
-                    Crop: "000000000000000000000000000000000000000000000000000000",
+                    Water: "0".repeat(9*playNum),
+                    Crop: "0".repeat(9*playNum),
                     IB: "0000000000000000000",
-                    GD: "0,0,0,0,0,0",
+                    GD: (new Array(playNum).fill(0)).join(),
                     r0: G.villageStats[1].r0,
                     P: G.gameConfig.probabilityWetYear,
                     Ld: G.gameConfig.avgLengthDrySpell,
@@ -277,14 +279,15 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                     k: G.gameConfig.recessionConstant,
                     aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
                     lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
-                    Pen: G.gameConfig.profitPenaltyPerPersonPubInfo,
+                    aPen: G.gameConfig.profitPenaltyPerPersonPubInfo,
                     VillageID:1,
-                    PlayerIDs: "0,1,2,3,4,5",
-                    numPlayers: 6
+                    PlayerIDs: (new Array(playNum).fill(0)).join(),
+                    isHumanPlayer: "1".repeat(playNum),
+                    numPlayers: playNum
                 }}).then((res) => {
                     console.log(res.data[1][0])
                     moves.setPublicInfo(res.data[1][0], playerID)
-                })}>Get Public Info</button>
+                })}}>Get Public Info</button>
                 <button 
                     disabled={
                         G.publicInfo === null || 
@@ -314,6 +317,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                         console.log(PLUMBER_URL)
                         let playerIDs = []
                         let waterDepths = []
+                        let isHumanPlayer = ""
                         matchData.map(player => {
                             if( G.playerStats[player.id].village === i+1 ) {
                                 playerIDs.push(player.id)
@@ -321,11 +325,13 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                 if(player.name != undefined  ) {
                                     G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (waterChoices += String(choice)))
                                     G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (cropChoices += String(choice)))
+                                    isHumanPlayer += "1"
                                 }
                                 else {
                                     // if no player has ever logged into this player ID, then fill it with optimal values for the entire village.
                                     waterChoices += "111220000" // 4 rainwater, 3 surface water, 2 groundwater, per JIRA ticket TE-12 
                                     cropChoices += "111111100" // 7 low value crops, 2 fallow, per JIRA ticket TE-12 
+                                    isHumanPlayer += "0"
                                 }
                             }
                         });
@@ -354,9 +360,10 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                             k: G.gameConfig.recessionConstant,
                             aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
                             lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
-                            Pen: G.gameConfig.profitPenaltyPerPersonPubInfo,
+                            aPen: G.gameConfig.profitPenaltyPerPersonPubInfo,
                             VillageID:i+1,
                             PlayerIDs: playerIDs.join(","),
+                            isHumanPlayer: isHumanPlayer,
                             numPlayers: G.gameConfig.playersPerVillage
                         }}).then((res) => {
                             moves.submitVillageDataUpdate(0, res.data)

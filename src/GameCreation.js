@@ -61,7 +61,7 @@ export function CreateGame({ gameCreationPassword }) {
     const [groundwaterRechargeGoodBadYear, setGroundwaterRechargeGoodBadYear] = React.useState(0.8); // rhoRe
     const [ratioReturnsRainVFallow, setRatioReturnsRainVFallow] = React.useState(1.2); // rhoRF
     const [multiplierProfitWaterHighValCrops, setMultiplierProfitWaterHighValCrops] = React.useState(2); // aCr
-    const [profitPenaltyPerPersonPubInfo, setProfitPenaltyPerPersonPubInfo] = React.useState(2); // Pen
+    const [profitPenaltyPerPersonPubInfo, setProfitPenaltyPerPersonPubInfo] = React.useState(0.5); // Pen
     // R parameters (advanced)
     const [optimalFieldAllocationSWSelfish, setOptimalFieldAllocationSWSelfish] = React.useState(4); // QNS
     const [optimalFieldAllocationSWCommunity, setOptimalFieldAllocationSWCommunity] = React.useState(3); // QFS
@@ -140,7 +140,7 @@ export function CreateGame({ gameCreationPassword }) {
       },
       {
         id: "profitPenaltyPerPersonPubInfo",
-        label: "Profit penalty per person based on public information (Pen)",
+        label: "Percentage of the profit if all fields were fallow (aPen)",
         value: profitPenaltyPerPersonPubInfo,
         set_function: setProfitPenaltyPerPersonPubInfo
       },
