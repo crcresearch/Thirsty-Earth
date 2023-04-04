@@ -40,25 +40,25 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     const waterChoices = [cloud, river, well];
     const cropChoices = [crop_empty, crop_low, crop_high];
     const IBChoices = [  
-        {"value": 0, "text": "What is the average number of fields irrigated with groundwater per player this year in our village?"},
-        {"value": 1, "text": "What was the average number of fields irrigated with surface water per player this year in our village?"},
-        {"value": 2, "text": "What was the average number of fields irrigated with rain per player this year in our village?"},
-        {"value": 3, "text": "What was the average number of fields left fallow per player this year in our village?"},
-        {"value": 4, "text": "How many high value crops were planted on average per player this year in our village?"},
-        {"value": 5, "text": "What is the probability of next year being a good year given this year's rain type?"},
-        {"value": 6, "text": "What was the average unit groundwater cost over all players in the village this year?"},
-        {"value": 7, "text": "What was the average unit surface water cost over all players in the village this year?"},
-        {"value": 8, "text": "What was the average net profit for the village this year?"},
-        {"value": 9, "text": "Which player had the highest net profit this year?"},
-        {"value": 10, "text": "What was the maximum net profit this year?"},
-        {"value": 11, "text": "Which player used the most groundwater this year?"},
-        {"value": 12, "text": "What is the maximum amount of groundwater used by a single player this year?"},
-        {"value": 13, "text": "Which player used the most surface water this year?"},
-        {"value": 14, "text": "What is the maximum amount of surface water used by a single player this year?"},
-        {"value": 15, "text": "Randomly show a player's name and groundwater usage."},
-        {"value": 16, "text": "Randomly show a player's name and surface water usage."},
-        {"value": 17, "text": "Randomly show a player's name and rain water usage."},
-        {"value": 18, "text": "Randomly show a player's name and their number of fields left fallow."}
+        {"value": 0, "text": "1. What is the average number of fields irrigated with groundwater per player this year in our village?"},
+        {"value": 1, "text": "2. What was the average number of fields irrigated with surface water per player this year in our village?"},
+        {"value": 2, "text": "3. What was the average number of fields irrigated with rain per player this year in our village?"},
+        {"value": 3, "text": "4. What was the average number of fields left fallow per player this year in our village?"},
+        {"value": 4, "text": "5. How many high value crops were planted on average per player this year in our village?"},
+        {"value": 5, "text": "6. What is the probability of next year being a good year given this year's rain type?"},
+        {"value": 6, "text": "7. What was the average unit groundwater cost over all players in the village this year?"},
+        {"value": 7, "text": "8. What was the average unit surface water cost over all players in the village this year?"},
+        {"value": 8, "text": "9. What was the average net profit for the village this year?"},
+        {"value": 9, "text": "10. Which player had the highest net profit this year?"},
+        {"value": 10, "text": "11. What was the maximum net profit this year?"},
+        {"value": 11, "text": "12. Which player used the most groundwater this year?"},
+        {"value": 12, "text": "13. What is the maximum amount of groundwater used by a single player this year?"},
+        {"value": 13, "text": "14. Which player used the most surface water this year?"},
+        {"value": 14, "text": "15. What is the maximum amount of surface water used by a single player this year?"},
+        {"value": 15, "text": "16. Randomly show a player's name and groundwater usage."},
+        {"value": 16, "text": "17. Randomly show a player's name and surface water usage."},
+        {"value": 17, "text": "18. Randomly show a player's name and rain water usage."},
+        {"value": 18, "text": "19. Randomly show a player's name and their number of fields left fallow."}
     ]
 
     function pushSelectedBit(selection, village) {
