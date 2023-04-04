@@ -444,7 +444,10 @@ ThirstyEarth = function(Water,Crop,IB,GD,r0, P, Ld, dP, dLd, QNS, QFS, QNG0, QNG
   Sv=round(sum(Si[HumanIndex,1])/Nhuman, 2) #Average number of fields irrigated with SW per player not accounting for high value crops
   Rv = round(sum(Ri[HumanIndex,1])/Nhuman, 2) ##Average number of fields irrigated with RW per player
   Fv = round(sum(Fi[HumanIndex,1])/Nhuman, 2) #Average number of fields left fallow per player
-  HVCr = round(sum(Cr[HumanIndex,])/Nhuman,2)
+
+  HighCr = Cr #We want a matrix where 1 = high value crop and 0 = anything else
+  HighCr[HighCr==5]=0 #get rid of the 5's that represent fallow fields and make them 0 (which also represents low value crop fields)
+  HVCr = round(sum(HighCr[HumanIndex,])/Nhuman,2) #the average number of high value crops per player
   
   
   #For the maximums, if multiple players have the same values, choose a random maximum/player 
