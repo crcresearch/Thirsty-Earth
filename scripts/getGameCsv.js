@@ -1,9 +1,23 @@
 import { PostgresStore } from "bgio-postgres";
+import { info } from "console";
 import { writeFileSync } from "fs";
 
 const matchId = process.argv[2]
 const csvColumns = []
 
+const getPlayerName = (stats, infoBit, playerMetadata) => {
+    console.log(infoBit)
+    console.log(stats.IBOutput)
+    const villagePlayerID = stats.IBOutput[infoBit][0];
+    console.log(villagePlayerID)
+    const villagePlayers = stats.modelOutput[7][0].split(",");
+    console.log(villagePlayers)
+    const gamePlayerID = villagePlayers[villagePlayerID-1];
+    console.log(gamePlayerID)
+    const playerName = playerMetadata[gamePlayerID.toString()].name
+    return playerName
+}
+// node -r esm scripts/getGameCsv.js 1xzgX9iwNmk
 // to run: node -r esm scripts/getGameCsv.js <matchId>
 console.log(`getting match: ${matchId}...`)
 // connect to database
@@ -17,6 +31,7 @@ db.fetch(matchId, {
     const setupDataKeys = Object.keys(matchInfo.metadata.setupData)
     const playerDataKeys = [
         "playerID",
+        "playerName",
         "village",
         "groundwaterDepth",
         "rain",
@@ -31,18 +46,55 @@ db.fetch(matchId, {
         "waterChoices"
     ]
     const pubInfoKeys = Object.keys(matchInfo.state.G.publicInfo)
-    console.log("pubInfo: ", matchInfo.state.G.publicInfo)
-    csvColumns.push(...setupDataKeys, ...playerDataKeys, ...pubInfoKeys)
-    let outputData = `${csvColumns.toString().replaceAll(",", "|")}\n`
+    const infoBitKeys = [
+        "Avg. # GW Fields",
+        "Avg. # SW Fields",
+        "Avg. # RW Fields", 
+        "Avg. # Fallow Fields", 
+        "Avg. # High Value Crops", 
+        "Prob. of Good Rain Next Year",
+        "Avg. GW Unit Cost",
+        "Avg. SW Unit Cost",
+        "Village Avg. Profit",
+        "Player w/ Max Profit",
+        "Max Village Profit",
+        "Player w/ Max GW use",
+        "Max Individual GW use",
+        "Player w/ Max SW use",
+        "Max Individual SW use",
+        "Random player/GW usage",
+        "Random player/SW usage",
+        "Random player/RW usage", 
+        "Random player/# fields Fallow"
+    ];
+    csvColumns.push(...setupDataKeys, ...playerDataKeys, ...pubInfoKeys, ...infoBitKeys)
+    let outputData = `${csvColumns.toString()}\n`
     for (let i in yearlyStateRecord) {
         if (i > 0) {
             let filterdStats = yearlyStateRecord[i].playerStats.filter(player => player.pid !== 0 && player.village !== "unassigned")
             for (let j in filterdStats) {
+                let villageStats = yearlyStateRecord[i].villageStats[filterdStats[j].village]
+                let infoBitDict = {}
+                infoBitKeys.forEach((key) => {
+                    if (Object.keys(villageStats).includes("IBOutput") && Object.keys(villageStats.IBOutput).includes(key)) {
+                        if (villageStats.IBOutput[key].length > 1) {
+                            let playerName = getPlayerName(villageStats, key, matchInfo.metadata.players)
+                            console.log(playerName)
+                            villageStats.IBOutput[key][0] = playerName
+                        }
+                        console.log(villageStats.IBOutput)
+                        infoBitDict[key] = `"${villageStats.IBOutput[key].toString()}"`;
+                    } else {
+                        infoBitDict[key] = ""
+                    }
+                })
+                let playerName = matchInfo.metadata.players[filterdStats[j].pid.toString()].name;
                 let baseInfo = {
                     playerID: filterdStats[j].pid,
+                    playerName: playerName,
                     village: filterdStats[j].village,
                     groundwaterDepth: filterdStats[j].groundwaterDepth,
-                    rain: yearlyStateRecord[i].villageStats[filterdStats[j].village]["r0"],
+                    rain: villageStats["r0"],
                     playerMoney: filterdStats[j].playerMoney.toFixed(2),
                     Profit_F: filterdStats[j].Profit_F.toFixed(2),
                     Profit_R: filterdStats[j].Profit_R.toFixed(2),
@@ -50,23 +102,23 @@ db.fetch(matchId, {
                     Profit_G: filterdStats[j].Profit_G.toFixed(2),
                     Profit_Net: filterdStats[j].Profit_Net.toFixed(2),
                     year: i,
-                    cropChoices: JSON.stringify(filterdStats[j].playerCropFields),
-                    waterChoices: JSON.stringify(filterdStats[j].playerWaterFields)
+                    cropChoices: playerName ? `"${filterdStats[j].playerCropFields.flat(4).toString()}"` : '"1,1,1,2,2,0,0,0,0"',
+                    waterChoices: playerName ? `"${filterdStats[j].playerWaterFields.flat(4).toString()}"` : '"1,1,1,1,1,1,1,0,0"'
                 }
                 const rowObj = Object.assign(
                     matchInfo.metadata.setupData, 
                     ...[
                         baseInfo,
-                        matchInfo.state.G.publicInfo
+                        matchInfo.state.G.publicInfo,
+                        infoBitDict
                     ]
                 )
-                console.log("row: ", rowObj)
                 let rowColumns = []
                 for (let k in csvColumns) {
                     let header = csvColumns[k];
                     rowColumns.push(rowObj[header])
                 }
-                const row = `${rowColumns.slice(0,38).toString().replaceAll(",", "|")}|${rowColumns[38]}|${rowColumns[39]}|${rowColumns.slice(40).toString().replaceAll(",", "|")}\n`
+                const row = `${rowColumns.toString()}\n`
                 outputData += row;
             }
         }
