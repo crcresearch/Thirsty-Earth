@@ -6,15 +6,13 @@ const matchId = process.argv[2]
 const csvColumns = []
 
 const getPlayerName = (stats, infoBit, playerMetadata) => {
-    console.log(infoBit)
-    console.log(stats.IBOutput)
     const villagePlayerID = stats.IBOutput[infoBit][0];
-    console.log(villagePlayerID)
     const villagePlayers = stats.modelOutput[7][0].split(",");
-    console.log(villagePlayers)
     const gamePlayerID = villagePlayers[villagePlayerID-1];
-    console.log(gamePlayerID)
-    const playerName = playerMetadata[gamePlayerID.toString()].name
+    let playerName = "BOT"
+    if (playerMetadata[gamePlayerID].name) {
+        playerName = playerMetadata[gamePlayerID].name
+    }
     return playerName
 }
 // node -r esm scripts/getGameCsv.js 1xzgX9iwNmk
@@ -72,17 +70,15 @@ db.fetch(matchId, {
     for (let i in yearlyStateRecord) {
         if (i > 0) {
             let filterdStats = yearlyStateRecord[i].playerStats.filter(player => player.pid !== 0 && player.village !== "unassigned")
+            filterdStats.sort((a,b) => a.village-b.village)
             for (let j in filterdStats) {
                 let villageStats = yearlyStateRecord[i].villageStats[filterdStats[j].village]
                 let infoBitDict = {}
                 infoBitKeys.forEach((key) => {
                     if (Object.keys(villageStats).includes("IBOutput") && Object.keys(villageStats.IBOutput).includes(key)) {
-                        if (villageStats.IBOutput[key].length > 1) {
-                            let playerName = getPlayerName(villageStats, key, matchInfo.metadata.players)
-                            console.log(playerName)
-                            villageStats.IBOutput[key][0] = playerName
+                        if (villageStats.IBOutput[key].length > 1 && typeof villageStats.IBOutput[key][0] === "number") {
+                            villageStats.IBOutput[key][0] = getPlayerName(villageStats, key, matchInfo.metadata.players)
                         }
-                        console.log(villageStats.IBOutput)
                         infoBitDict[key] = `"${villageStats.IBOutput[key].toString()}"`;
                     } else {
                         infoBitDict[key] = ""
