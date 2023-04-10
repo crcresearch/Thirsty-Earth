@@ -94,6 +94,7 @@ export function ResultsPage({ G, playerID }) {
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">Rain Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_R, 0).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">River Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_S, 0).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">Groundwater Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_G, 0).toFixed(2)}</li>
+                    <li className="list-group-item border-0 bg-tan text-center text-danger fw-bold h4">Total Purchased Information Cost: ${(G.publicInfo["Unit Penalty"]*G.villageStats[G.playerStats[playerID].village].infoSelections.length*G.gameConfig.numYears).toFixed(2)}</li>
                     <li className="list-group-item border-0 bg-tan text-center fw-bold h4">Total Profit: ${G.yearlyStateRecord.slice(1).reduce((partialSum, year) => partialSum + year.playerStats[playerID].Profit_Net, 0).toFixed(2)}</li>
                 </ul>
             </div>
