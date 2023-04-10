@@ -44,11 +44,11 @@ export function PreviousRounds({G, matchData, playerID}) {
             </div> */}
             <div className="row" style={listInfoStyle}>
             { 
-                [...Array(G.currentRound)].map((x, idx) => {
-                    let year = (idx+1 == G.currentRound) ? G : G.yearlyStateRecord[idx+1]
-                    return idx+1 != G.currentRound && (
+                [...Array(G.currentRound).keys()].reverse().map((x, idx) => {
+                    let year = (x+1 == G.currentRound) ? G : G.yearlyStateRecord[x+1]
+                    return x+1 != G.currentRound && (
                         <div className='mb-1'>
-                            <p className='mb-0 text-center'><strong>Year {idx+1} {idx+1 == G.currentRound ? " (Current)" : ""}</strong></p>
+                            <p className='mb-0 text-center'><strong>Year {x+1} {x+1 == G.currentRound ? " (Current)" : ""}</strong></p>
                             <div class="row row-cols-9">
                                 {
                                     [...Array(9)].map((y, index) => {
