@@ -182,12 +182,20 @@ export function YearlyReview({ G, ctx, playerID, matchData, confirmFunc }) {
             <div className="d-grid mt-3">
             { ctx.phase == "playerMoves" ?
             <button 
-                            className="btn btn-danger text-white text-uppercase"
-                            onClick={() => confirmFunc()}
-                            >
-                            <strong>Go to Year {G.currentRound} Choices</strong>
-                        </button> : <span className="text-center">Waiting for the moderator to open up choices for year {G.currentRound}</span> }
-                        </div></div>
+                className="btn btn-danger text-white text-uppercase"
+                onClick={() => confirmFunc()}
+                >
+                <strong>Go to Year {G.currentRound} Choices</strong>
+            </button> 
+            : ctx.gameover ?
+            <button 
+                className="btn btn-danger text-white text-uppercase"
+                onClick={() => confirmFunc()}
+                >
+                <strong>Go to Game Summary</strong>
+            </button>
+            : <span className="text-center">Waiting for the moderator to open up choices for year {G.currentRound}</span> }
+            </div></div>
 
         </div>
     )
