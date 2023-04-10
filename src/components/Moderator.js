@@ -28,12 +28,6 @@ const hide = {
     visibility: "hidden"
 }
 
-const villageHeaderStyle = {
-    backgroundColor: "rgba(32, 105, 50, 0.65)",
-    height: "60px",
-    paddingTop: "10px"
-}
-
 const buttonSpacing = {
     marginLeft: "10px"
 }
@@ -89,42 +83,6 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         setInformationBits(tempIBArray);
         moves.setInfoBits(informationBits[village], village);
     }
-    
-    function checkNextAvailableVillage(current, playersInVillage) {
-        let availableVillages = current == G.gameConfig.numVillages ? G.villages.slice(1, current) : [...G.villages.slice(current+1), ...G.villages.slice(1, current)]
-        for (let i in availableVillages) {
-            let village = availableVillages[i];
-            if (playersInVillage[village] < G.gameConfig.playersPerVillage) {
-                return village;
-            }
-        }
-    }
-
-    function fillSeats(unassignedPlayers) {
-        let villageToAssign = 1;
-        let playersInVillage = {};
-        for (let i in G.villages.filter(village => village != 0)) {
-            let village = G.villages.filter(village => village != 0)[i];
-            playersInVillage[village] = G.playerStats.filter(player => player.village == village).length
-        }
-        for (let i in unassignedPlayers) {
-            let player = unassignedPlayers[i]
-            if (villageToAssign > G.gameConfig.numVillages) {
-                villageToAssign = 1;
-            }
-            if (playersInVillage[villageToAssign] < G.gameConfig.playersPerVillage) {
-                moves.setVillageAssignment(villageToAssign, player.id);
-                playersInVillage[villageToAssign] += 1
-                villageToAssign += 1;
-            } else {
-                villageToAssign = checkNextAvailableVillage(villageToAssign, playersInVillage);
-                moves.setVillageAssignment(villageToAssign, player.id);
-                playersInVillage[villageToAssign] += 1
-                villageToAssign += 1;
-            }
-        }
-    }
-
 
     return (
         <div className='container mt-4'>
@@ -164,27 +122,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             </div>
             {(matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0 && ctx.phase == "setup") &&
                 <div>
-                    <div className="row mt-3 mb-2">
-                        <div className='col-2 pt-1'>
-                            <span className="h5">Unassigned Players</span>
-                        </div>
-                        {(ctx.phase == "setup" && matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0) && 
-                        <div className='col-2'>
-                            <button 
-                                className="btn btn-primary mb-2" type="submit"
-                                disabled={
-                                    G.playerStats.reduce(
-                                        (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 
-                                    ) == (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
-                                }
-                                id="fill-empty-seats"
-                                onClick={() => fillSeats(matchData.slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1).filter(el => G.playerStats[el.id].village === "unassigned"))}
-                            >   
-                                Fill Empty Seats
-                            </button>
-                        </div>
-                        }
-                    </div>
+                    <span className="h5 mt-3 mb-2">Unassigned Players</span>
                     <table className='table table-striped mb-3'>
                         <thead>
                             <td>Player ID</td>
@@ -216,35 +154,33 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 <div>
                     {(village > 0) &&
                     <div className="row mt-3 mb-2">
-                        <div className="row m-0" style={villageHeaderStyle}>
-                            <div className='col-4 pt-2'>
-                                <span className="h5 text-white">Village {village}</span>
-                            </div>
-                            {(ctx.phase == "setup") &&
-                            <div className='col-8'>
-                                <div class="input-group">
-                                    <select className="form-select" id={`select-information-${village}`} name="selectedBits" 
-                                    onChange={(event) => pushSelectedBit(event.target.value, village)}>
-                                        <option disabled selected>Select Information Bit to purchase.</option>
-                                        {IBChoices.map(choice => (
-                                            <option 
-                                                disabled={informationBits[village].includes(choice.value.toString())} 
-                                                value={choice.value}>{choice.text}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <button 
-                                        className="btn btn-primary" type="submit"
-                                        id={`submit-ib-${village}`}
-                                        onClick={() => pushVillageIB(selectedBits[village], village)}
-                                        disabled={informationBits[village].length >= 6}
-                                    >
-                                        Add Information Bit
-                                    </button>
-                                </div>
-                            </div>
-                            }
+                        <div className='col-4'>
+                            <span className="h5">Village {village}</span>
                         </div>
+                        {(ctx.phase == "setup") &&
+                        <div className='col-8'>
+                            <div class="input-group">
+                                <select className="form-select" id={`select-information-${village}`} name="selectedBits" 
+                                onChange={(event) => pushSelectedBit(event.target.value, village)}>
+                                    <option disabled selected>Select Information Bit to purchase.</option>
+                                    {IBChoices.map(choice => (
+                                        <option 
+                                            disabled={informationBits[village].includes(choice.value.toString())} 
+                                            value={choice.value}>{choice.text}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button 
+                                    className="btn btn-primary" type="submit"
+                                    id={`submit-ib-${village}`}
+                                    onClick={() => pushVillageIB(selectedBits[village], village)}
+                                    disabled={informationBits[village].length >= 6}
+                                >
+                                    Add Information Bit
+                                </button>
+                            </div>
+                        </div>
+                        }
                         {G.villageStats[village].infoSelections.length > 0 &&
                         <table className='table table-striped mt-2'>
                             <thead>

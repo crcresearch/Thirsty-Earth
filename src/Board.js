@@ -43,7 +43,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
     }, [ctx.gameover, showModal])
     
     useEffect(() => {
-        if(ctx.phase === "moderatorPause" || ctx.gameover) {
+        if(ctx.phase === "moderatorPause") {
             setconfirmedYearSummary(false);
         }
     }, [ctx.phase])
@@ -82,10 +82,10 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                 <div className="row">
                     {/*pass down chat functions and objects as props so that the chatbox has access to them.*/}
                     <ChatBox sendMessageFn={sendChatMessage} chatMessages={chatMessages} G={G} ctx={ctx}/>
-                    {   ctx.phase == "moderatorPause" || !confirmedYearSummary ?
-                        <YearlyReview G={G} ctx={ctx} playerID={playerID} matchData={matchData} confirmFunc={confirmViewedYearlySummary}/> 
-                        : ctx.gameover ?
+                    { ctx.gameover ?
                         <ResultsPage G={G} playerID={playerID}/>
+                        : ctx.phase == "moderatorPause" || !confirmedYearSummary ?
+                        <YearlyReview G={G} ctx={ctx} playerID={playerID} matchData={matchData} confirmFunc={confirmViewedYearlySummary}/>
                         : ctx.phase == "playerMoves" ?
                         <MainField G={G} moves={moves} matchData={matchData}/>
                         : (G.playerStats[playerID].village == "unassigned" && ctx.phase == "setup") ?
