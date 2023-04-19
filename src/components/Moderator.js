@@ -215,7 +215,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                 setTimeout(() => {
                                     moves.startGame(playerID)
                                     setShowModal(false)
-                                }, 1000)
+                                }, 3000)
                             }}>Start Anyway</button>
                         </div>
                     </div>
