@@ -29,7 +29,7 @@ const collapseHidden = {
 
 const lobbyClient = new LobbyClient({ server: API_URL });
 
-export function CreateGame({ gameCreationPassword }) {
+export function CreateGame() {
     const setGameID = useSetRecoilState(gameIDAtom);
     const setPlayerID = useSetRecoilState(playerIDAtom);
     const setPlayerCredentials = useSetRecoilState(playerCredentialsAtom);
@@ -49,7 +49,6 @@ export function CreateGame({ gameCreationPassword }) {
     const [numPlayers, setNumPlayers] = React.useState("");
     const [numYears, setNumYears] = React.useState("");
     const [gameLabel, setGameLabel] = React.useState("");
-    const [password, setPassword] = React.useState("");
     // R parameters (basic)
     const [probabilityWetYear, setProbabilityWetYear] = React.useState(0.5); // P
     const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1.25); // Ld
@@ -208,7 +207,7 @@ export function CreateGame({ gameCreationPassword }) {
     function createMatch(playerName) {
         lobbyClient
             .createMatch(GAME_NAME, {
-                numPlayers: numPlayers * numVillages + (moderated ? 1: 0) + (1 * numVillages), 
+                numPlayers: numPlayers * numVillages + 1 + (1 * numVillages), 
                 setupData: {
                     numYears: numYears, 
                     playersPerVillage: numPlayers, 
@@ -267,9 +266,9 @@ export function CreateGame({ gameCreationPassword }) {
       setIdsWithWarnings([]);
     }
 
-    function checkEntries(P, dP, Ld, dLd, QFS, QNS, QFG, QNG, QNG0, k, rhoRS, rhoRG, rhoRF, lambda, rhoR, aCr, playerName, password) {
+    function checkEntries(P, dP, Ld, dLd, QFS, QNS, QFG, QNG, QNG0, k, rhoRS, rhoRG, rhoRF, lambda, rhoR, aCr, playerName) {
       resetErrorsWarnings();
-      let error = submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr, password);
+      let error = submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr);
       let warning = submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG, lambda, k);
 
       if (error.text.length == 0 && (warning.text.length == 0 || ignoreWarnings)) {
@@ -310,13 +309,9 @@ export function CreateGame({ gameCreationPassword }) {
         let errorText = [];
         let errorIds = [];
 
-        if (numPlayers * numVillages + (moderated ? 1: 0) + (1 * numVillages) > 40) {
-          errorText.push("The number of active players (players per village times number of villages) plus the moderator, if moderated, (1) plus the number of extra players (1 per village) must be less than or equal to 40.");
+        if (numPlayers * numVillages + 1 + (1 * numVillages) > 40) {
+          errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) plus the number of extra players (1 per village) must be less than or equal to 40.");
           errorIds.push("playersPerVillage", "numVillages")
-        }
-        if (password !== gameCreationPassword) {
-          errorText.push("Password entered is invalid!");
-          errorIds.push("password")
         }
         if(QNS+QNG > 9) {
           errorText.push(`QNS + QNG (${QNS+QNG}) must be less than or equal to 9!`);
@@ -519,21 +514,6 @@ export function CreateGame({ gameCreationPassword }) {
                       </div>
                     ))}
                   </div>
-                  <div>
-                    <label htmlFor="password">Enter Password: </label>
-                    <input
-                      type="password"
-                      id="password"
-                      className={getValidState("password")}
-                      style={inputStyle}
-                      value={password}
-                      onChange={(event) => {
-                        setPassword(event.target.value)
-                      }}
-                    ></input>
-                  </div>
-                  <input className="mt-3" checked={moderated} type="checkbox" id="isModerated" value={moderated} onChange={e => setModerated(e.target.checked)} />
-                  <label htmlFor="isModerated"> Moderated Game</label>
                   <div className="d-flex flex-row-reverse ">
                     <button
                       type="button"
@@ -557,8 +537,7 @@ export function CreateGame({ gameCreationPassword }) {
                           ratioMaxLossesVExpectedRecharge,
                           profitMultiplierGoodBadYear,
                           multiplierProfitWaterHighValCrops,
-                          creatingPlayerName,
-                          password
+                          creatingPlayerName
                         )
                       }}
                     >

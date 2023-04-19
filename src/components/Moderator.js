@@ -41,6 +41,7 @@ const buttonSpacing = {
 export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     const [selectedBits, setSelectedBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill(""));
     const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill([]));
+    const [showModal, setShowModal] = useState(false);
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well];
@@ -125,9 +126,100 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         }
     }
 
+    function getPublicInfo() {
+        const playNum = G.gameConfig.playersPerVillage
+
+        axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
+            Water: "0".repeat(9*playNum),
+            Crop: "0".repeat(9*playNum),
+            IB: "0000000000000000000",
+            GD: (new Array(playNum).fill(0)).join(),
+            r0: G.villageStats[1].r0,
+            P: G.gameConfig.probabilityWetYear,
+            Ld: G.gameConfig.avgLengthDrySpell,
+            dP: G.gameConfig.incProbabilityWetYearAnnual,
+            dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
+            QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
+            QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
+            QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
+            QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
+            QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
+            rhoRF: G.gameConfig.ratioReturnsRainVFallow,
+            rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
+            rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
+            rhoR: G.gameConfig.profitMultiplierGoodBadYear,
+            rhoRe: G.gameConfig.groundwaterRechargeGoodBadYear,
+            aF: G.gameConfig.profitMarginalFieldFallow,
+            EPR: G.gameConfig.expectedGWRecharge,
+            k: G.gameConfig.recessionConstant,
+            aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
+            lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
+            aPen: G.gameConfig.profitPenaltyPerPersonPubInfo,
+            VillageID:1,
+            PlayerIDs: (new Array(playNum).fill(0)).join(),
+            isHumanPlayer: "1".repeat(playNum),
+            numPlayers: playNum
+        }}).then((res) => {
+            console.log(res.data[1][0])
+            moves.setPublicInfo(res.data[1][0], playerID)
+        })
+    }
+
+    function simpleStart() {
+        if (G.publicInfo === null) {
+            getPublicInfo()
+        }
+        if (G.playerStats.filter(el => el.village == "unassigned" && matchData[el.pid].name).length > 0) {
+            setShowModal(true)
+        } else {
+            if (G.playerStats.filter(el => el.village == "unassigned").length > 0) {
+                fillSeats(
+                    matchData.
+                    slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1)
+                    .filter(el => G.playerStats[el.id].village === "unassigned")
+                )
+            }
+            setTimeout(() => {
+                moves.startGame(playerID)
+            }, 1000)
+        }
+    }
 
     return (
         <div className='container mt-4'>
+            {showModal &&
+            <div class="modal modal-show" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Active Players Unassigned</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                There are active players who have yet to be assigned to a village. 
+                                Would you like to return and assign those players?
+                                If so, click "Go Back" to close this message. If not, click "Start Anyway" 
+                                to automatically assign all players and bots remaining unassigned and start the game.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onClick={() => {
+                                setShowModal(false)
+                            }}>Go Back</button>
+                            <button type="button" class="btn btn-primary" onClick={() => {
+                                fillSeats(
+                                    matchData.
+                                    slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1)
+                                    .filter(el => G.playerStats[el.id].village === "unassigned")
+                                )
+                                moves.startGame(playerID)
+                                setShowModal(false)
+                            }}>Start Anyway</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
             <div className="text-center">
                 <h3>Game Overview</h3>
             </div>
@@ -168,22 +260,6 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                         <div className='col-2 pt-1'>
                             <span className="h5">Unassigned Players</span>
                         </div>
-                        {(ctx.phase == "setup" && matchData.filter(el => G.playerStats[el.id].village === "unassigned").length > 0) && 
-                        <div className='col-2'>
-                            <button 
-                                className="btn btn-primary mb-2" type="submit"
-                                disabled={
-                                    G.playerStats.reduce(
-                                        (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 
-                                    ) == (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
-                                }
-                                id="fill-empty-seats"
-                                onClick={() => fillSeats(matchData.slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1).filter(el => G.playerStats[el.id].village === "unassigned"))}
-                            >   
-                                Fill Empty Seats
-                            </button>
-                        </div>
-                        }
                     </div>
                     <table className='table table-striped mb-3'>
                         <thead>
@@ -316,53 +392,25 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 <h3>Actions for Game State: {ctx.phase}</h3>
                 {ctx.phase == "setup" && 
                 <div>
-                <button className='btn btn-primary' onClick={() => {
-                const playNum = G.gameConfig.playersPerVillage
-
-                axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
-                    Water: "0".repeat(9*playNum),
-                    Crop: "0".repeat(9*playNum),
-                    IB: "0000000000000000000",
-                    GD: (new Array(playNum).fill(0)).join(),
-                    r0: G.villageStats[1].r0,
-                    P: G.gameConfig.probabilityWetYear,
-                    Ld: G.gameConfig.avgLengthDrySpell,
-                    dP: G.gameConfig.incProbabilityWetYearAnnual,
-                    dLd: G.gameConfig.incAvgLengthDrySpellAnnual,
-                    QNS: G.gameConfig.optimalFieldAllocationSWSelfish,
-                    QFS: G.gameConfig.optimalFieldAllocationSWCommunity,
-                    QNG0: G.gameConfig.optimalFieldAllocationGWSelfishMyopic,
-                    QNG: G.gameConfig.optimalFieldAllocationGWSelfishSustainable,
-                    QFG: G.gameConfig.optimalFieldAllocationGWCommunity,
-                    rhoRF: G.gameConfig.ratioReturnsRainVFallow,
-                    rhoRS: G.gameConfig.ratioReturnsRainVSurfaceWater,
-                    rhoRG: G.gameConfig.ratioReturnsRainVGroundWater,
-                    rhoR: G.gameConfig.profitMultiplierGoodBadYear,
-                    rhoRe: G.gameConfig.groundwaterRechargeGoodBadYear,
-                    aF: G.gameConfig.profitMarginalFieldFallow,
-                    EPR: G.gameConfig.expectedGWRecharge,
-                    k: G.gameConfig.recessionConstant,
-                    aCr: G.gameConfig.multiplierProfitWaterHighValCrops,
-                    lambda: G.gameConfig.ratioMaxLossesVExpectedRecharge,
-                    aPen: G.gameConfig.profitPenaltyPerPersonPubInfo,
-                    VillageID:1,
-                    PlayerIDs: (new Array(playNum).fill(0)).join(),
-                    isHumanPlayer: "1".repeat(playNum),
-                    numPlayers: playNum
-                }}).then((res) => {
-                    console.log(res.data[1][0])
-                    moves.setPublicInfo(res.data[1][0], playerID)
-                })}}>Get Public Info</button>
                 <button 
+                    className="btn btn-primary" type="submit"
                     disabled={
-                        G.publicInfo === null || 
                         G.playerStats.reduce(
                             (accumulator, currentVal) => currentVal.village === "unassigned" || currentVal.village == 0 ? accumulator : accumulator + 1, 0 
-                        ) < (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
-                    } 
+                        ) == (G.gameConfig.playersPerVillage * G.gameConfig.numVillages)
+                    }
+                    id="fill-empty-seats"
+                    onClick={() => fillSeats(matchData.slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1).filter(el => G.playerStats[el.id].village === "unassigned"))}
+                >   
+                    Fill Empty Seats
+                </button>
+                <button className='btn btn-primary' style={buttonSpacing} onClick={() => getPublicInfo()}>Get Public Info</button>
+                <button
                     className='btn btn-primary'
                     style={buttonSpacing}
-                    onClick={() => moves.startGame(playerID)}
+                    onClick={() => {
+                        simpleStart()
+                    }}
                 >Start Game</button>
                 </div>
                 }

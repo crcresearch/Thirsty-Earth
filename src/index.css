@@ -131,7 +131,7 @@ code {
 {
   opacity: 0; 
   background-color: rgba(238,234,223,1);
-  border-width: 5px;
+  border-width: 2px;
   border-radius: 10px;
   border-color: #243953;
 }
@@ -143,12 +143,12 @@ code {
 } 
 
 .modal-header {
-  border-width: 5px;
+  border-width: 2px;
   border-color: #243953;
 }
 
 .modal-footer {
-  border-width: 5px;
+  border-width: 2px;
   border-color: #243953;
 }
 
