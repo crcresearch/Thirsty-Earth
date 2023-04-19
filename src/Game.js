@@ -20,7 +20,7 @@ export const ThirstyEarth = {
   // The minimum and maximum number of players supported
   // (This is only enforced when using the Lobby server component.)
   minPlayers: 1,
-  maxPlayers: 40,
+  maxPlayers: 100,
 
   setup: (ctx, setupData) => { 
       const FALLOW = 0;

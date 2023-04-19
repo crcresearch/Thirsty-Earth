@@ -309,8 +309,8 @@ export function CreateGame() {
         let errorText = [];
         let errorIds = [];
 
-        if (numPlayers * numVillages + 1 + (1 * numVillages) > 40) {
-          errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) plus the number of extra players (1 per village) must be less than or equal to 40.");
+        if (numPlayers * numVillages + 1 + (1 * numVillages) > 100) {
+          errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) plus the number of extra players (1 per village) must be less than or equal to 100.");
           errorIds.push("playersPerVillage", "numVillages")
         }
         if(QNS+QNG > 9) {
