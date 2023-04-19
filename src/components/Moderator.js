@@ -181,7 +181,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             }
             setTimeout(() => {
                 moves.startGame(playerID)
-            }, 1000)
+            }, 2000)
         }
     }
 
@@ -212,8 +212,10 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                                     slice(1,G.gameConfig.numVillages*G.gameConfig.playersPerVillage+1)
                                     .filter(el => G.playerStats[el.id].village === "unassigned")
                                 )
-                                moves.startGame(playerID)
-                                setShowModal(false)
+                                setTimeout(() => {
+                                    moves.startGame(playerID)
+                                    setShowModal(false)
+                                }, 2000)
                             }}>Start Anyway</button>
                         </div>
                     </div>
