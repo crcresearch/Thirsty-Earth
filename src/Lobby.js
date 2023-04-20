@@ -40,8 +40,23 @@ export function JoinGame() {
   let navigate = useNavigate();
 
   function joinMatch(matchID, playerName) {
-    setGameID(matchID);
-    lobbyClient
+    if (matchID === JSON.parse(localStorage.getItem("gameID"))) {
+      lobbyClient
+      .updatePlayer(GAME_NAME, matchID, {
+        playerID: JSON.parse(localStorage.getItem("playerID")),
+        credentials: JSON.parse(localStorage.getItem("playerCredentials")),
+        newName: playerName,
+      })
+      .then(() => {
+        setPlayerNameAtom(playerName);
+        navigate(`/game/${matchID}`, { replace: true });
+      })
+      .catch((error) => {
+        setErrorText('Invalid Room ID');
+      });
+    } else {
+      setGameID(matchID);
+      lobbyClient
       .joinMatch(GAME_NAME, matchID, {
         playerName: playerName,
       })
@@ -54,6 +69,7 @@ export function JoinGame() {
       .catch((error) => {
         setErrorText('Invalid Room ID');
       });
+    }
   }
 
   let alert = "";
