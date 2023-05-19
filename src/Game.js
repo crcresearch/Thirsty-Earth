@@ -59,7 +59,7 @@ export const ThirstyEarth = {
             stats.push({
                 r0: 1,
                 infoSelections: [],
-                infoBits: "0000000000000000000",
+                infoBits: "0000000000000000000000",
                 IBOutput: {}
             })
         }

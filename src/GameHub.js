@@ -54,7 +54,7 @@ export function GameHub() {
                     matchID={gameID}/>
                 <div style={nameIDStyle}>
                     <p>Name: {playerName}</p>
-                    <p>Room ID: {gameID}</p>
+                    <p>Game ID: {gameID}</p>
                 </div>  
             </div>
         )

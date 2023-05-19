@@ -52,7 +52,7 @@ export function EnterName() {
         navigate(`/game/${matchID}`, { replace: true });
       })
       .catch((error) => {
-        setErrorText('Invalid Room ID');
+        setErrorText('Invalid Game ID');
       });
   }
 

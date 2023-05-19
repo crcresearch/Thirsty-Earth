@@ -46,6 +46,9 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
         if(ctx.phase === "moderatorPause" || ctx.gameover) {
             setconfirmedYearSummary(false);
         }
+        if(G.currentRound == 1) {
+            setconfirmedYearSummary(true);
+        }
     }, [ctx.phase])
 
     useEffect(() => {
