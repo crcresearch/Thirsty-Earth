@@ -9,8 +9,10 @@ import { playerIDAtom } from "./atoms/pid";
 import { playerCredentialsAtom } from "./atoms/playercred";
 import { playerNameAtom } from "./atoms/playername";
 
+import axios from 'axios'
 import { API_URL } from "./config";
 import { GAME_NAME } from "./config";
+import { PLUMBER_URL } from "./config";
 
 const extraButtonStyle = {
   marginTop: "18px",
@@ -45,10 +47,12 @@ export function CreateGame() {
     const [ignoreWarnings, setIgnoreWarnings] = useState(false);
 
     const [moderated, setModerated] = React.useState(true);
-    const [numVillages, setNumVillages] = React.useState("");
-    const [numPlayers, setNumPlayers] = React.useState("");
-    const [numYears, setNumYears] = React.useState("");
+    const [numVillages, setNumVillages] = React.useState(null);
+    const [numPlayers, setNumPlayers] = React.useState(null);
+    const [numYears, setNumYears] = React.useState(null);
     const [gameLabel, setGameLabel] = React.useState("");
+    const [imgSrc, setImgSrc] = React.useState("");
+    const [showModal, setShowModal] = useState(false);
     // R parameters (basic)
     const [probabilityWetYear, setProbabilityWetYear] = React.useState(0.5); // P
     const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1.25); // Ld
@@ -101,7 +105,7 @@ export function CreateGame() {
       },
       {
         id: "profitMultiplierGoodBadYear",
-        label: "Ratio of rainfed profits & groundwater recharge in a bad vs. good rain year (rhoR)",
+        label: "Ratio of rainfed profits in a bad vs. good rain year (rhoR)",
         value: profitMultiplierGoodBadYear,
         set_function: setProfitMultiplierGoodBadYear
       },
@@ -417,11 +421,72 @@ export function CreateGame() {
         return {text: warningText, ids: uniqueWarningIds};
     }
 
+    function generateGraph() {
+      axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
+          Water: "0".repeat(9*numPlayers),
+          Crop: "0".repeat(9*numPlayers),
+          IB: "0000000000000000000000",
+          GD: (new Array(numPlayers).fill(0)).join(),
+          r0: 1,
+          P: probabilityWetYear,
+          Ld: avgLengthDrySpell,
+          dP: incProbabilityWetYearAnnual,
+          dLd: incAvgLengthDrySpellAnnual,
+          QNS: optimalFieldAllocationSWSelfish,
+          QFS: optimalFieldAllocationSWCommunity,
+          QNG0: optimalFieldAllocationGWSelfishMyopic,
+          QNG: optimalFieldAllocationGWSelfishSustainable,
+          QFG: optimalFieldAllocationGWCommunity,
+          rhoRF: ratioReturnsRainVFallow,
+          rhoRS: ratioReturnsRainVSurfaceWater,
+          rhoRG: ratioReturnsRainVGroundWater,
+          rhoR: profitMultiplierGoodBadYear,
+          rhoRe: groundwaterRechargeGoodBadYear,
+          aF: profitMarginalFieldFallow,
+          EPR: expectedGWRecharge,
+          k: recessionConstant,
+          aCr: multiplierProfitWaterHighValCrops,
+          lambda: ratioMaxLossesVExpectedRecharge,
+          aPen: profitPenaltyPerPersonPubInfo,
+          VillageID: 1,
+          PlayerIDs: (new Array(numPlayers).fill(0)).join(),
+          isHumanPlayer: "1".repeat(numPlayers),
+          numPlayers: numPlayers,
+          gameLabel: gameLabel,
+          generateGraph: true
+      }}).then((res) => {
+        setImgSrc(res.data[0][0])
+        setShowModal(true)
+      })
+    }
+
     return (
         <div className="container mt-4">
-            <nav class="navbar">
-                <a class="navbar-brand"></a>
-                <a href="/" class="btn btn-primary my-2 my-sm-0">Join Game</a>
+          {showModal &&
+            <div class="modal modal-show" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Optimal Profits Graph</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>Here is a graph of the optimal profits for this game configuration</p>
+                            <img src={`${process.env.PUBLIC_URL}/${imgSrc}`}></img>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onClick={() => {
+                                setShowModal(false)
+                            }}>Exit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            <nav className="navbar">
+                <a className="navbar-brand" target="_blank" href="https://drive.google.com/drive/u/0/folders/14b00jvGWzQ-elFGk8LrtbPAg4ak5VFvy">
+                  Instructor Documents
+                </a>
+                <a href="/" className="btn btn-primary my-2 my-sm-0">Join Game</a>
             </nav>
             <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
             <div className="row">
@@ -515,6 +580,15 @@ export function CreateGame() {
                     ))}
                   </div>
                   <div className="d-flex flex-row-reverse ">
+                    <button 
+                      className="btn btn-navy" 
+                      type="button"
+                      disabled={!numPlayers || !numVillages || gameLabel == ""}
+                      style={extraButtonStyle}
+                      onClick={() => generateGraph()}
+                    >
+                      Generate Graph
+                    </button>
                     <button
                       type="button"
                       className="btn btn-primary"

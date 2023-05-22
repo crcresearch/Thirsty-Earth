@@ -2,29 +2,31 @@ version: '3.9'
 
 volumes:
   local_postgres_data: {}
+  graph-img-serve: {}
 
 services:
   client:
+    restart: unless-stopped
     build:
       dockerfile: Dockerfile
       context: ./
     env_file:
       - ./.envs/.postgres
     expose:
-      - 8000
-      - 8080
-    volumes:
-      - ../exports:/var/exports
+            #- 8000
+            #- 8080
+      - 5000
     ports:
-      - 127.0.0.1:8000:8000
-      - 127.0.0.1:8080:8080
+        #- 127.0.0.1:8000:8000
+        #- 127.0.0.1:8080:8080
+      - 127.0.0.1:5000:5000
       #  - '8000:8000'
 
   nginx:
     restart: unless-stopped
     build: 
       context: ./nginx
-#      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
     - '80:80'
     - '443:443'
@@ -32,8 +34,10 @@ services:
     - client
     volumes:
     - ./certs/:/etc/ssl/
+    - graph-img-serve:/usr/share/nginx/html/graph_imgs/
 
   postgres:
+    restart: unless-stopped
     image: postgres:15-alpine
     container_name: postgres
     volumes:
@@ -44,13 +48,12 @@ services:
     - '127.0.0.1:5432:5432'
   
   plumber:
+    restart: unless-stopped
     build:
       dockerfile: Dockerfile
       context: ./Plumber
     container_name: plumber
     volumes:
       - ./Plumber:/app
-    ports:
-      - '127.0.0.1:9000:8000'
-    command: "/app/ThirstyEarth_Final_Spring.R"
-
+      - graph-img-serve:/var/media/graph_imgs
+    command: "/app/ThirstyEarth_FinalEducationCode.R"

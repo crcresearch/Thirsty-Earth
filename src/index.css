@@ -254,6 +254,11 @@ code {
   background-color: #243953;
   border-color: #243953;
 }
+.btn-navy:disabled {
+  color: #fff;
+  background-color: #2b4768;
+  border-color: #2b4768;
+}
 .btn-navy:hover {
   color: #fff;
   background-color: #0c2340;

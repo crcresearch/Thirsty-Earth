@@ -59,7 +59,7 @@ export const ThirstyEarth = {
             stats.push({
                 r0: 1,
                 infoSelections: [],
-                infoBits: "0000000000000000000",
+                infoBits: "0000000000000000000000",
                 IBOutput: {}
             })
         }
@@ -189,7 +189,7 @@ export const ThirstyEarth = {
         },
         setInfoBits: (G, ctx, informationBits, villageID) => {
           let binaryChoiceString = ""
-          for (let i in Array(19).fill("")) {
+          for (let i in Array(22).fill("")) {
               if (informationBits.includes(i.toString())) {
                   binaryChoiceString += "1"
               } else {

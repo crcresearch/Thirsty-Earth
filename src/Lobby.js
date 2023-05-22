@@ -52,7 +52,7 @@ export function JoinGame() {
         navigate(`/game/${matchID}`, { replace: true });
       })
       .catch((error) => {
-        setErrorText('Invalid Room ID');
+        setErrorText('Invalid Game ID');
       });
     } else {
       setGameID(matchID);
@@ -67,7 +67,7 @@ export function JoinGame() {
         navigate(`/game/${matchID}`, { replace: true });
       })
       .catch((error) => {
-        setErrorText('Invalid Room ID');
+        setErrorText('Invalid Game ID');
       });
     }
   }
@@ -83,9 +83,15 @@ export function JoinGame() {
 
   return (
     <div className="container mt-4">
-      <nav class="navbar">
-      <a class="navbar-brand"></a>
-        <a href="/game-creation" class="btn btn-primary my-2 my-sm-0">Create Game</a>
+      <nav className="navbar">
+        <a className="navbar-brand" target="_blank" href="https://drive.google.com/file/d/1CTSnA8LY_b65BZO8yILr6W98T6LuChep/view?usp=sharing">
+          Students Start Here
+        </a>
+        <a href="/game-creation" className="btn btn-navy my-2 my-sm-0">
+          Create Game
+          <br></br>
+          (for Instructor)
+        </a>
       </nav>
       <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
       <div className="row">
@@ -105,7 +111,7 @@ export function JoinGame() {
               onChange={(event) => {
                 setMatchIDQuery(event.target.value);
               }}
-              placeholder="Room ID"
+              placeholder="Game ID"
             ></input>
           </div>
           <input
@@ -125,11 +131,11 @@ export function JoinGame() {
             <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label></div>
           </div>
 
-          <div className="d-flex flex-row-reverse ">
+          <div className="d-flex flex-row-reverse">
             <button
               type="button"
-              hidden={!agreeTOS}
-              className="btn btn-block btn-primary"
+              disabled={!agreeTOS}
+              className="btn btn-primary btn-block"
               style={extraButtonStyle}
               onClick={() => joinMatch(matchIDQuery, joiningPlayerName)}
             >

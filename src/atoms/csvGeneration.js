@@ -1,10 +1,3 @@
-import { PostgresStore } from "bgio-postgres";
-import { info } from "console";
-import { writeFileSync } from "fs";
-
-const matchId = process.argv[2]
-const csvColumns = []
-
 const getPlayerName = (stats, infoBit, playerMetadata) => {
     const villagePlayerID = stats.IBOutput[infoBit][0];
     const villagePlayers = stats.modelOutput[7][0].split(",");
@@ -15,18 +8,12 @@ const getPlayerName = (stats, infoBit, playerMetadata) => {
     }
     return playerName
 }
-// node -r esm scripts/getGameCsv.js 1xzgX9iwNmk
-// to run: node -r esm scripts/getGameCsv.js <matchId>
-console.log(`getting match: ${matchId}...`)
-// connect to database
-const db = new PostgresStore(`postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}/${process.env.POSTGRES_DB}`);
-db.fetch(matchId, {
-    state: true,
-    metadata: true
-}).then((matchInfo) => {
-    const outputFile = `${matchId}-${matchInfo.metadata.setupData.gameLabel}.csv`;
-    const yearlyStateRecord = matchInfo.state.G.yearlyStateRecord
-    const setupDataKeys = Object.keys(matchInfo.metadata.setupData)
+
+export const getGameData = (matchId, G, matchData) => {
+    const csvColumns = []
+    const outputFile = `${matchId}-${G.gameConfig.gameLabel}.csv`;
+    const yearlyStateRecord = G.yearlyStateRecord
+    const setupDataKeys = Object.keys(G.gameConfig)
     const playerDataKeys = [
         "playerID",
         "playerName",
@@ -43,7 +30,7 @@ db.fetch(matchId, {
         "cropChoices",
         "waterChoices"
     ]
-    const pubInfoKeys = Object.keys(matchInfo.state.G.publicInfo)
+    const pubInfoKeys = Object.keys(G.publicInfo)
     const infoBitKeys = [
         "Avg. # GW Fields",
         "Avg. # SW Fields",
@@ -64,6 +51,7 @@ db.fetch(matchId, {
         "Random player/SW usage",
         "Random player/RW usage", 
         "Random player/# fields Fallow",
+        "Random player/# fields Fallow",
         "Player w/ Max High Value Crop", 
         "Max # High Value Crops", 
         "Expected GW Recharge"
@@ -80,14 +68,14 @@ db.fetch(matchId, {
                 infoBitKeys.forEach((key) => {
                     if (Object.keys(villageStats).includes("IBOutput") && Object.keys(villageStats.IBOutput).includes(key)) {
                         if (villageStats.IBOutput[key].length > 1 && typeof villageStats.IBOutput[key][0] === "number") {
-                            villageStats.IBOutput[key][0] = getPlayerName(villageStats, key, matchInfo.metadata.players)
+                            villageStats.IBOutput[key][0] = getPlayerName(villageStats, key, matchData)
                         }
                         infoBitDict[key] = `"${villageStats.IBOutput[key].toString()}"`;
                     } else {
                         infoBitDict[key] = ""
                     }
                 })
-                let playerName = matchInfo.metadata.players[filterdStats[j].pid.toString()].name;
+                let playerName = matchData[filterdStats[j].pid.toString()].name;
                 let baseInfo = {
                     playerID: filterdStats[j].pid,
                     playerName: playerName,
@@ -105,10 +93,10 @@ db.fetch(matchId, {
                     waterChoices: playerName ? `"${filterdStats[j].playerWaterFields.flat(4).toString()}"` : '"1,1,1,1,1,1,1,0,0"'
                 }
                 const rowObj = Object.assign(
-                    matchInfo.metadata.setupData, 
+                    G.gameConfig, 
                     ...[
                         baseInfo,
-                        matchInfo.state.G.publicInfo,
+                        G.publicInfo,
                         infoBitDict
                     ]
                 )
@@ -122,62 +110,5 @@ db.fetch(matchId, {
             }
         }
     }
-
-    writeFileSync(`/var/exports/${outputFile}`, outputData)
-    console.log(`Your CSV is ready to scp: /var/exports/${outputFile}`)
-})
-
-/*
-test row:  {
-  numYears: 10,
-  playersPerVillage: 3,
-  numVillages: 3,
-  probabilityWetYear: 0.5,
-  avgLengthDrySpell: 1.25,
-  incProbabilityWetYearAnnual: 0,
-  incAvgLengthDrySpellAnnual: 0,
-  profitMultiplierGoodBadYear: 0.15,
-  groundwaterRechargeGoodBadYear: 0.8,
-  ratioReturnsRainVFallow: 1.2,
-  ratioReturnsRainVSurfaceWater: 0.1,
-  ratioReturnsRainVGroundWater: 0.06,
-  multiplierProfitWaterHighValCrops: 2,
-  profitPenaltyPerPersonPubInfo: 2,
-  optimalFieldAllocationSWSelfish: 4,
-  optimalFieldAllocationSWCommunity: 3,
-  optimalFieldAllocationGWSelfishMyopic: 5,
-  optimalFieldAllocationGWSelfishSustainable: 3,
-  optimalFieldAllocationGWCommunity: 2,
-  profitMarginalFieldFallow: 1,
-  expectedGWRecharge: 3,
-  recessionConstant: 1.75,
-  ratioMaxLossesVExpectedRecharge: 0.9,
-  moderated: true,
-  turnLength: 30000,
-  maxYears: 25,
-  gameLabel: 'game3020304',
-  playerID: 9,
-  village: 3,
-  groundwaterDepth: 0.28,
-  rain: 1,
-  playerMoney: '111.44',
-  Profit_F: '2.00',
-  Profit_R: '0.63',
-  Profit_S: '21.60',
-  Profit_G: '20.14',
-  Profit_Net: '44.37',
-  year: '2',
-  cropChoices: '[[0,0,0],[0,0,0],[0,0,0]]',
-  waterChoices: '[[0,0,0],[0,0,0],[0,0,0]]',
-  alphaF: 1,
-  alphaR1: 2.09,
-  alphaR2: 0.31,
-  alphaS: 14.4,
-  betaS1: 1.2,
-  betaS2: 0.24,
-  alphaG: 28.07,
-  betaG: 34.75,
-  betaG1: 1.4,
-  betaG2: 0.56
+    return {data: outputData, file: outputFile}
 }
-*/

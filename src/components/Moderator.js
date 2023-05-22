@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { playerIDAtom } from '../atoms/pid';
 import { gameIDAtom } from '../atoms/gameid';
+import { getGameData } from '../atoms/csvGeneration'
 
 import axios from 'axios'
 import { PLUMBER_URL } from "../config";
@@ -65,7 +66,10 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         {"value": 15, "text": "16. Randomly show a player's name and groundwater usage."},
         {"value": 16, "text": "17. Randomly show a player's name and surface water usage."},
         {"value": 17, "text": "18. Randomly show a player's name and rain water usage."},
-        {"value": 18, "text": "19. Randomly show a player's name and their number of fields left fallow."}
+        {"value": 18, "text": "19. Randomly show a player's name and their number of fields left fallow."},
+        {"value": 19, "text": "20. Which player planted the most high value crops this year?"},
+        {"value": 20, "text": "21. What was the maximum number of high value crops planted by a single player this year?"},
+        {"value": 21, "text": "22. What is the expected average groundwater recharge amount?"}
     ]
 
     function pushSelectedBit(selection, village) {
@@ -132,7 +136,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
             Water: "0".repeat(9*playNum),
             Crop: "0".repeat(9*playNum),
-            IB: "0000000000000000000",
+            IB: "0000000000000000000000",
             GD: (new Array(playNum).fill(0)).join(),
             r0: G.villageStats[1].r0,
             P: G.gameConfig.probabilityWetYear,
@@ -158,7 +162,9 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             VillageID:1,
             PlayerIDs: (new Array(playNum).fill(0)).join(),
             isHumanPlayer: "1".repeat(playNum),
-            numPlayers: playNum
+            numPlayers: playNum,
+            gameLabel: G.gameConfig.gameLabel,
+            generateGraph: false
         }}).then((res) => {
             console.log(res.data[1][0])
             moves.setPublicInfo(res.data[1][0], playerID)
@@ -184,6 +190,24 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
             }, 3000)
         }
     }
+
+    function downloadLog () {
+        let gameInfo = getGameData(gameID, G, matchData)
+        // Create a blob with the data we want to download as a file
+        const blob = new Blob([gameInfo.data], { type: 'text/csv' })
+        // Create an anchor element and dispatch a click event on it
+        // to trigger a download
+        const a = document.createElement('a')
+        a.download = gameInfo.file
+        a.href = window.URL.createObjectURL(blob)
+        const clickEvt = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        })
+        a.dispatchEvent(clickEvt)
+        a.remove()
+      }
 
     return (
         <div className='container mt-4'>
@@ -368,7 +392,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                             {matchData.filter(el => G.playerStats[el.id].village === village).map(player => (
                                 <tr key={player.id}>
                                     <td className="align-middle" style={tableStyle}>{player.id} { (village === 0) && "(Moderator)" }</td>
-                                    <td className="align-middle" style={tableStyle}>{player.name ? player.name : ""}</td>
+                                    <td className="align-middle" style={tableStyle}>{player.name ? player.name : "BOT"}</td>
                                     <td className="align-middle" style={tableStyle}>{player.isConnected ? player.isConnected.toString() : ""}</td>
                                     <td className="align-middle" style={tableStyle}>{G.playerStats[player.id].playerMoney.toFixed(2)}</td>
                                     <td onClick={() => moves.resetSubmissions(player.id)} className="align-middle" style={tableStyle}>{G.playerStats[player.id].selectionsSubmitted ? <div style={{cursor:"not-allowed"}}> {G.playerStats[player.id].playerWaterFields.flat(4).map((choice, index) => (<img className="bg-wet-dirt border-0" key={index} src={waterChoices[choice]} width="25px"></img>))}<br className="p-0 m-0"/>{G.playerStats[player.id].playerCropFields.flat(4).map((choice, index) => (<img className="bg-dirt border-0" key={index} src={cropChoices[choice]} width="25px"></img>))}</div> : "No"} </td>
@@ -414,6 +438,17 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                         simpleStart()
                     }}
                 >Start Game</button>
+                </div>
+                }
+                {ctx.gameover == true &&
+                <div>
+                    <button
+                    className='btn btn-primary'
+                    style={buttonSpacing}
+                    onClick={() => {
+                        downloadLog(gameID)
+                    }}
+                    >Download Log</button>
                 </div>
                 }
                 {ctx.phase == "playerMoves" && 
@@ -479,7 +514,9 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                             VillageID:i+1,
                             PlayerIDs: playerIDs.join(","),
                             isHumanPlayer: isHumanPlayer,
-                            numPlayers: G.gameConfig.playersPerVillage
+                            numPlayers: G.gameConfig.playersPerVillage,
+                            gameLabel: G.gameConfig.gameLabel,
+                            generateGraph: false
                         }}).then((res) => {
                             moves.submitVillageDataUpdate(0, res.data)
                         }))
