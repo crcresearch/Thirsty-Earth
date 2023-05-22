@@ -464,14 +464,14 @@ export function CreateGame() {
         <div className="container mt-4">
           {showModal &&
             <div class="modal modal-show" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Optimal Profits Graph</h5>
                         </div>
                         <div class="modal-body">
-                            <p>Here is a graph of the optimal profits for this game configuration</p>
-                            <img src={`${process.env.PUBLIC_URL}/${imgSrc}`}></img>
+                            <p>Here is a graph of the optimal profits for this game configuration:</p>
+                            <img className="img-fluid" src={`${process.env.PUBLIC_URL}/${imgSrc}`}></img>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onClick={() => {
