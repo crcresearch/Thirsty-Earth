@@ -50,7 +50,11 @@ export const getGameData = (matchId, G, matchData) => {
         "Random player/GW usage",
         "Random player/SW usage",
         "Random player/RW usage", 
-        "Random player/# fields Fallow"
+        "Random player/# fields Fallow",
+        "Random player/# fields Fallow",
+        "Player w/ Max High Value Crop", 
+        "Max # High Value Crops", 
+        "Expected GW Recharge"
     ];
     csvColumns.push(...setupDataKeys, ...playerDataKeys, ...pubInfoKeys, ...infoBitKeys)
     let outputData = `${csvColumns.toString()}\n`
