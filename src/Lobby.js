@@ -128,7 +128,7 @@ export function JoinGame() {
           ></input>
           <div class="row row-cols-2 mt-3 ">
             <div class="col col-1"><input type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} /></div>
-            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to <a href="https://drive.google.com/file/d/1WKkwSIIi13tOaot3C_yh6fZTwO0zbcZB/view?usp=sharing" target="_blank">the consent form for research found here</a> </label></div>
+            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to the <a href="https://drive.google.com/file/d/1ptLTGySpdp0mdQSd-x63DIAZM8NLjGFw/view" target="_blank">Terms and Conditions</a> of this site.</label></div>
           </div>
 
           <div className="d-flex flex-row-reverse">
