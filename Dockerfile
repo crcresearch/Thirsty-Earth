@@ -11,10 +11,6 @@ COPY ./package.json /app/
 #create exports folder.
 RUN mkdir /var/exports
 
-#create imgs folder.
-RUN mkdir /var/media
-RUN mkdir /var/media/graph_imgs
-
 # Install and build.
 RUN npm install 
 
