@@ -16,7 +16,7 @@ services:
       - 8080
     volumes:
       - ../exports:/var/exports
-      - graph-img-serve:/var/media/graph_imgs
+      - graph-img-serve:/app/public/graph_imgs
     ports:
       - 127.0.0.1:8000:8000
       - 127.0.0.1:8080:8080

@@ -471,7 +471,7 @@ export function CreateGame() {
                         </div>
                         <div class="modal-body">
                             <p>Here is a graph of the optimal profits for this game configuration</p>
-                            <img src={imgSrc}></img>
+                            <img src={`${process.env.PUBLIC_URL}/${imgSrc}`}></img>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onClick={() => {

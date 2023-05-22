@@ -189,7 +189,7 @@ export const ThirstyEarth = {
         },
         setInfoBits: (G, ctx, informationBits, villageID) => {
           let binaryChoiceString = ""
-          for (let i in Array(19).fill("")) {
+          for (let i in Array(22).fill("")) {
               if (informationBits.includes(i.toString())) {
                   binaryChoiceString += "1"
               } else {
