@@ -29,6 +29,10 @@ const collapseHidden = {
     display: "none"
 }
 
+const linkStyle = {
+  textDecoration: "none"
+};
+
 const lobbyClient = new LobbyClient({ server: API_URL });
 
 export function CreateGame() {
@@ -486,9 +490,8 @@ export function CreateGame() {
                 <a className="navbar-brand" target="_blank" href="https://drive.google.com/drive/u/0/folders/14b00jvGWzQ-elFGk8LrtbPAg4ak5VFvy">
                   Instructor Documents
                 </a>
-                <a href="/" className="btn btn-primary my-2 my-sm-0">Join Game</a>
             </nav>
-            <h2 className="title-font text-center mb-4">Thirsty Earth Lobby</h2>
+            <h2 className="text-center mb-4"><a className="title-font" style={linkStyle} href="/">Thirsty Earth Lobby</a></h2>
             <div className="row">
                 <div className="col-6 offset-lg-3">
                   <h2 className="subtitle-font text-center">Create Game</h2>
@@ -568,7 +571,7 @@ export function CreateGame() {
                           type="number"
                           id={input.id}
                           className={getValidState(input.id)}
-                          placeholder={input.label}
+                          step="0.1"
                           required
                           style={inputStyle}
                           value={input.value}
@@ -636,6 +639,7 @@ export function CreateGame() {
                             type="number"
                             id={input.id}
                             className={getValidState(input.id)}
+                            step="0.1"
                             style={inputStyle}
                             value={input.value}
                             onChange={(event) => {
