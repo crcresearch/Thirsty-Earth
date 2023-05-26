@@ -369,7 +369,7 @@ ThirstyEarth = function(Water, Crop, IB, GD, r0, P, Ld, dP, dLd, QNS, QFS, QNG0,
       geom_line(aes(y=RBp), color='darkgreen')+           #RW bad year profit
       geom_line(aes(y=RAprof), color='darkgreen', lty=3)+ #RW expected profit
       geom_line(aes(y=Fprof), color='black')+             #Fallow profit
-      geom_vline(xintercept=c(QNG,QFG,QNS,QFS),col=c('brown','brown', 'blue','blue'),lty=rep(c(1,2,1,2)))
+      geom_vline(xintercept=c(QNG,QFG,QNS,QFS),col=c('brown','brown', 'blue','blue'),lty=rep(c(4,2,4,2)))
     
     file_path = "/var/media/graph_imgs/optimal_profits.jpeg"
     ggsave(file_path)
