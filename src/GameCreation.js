@@ -255,7 +255,6 @@ export function CreateGame() {
                     console.log(playerInfo);
                     setPlayerID(playerInfo.playerID);
                     setPlayerCredentials(playerInfo.playerCredentials);
-
                     navigate(`/game/${matchID}`, { replace: true });
                 });
                 setGameID(matchID);
@@ -274,13 +273,17 @@ export function CreateGame() {
       setIdsWithWarnings([]);
     }
 
-    function checkEntries(P, dP, Ld, dLd, QFS, QNS, QFG, QNG, QNG0, k, rhoRS, rhoRG, rhoRF, lambda, rhoR, aCr, playerName) {
+    function checkEntries(checkFor, P, dP, Ld, dLd, QFS, QNS, QFG, QNG, QNG0, k, rhoRS, rhoRG, rhoRF, lambda, rhoR, aCr, playerName) {
       resetErrorsWarnings();
       let error = submissionErrors(QFS, QNS, QFG, QNG, QNG0, k, lambda, rhoR, aCr);
       let warning = submissionWarnings(P, dP, Ld, dLd, rhoRS, rhoRG, rhoRF, QNG, lambda, k);
 
       if (error.text.length == 0 && (warning.text.length == 0 || ignoreWarnings)) {
-        createMatch(playerName);
+        if (checkFor == "createMatch") {
+          createMatch(playerName);
+        } else {
+          generateGraph()
+        }
       } else {
         if (error.text.length > 0) {
           setShowError(true);
@@ -317,6 +320,10 @@ export function CreateGame() {
         let errorText = [];
         let errorIds = [];
 
+        if (numPlayers < 3) {
+          errorText.push("Each village needs at least 3 players.");
+          errorIds.push("playersPerVillage")
+        }
         if (numPlayers * numVillages + 1 + (1 * numVillages) > 100) {
           errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) plus the number of extra players (1 per village) must be less than or equal to 100.");
           errorIds.push("playersPerVillage", "numVillages")
@@ -588,7 +595,28 @@ export function CreateGame() {
                       type="button"
                       disabled={!numPlayers || !numVillages || gameLabel == ""}
                       style={extraButtonStyle}
-                      onClick={() => generateGraph()}
+                      onClick={() => 
+                        checkEntries(
+                          "generateGraph",
+                          probabilityWetYear,
+                          incProbabilityWetYearAnnual,
+                          avgLengthDrySpell,
+                          incAvgLengthDrySpellAnnual,
+                          optimalFieldAllocationSWCommunity, 
+                          optimalFieldAllocationSWSelfish, 
+                          optimalFieldAllocationGWCommunity, 
+                          optimalFieldAllocationGWSelfishSustainable, 
+                          optimalFieldAllocationGWSelfishMyopic, 
+                          recessionConstant, 
+                          ratioReturnsRainVSurfaceWater, 
+                          ratioReturnsRainVGroundWater, 
+                          ratioReturnsRainVFallow,
+                          ratioMaxLossesVExpectedRecharge,
+                          profitMultiplierGoodBadYear,
+                          multiplierProfitWaterHighValCrops,
+                          creatingPlayerName
+                        )
+                      }
                     >
                       Generate Graph
                     </button>
@@ -598,6 +626,7 @@ export function CreateGame() {
                       style={extraButtonStyle}
                       onClick={() => {
                         checkEntries(
+                          "createMatch",
                           probabilityWetYear,
                           incProbabilityWetYearAnnual,
                           avgLengthDrySpell,
