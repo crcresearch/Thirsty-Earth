@@ -6,6 +6,8 @@
 #This function is applied individually for a single village. There will be no upstream or downstream villages.
 #rm(list=ls())  #clear work space
 library(tidyverse)
+library(ggplot2)
+library(ggnewscale)
 
 #* @filter cors
 cors <- function(res) {
@@ -363,14 +365,23 @@ ThirstyEarth = function(Water, Crop, IB, GD, r0, P, Ld, dP, dLd, QNS, QFS, QNG0,
     rain=rrr
 
     ggplot(data.frame(Village_Q = qPlot, Profit=Gprof, SW_Profit = Sprof, RGp = RGprof, RBp = RBprof, Fprof = Fprof), aes(x=Village_Q))+
-      geom_line(aes(y=Profit), color='brown')+            #GW sustainable expected profit
-      geom_line(aes(y=SW_Profit), color='blue')+          #SW profit
-      geom_line(aes(y=RGp), color='green')+               #RW good year profit
-      geom_line(aes(y=RBp), color='darkgreen')+           #RW bad year profit
-      geom_line(aes(y=RAprof), color='darkgreen', lty=3)+ #RW expected profit
-      geom_line(aes(y=Fprof), color='black')+             #Fallow profit
-      geom_vline(xintercept=c(QNG,QFG,QNS,QFS),col=c('brown','brown', 'blue','blue'),lty=rep(c(4,2,4,2)))
-    
+      geom_line(aes(y=Profit, color='GW_Profit', linetype='GW_Profit'))+            #GW sustainable expected profit
+      geom_line(aes(y=SW_Profit, color='SW_Profit', linetype='SW_Profit'))+          #SW profit
+      geom_line(aes(y=RGp, color='RW_Good_Year_Profit', linetype='RW_Good_Year_Profit'))+               #RW good year profit
+      geom_line(aes(y=RBp, color='RW_Bad_Year_Profit', linetype='RW_Bad_Year_Profit'))+           #RW bad year profit
+      geom_line(aes(y=RAprof, color='RW_Expected_Profit', linetype='RW_Expected_Profit'))+ #RW expected profit
+      geom_line(aes(y=Fprof, color='Fallow_Profit', linetype='Fallow_Profit'))+             #Fallow profit
+      scale_linetype_manual("Profits vs Water Usage", values = c('GW_Profit'=1,'SW_Profit'=1,'RW_Good_Year_Profit'=1,'RW_Bad_Year_Profit'=1,'RW_Expected_Profit'=3,'Fallow_Profit'=1), guide = guide_legend(order = 1))+
+      scale_color_manual("Profits vs Water Usage", values = c('GW_Profit'="brown",'SW_Profit'="blue",'RW_Good_Year_Profit'="green",'RW_Bad_Year_Profit'="darkgreen",'RW_Expected_Profit'="darkgreen",'Fallow_Profit'="black"), guide = guide_legend(order = 1))+
+      new_scale_color() +
+      new_scale("linetype") +
+      geom_vline(aes(xintercept=QNG, color="GW_Nash_Optimal", linetype="GW_Nash_Optimal"))+
+      geom_vline(aes(xintercept=QFG, color="GW_First_Best_Optimal", linetype="GW_First_Best_Optimal"))+
+      geom_vline(aes(xintercept=QNS, color="SW_Nash_Optimal", linetype="SW_Nash_Optimal"))+
+      geom_vline(aes(xintercept=QFS, color="SW_First_Best_Optimal", linetype="SW_First_Best_Optimal"))+
+      scale_linetype_manual("Optimal", values = c("GW_Nash_Optimal"=4,"GW_First_Best_Optimal"=2,"SW_Nash_Optimal"=4,"SW_First_Best_Optimal"=2), guide = guide_legend(order = 2))+
+      scale_color_manual("Optimal", values = c("GW_Nash_Optimal"="brown","GW_First_Best_Optimal"="brown","SW_Nash_Optimal"="blue","SW_First_Best_Optimal"="blue"), guide = guide_legend(order = 2))
+
     file_path = "/var/media/graph_imgs/optimal_profits.jpeg"
     ggsave(file_path)
     return(list("optimal_profits.jpeg")) 
