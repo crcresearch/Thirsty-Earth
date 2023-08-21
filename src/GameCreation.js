@@ -56,7 +56,8 @@ export function CreateGame() {
     const [numYears, setNumYears] = React.useState(null);
     const [gameLabel, setGameLabel] = React.useState("");
     const [imgSrc, setImgSrc] = React.useState("");
-    const [showModal, setShowModal] = useState(false);
+    const [showGraphModal, setShowGraphModal] = useState(false);
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     // R parameters (basic)
     const [probabilityWetYear, setProbabilityWetYear] = React.useState(0.5); // P
     const [avgLengthDrySpell, setAvgLengthDrySpell] = React.useState(1.25); // Ld
@@ -467,13 +468,13 @@ export function CreateGame() {
           generateGraph: true
       }}).then((res) => {
         setImgSrc(res.data[0][0])
-        setShowModal(true)
+        setShowGraphModal(true)
       })
     }
 
     return (
         <div className="container mt-4">
-          {showModal &&
+          {showGraphModal &&
             <div class="modal modal-show" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -486,7 +487,26 @@ export function CreateGame() {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onClick={() => {
-                                setShowModal(false)
+                                setShowGraphModal(false)
+                            }}>Exit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            {showFeedbackModal &&
+            <div class="modal modal-show" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Feedback Form</h5>
+                        </div>
+                        <div class="modal-body">
+                          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc0mJV56sOstsghoc7PAnAItWyrBSIg0cZmvhMS-Nz-tVjZrQ/viewform?embedded=true" width="100%" height="766" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onClick={() => {
+                                setShowFeedbackModal(false)
                             }}>Exit</button>
                         </div>
                     </div>
@@ -496,6 +516,9 @@ export function CreateGame() {
             <nav className="navbar">
                 <a className="navbar-brand" target="_blank" href="https://drive.google.com/drive/u/0/folders/14b00jvGWzQ-elFGk8LrtbPAg4ak5VFvy">
                   Instructor Documents
+                </a>
+                <a onClick={() => { setShowFeedbackModal(true) }} className="btn btn-navy my-2 my-sm-0">
+                  Submit Feedback
                 </a>
             </nav>
             <h2 className="text-center mb-4"><a className="title-font" style={linkStyle} href="/">Thirsty Earth Lobby</a></h2>
