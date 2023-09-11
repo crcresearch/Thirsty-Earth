@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GameHub } from './GameHub';
 import { JoinGame } from "./Lobby";
 import { CreateGame } from "./GameCreation";
+import { CreateJson } from "./CreateJson";
 import { GameIDError } from './GameIDError';
 
 // i think gameCreationPassword should go in the .env file but I'm not sure how to call it, process.env.<variable> returns undefined
@@ -14,6 +15,7 @@ const App = () => (
       <Route path="/game/:gameID" element={<GameHub/>} />
       <Route path="/" element={<JoinGame/>} />
       <Route path="/game-creation" element={<CreateGame/>} />
+      <Route path="/json-generation" element={<CreateJson/>} />
       <Route path="/error" element={<GameIDError/>}/>
       <Route path="/game" element={<Navigate to="/error"/>}/>
     </Routes>
