@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LobbyClient } from "boardgame.io/client";
 import { useSetRecoilState } from "recoil";
@@ -49,6 +49,8 @@ export function CreateGame() {
     const [idsWithErrors, setIdsWithErrors] = useState([]);
     const [idsWithWarnings, setIdsWithWarnings] = useState([]);
     const [ignoreWarnings, setIgnoreWarnings] = useState(false);
+    const [fileContent, setFileContent] = useState("");
+    let fileRef = useRef();
 
     const [moderated, setModerated] = React.useState(true);
     const [numVillages, setNumVillages] = React.useState(null);
@@ -82,6 +84,33 @@ export function CreateGame() {
     const [ratioMaxLossesVExpectedRecharge, setRatioMaxLossesVExpectedRecharge] = React.useState(0.9); // lambda
 
     // const [turnTimer, setTurnTimer] = React.useState(null);
+
+    let basicGameConfig = [
+      {
+        id: "creatingPlayerName",
+        set_function: setCreatingPlayerName
+      },
+      {
+        id: "moderated",
+        set_function: setModerated
+      },
+      {
+        id: "numVillages",
+        set_function: setNumVillages
+      },
+      {
+        id: "numPlayers",
+        set_function: setNumPlayers
+      },
+      {
+        id: "numYears",
+        set_function: setNumYears
+      },
+      {
+        id: "gameLabel",
+        set_function: setGameLabel
+      },
+    ]
 
     let basicRParameters = [
       {
@@ -211,6 +240,17 @@ export function CreateGame() {
       }
     ]
 
+    const readFile = event => {
+      const fileReader = new FileReader();
+      const { files } = event.target;
+  
+      fileReader.readAsText(files[0], "UTF-8");
+      fileReader.onload = e => {
+        const content = e.target.result;
+        setFileContent(JSON.parse(content));
+      };
+    };
+
     let navigate = useNavigate();
 
     function createMatch(playerName) {
@@ -263,6 +303,13 @@ export function CreateGame() {
           
                 console.log(matchID);
             });
+    }
+
+    function autoFill() {
+      let params = [...basicGameConfig, ...basicRParameters, ...advancedRParameters];
+      params.forEach((param) => {
+        param.set_function(fileContent[param.id]);
+      })
     }
 
     function resetErrorsWarnings() {
@@ -525,6 +572,15 @@ export function CreateGame() {
             <div className="row">
                 <div className="col-6 offset-lg-3">
                   <h2 className="subtitle-font text-center">Create Game</h2>
+                  <div className="d-flex mt-2 mb-2">
+                    <div className="input-group">
+                      <input className="form-control" ref={fileRef} accept="application/JSON" type="file" onChange={readFile} />
+                      <button className="btn btn-primary" onClick={()=> { autoFill() }}>Upload Game Config</button>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-center mt-2 mb-2">
+                    <h3>-------- OR --------</h3>
+                  </div>
                   <div>
                     <label htmlFor="name">Your Name:</label>
                     <input
