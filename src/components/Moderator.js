@@ -135,6 +135,7 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
 
     function getPublicInfo() {
         const playNum = G.gameConfig.playersPerVillage
+        setLoadingResponse(true)
 
         axios.post(`${PLUMBER_URL}/calculate`, null, {params: {
             Water: "0".repeat(9*playNum),
@@ -171,6 +172,10 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
         }}).then((res) => {
             console.log(res.data[1][0])
             moves.setPublicInfo(res.data[1][0], playerID)
+            setLoadingResponse(false)
+        }).catch((err) => {
+            setResponseError(true)
+            setErrorText(err.response.data.error)
         })
     }
 
@@ -543,12 +548,6 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 >Unlock Choices</button>
                 </div>
                 }
-                {responseError == true &&
-                    <div className="alert alert-danger mb-2" role="alert">
-                        <span className="mb-3">Error fetching response from algorithm:</span>
-                        <p>{errorText}</p>
-                    </div>
-                }
                 {ctx.phase == "moderatorPause" && 
                 <div>
                 <button disabled={loadingResponse} className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Advance to Next Choice Period</button> <br/>
@@ -559,6 +558,12 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 
                 {/* <button className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Rewind to Beginning of Year </button> */}
                 </div>
+                }
+                {responseError == true &&
+                    <div className="alert alert-danger mb-2 mt-2" role="alert">
+                        <span>Error fetching response from algorithm:</span>
+                        <p>{errorText}</p>
+                    </div>
                 }
             </div>
             <hr></hr>
