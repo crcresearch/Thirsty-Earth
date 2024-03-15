@@ -43,6 +43,9 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
     const [selectedBits, setSelectedBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill(""));
     const [informationBits, setInformationBits] =  React.useState(new Array(G.gameConfig.numVillages + 1).fill([]));
     const [showModal, setShowModal] = useState(false);
+    const [loadingResponse, setLoadingResponse] = useState(false);
+    const [responseError, setResponseError] = useState(false);
+    const [errorText, setErrorText] = useState("");
     const playerID = useRecoilValue(playerIDAtom);
     const gameID = useRecoilValue(gameIDAtom);
     const waterChoices = [cloud, river, well];
@@ -453,12 +456,14 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 }
                 {ctx.phase == "playerMoves" && 
                 <div>
-                <button className='btn btn-primary' onClick={() => {
+                <button className='btn btn-primary' 
+                disabled={loadingResponse}
+                onClick={() => {
                     // break up player choices into village groups
                     // make four calls to R code
                     // when each call comes back, save its output
                     // when all calls come back, merge all of the saved outputs into one 
-
+                    setLoadingResponse(true)
 
                     let promisesList = []
                     for(let i = 0; i < G.gameConfig.numVillages ; i++) {
@@ -519,11 +524,15 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                             generateGraph: false
                         }}).then((res) => {
                             moves.submitVillageDataUpdate(0, res.data)
+                        }).catch((err) => {
+                            setResponseError(true)
+                            setErrorText(err.response.data.error)
                         }))
                     }   
                     
                     Promise.all(promisesList).then(() => {
                         moves.advanceYear(0, {})
+                        setLoadingResponse(false)
                     })
                 }
                 }>End Choice Period of Current Year</button>
@@ -534,11 +543,17 @@ export function Moderator({ ctx, G, moves, matchData, chatMessages}) {
                 >Unlock Choices</button>
                 </div>
                 }
+                {responseError == true &&
+                    <div className="alert alert-danger mb-2" role="alert">
+                        <span className="mb-3">Error fetching response from algorithm:</span>
+                        <p>{errorText}</p>
+                    </div>
+                }
                 {ctx.phase == "moderatorPause" && 
                 <div>
-                <button className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Advance to Next Choice Period</button> <br/>
+                <button disabled={loadingResponse} className='btn btn-primary mb-2' onClick={() => moves.advanceToPlayerMoves(0)}>Advance to Next Choice Period</button> <br/>
                 {[...Array(G.currentRound - 1)].map(function(x, i) {
-                 return <><button className='btn btn-primary mb-2' onClick={() => moves.rewind(0,i+1)}>Rewind to Beginning of Year {i+1}</button><br/></>
+                 return <><button className='btn btn-primary mb-2' disabled={loadingResponse} onClick={() => moves.rewind(0,i+1)}>Rewind to Beginning of Year {i+1}</button><br/></>
                 })
                  }
                 
