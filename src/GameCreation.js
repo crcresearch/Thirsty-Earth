@@ -81,6 +81,12 @@ export function CreateGame() {
     const [recessionConstant, setRecessionConstant] = React.useState(1.75); // k
     const [ratioMaxLossesVExpectedRecharge, setRatioMaxLossesVExpectedRecharge] = React.useState(0.9); // lambda
 
+    // Add state for disabled options
+    const [disableRiver, setDisableRiver] = React.useState(false);
+    const [disableWell, setDisableWell] = React.useState(false);
+    const [disableEmptyCrop, setDisableEmptyCrop] = React.useState(false);
+    const [disableHighCrop, setDisableHighCrop] = React.useState(false);
+
     // const [turnTimer, setTurnTimer] = React.useState(null);
 
     let basicRParameters = [
@@ -216,7 +222,7 @@ export function CreateGame() {
     function createMatch(playerName) {
         lobbyClient
             .createMatch(GAME_NAME, {
-                numPlayers: numPlayers * numVillages + 1 + (1 * numVillages), 
+                numPlayers: numPlayers * numVillages + 1, 
                 setupData: {
                     numYears: numYears, 
                     playersPerVillage: numPlayers, 
@@ -244,7 +250,14 @@ export function CreateGame() {
                     moderated: moderated, 
                     turnLength: 30000, 
                     maxYears: 25, 
-                    gameLabel: gameLabel
+                    gameLabel: gameLabel,
+                    // Add disabled options
+                    disabledOptions: {
+                        riverWater: disableRiver,
+                        wellWater: disableWell,
+                        emptyCrop: disableEmptyCrop,
+                        highCrop: disableHighCrop
+                    }
                 }, unlisted: true
             })
             .then(({ matchID }) => {
@@ -325,8 +338,8 @@ export function CreateGame() {
           errorText.push("Each village needs at least 3 players.");
           errorIds.push("playersPerVillage")
         }
-        if (numPlayers * numVillages + 1 + (1 * numVillages) > 100) {
-          errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) plus the number of extra players (1 per village) must be less than or equal to 100.");
+        if (numPlayers * numVillages + 1 > 100) {
+          errorText.push("The number of active players (players per village times number of villages) plus the moderator (1) must be less than or equal to 100.");
           errorIds.push("playersPerVillage", "numVillages")
         }
         if(QNS+QNG > 9) {
@@ -612,7 +625,60 @@ export function CreateGame() {
                       </div>
                     ))}
                   </div>
-                  <div className="d-flex flex-row-reverse ">
+
+                  <div className="card my-4 p-3">
+                    <h5>Disable Water/Crop Choices</h5>
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="disableRiver"
+                            checked={disableRiver}
+                            onChange={(e) => setDisableRiver(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="disableRiver">
+                            Disable Surface Water
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="disableWell"
+                            checked={disableWell}
+                            onChange={(e) => setDisableWell(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="disableWell">
+                            Disable Ground Water
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="disableEmptyCrop"
+                            checked={disableEmptyCrop}
+                            onChange={(e) => setDisableEmptyCrop(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="disableEmptyCrop">
+                            Disable Empty Crop Yield
+                        </label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="disableHighCrop"
+                            checked={disableHighCrop}
+                            onChange={(e) => setDisableHighCrop(e.target.checked)}
+                        />
+                        <label className="form-check-label" htmlFor="disableHighCrop">
+                            Disable High Crop Yield
+                        </label>
+                    </div>
+                  </div>
+
+                  <div className="d-flex flex-row-reverse">
                     <button 
                       className="btn btn-navy" 
                       type="button"
