@@ -36,39 +36,19 @@ const gameBoardStyle = {
     position: 'relative',
     height: '780px'
 }
-const selectionsStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    marginBottom: '5%',
-    marginTop: '-15%'
-}
 
-const topSelectionsStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: '10%',
-    marginLeft: '30%'
-}
-const cropGridStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    marginLeft: '5%',
-    marginTop: '-10%'
+// Add disabled image style
+const disabledImageStyle = {
+    opacity: 0.5,
+    filter: 'grayscale(100%)',
+    cursor: 'not-allowed',
+    pointerEvents: 'none'
+};
 
-}
-const cropSquareStyle = {
-    borderStyle: 'solid'
-}
-
-const imgStyle = {
-    width: '100px',
-    height: '100px',
-} 
-
-const miniTileStyle = {
-    width: 'auto',
-    height: '50px',
-}
+// Add clickable style for enabled options
+const clickableStyle = {
+    cursor: 'pointer'
+};
 
 const leftOptions = [
     cloud,
@@ -94,13 +74,14 @@ const GameTile = ({
     return(
         <div className="col" key={theKey}>
             <div className="bg-wet-dirt text-center" onClick={topClick} style={{
-                    border: warning 
-                    ? 'solid orange 4px' 
-                    : undefined
+                    border: warning ? 'solid orange 4px' : undefined,
+                    cursor: 'pointer'
                 }}>
                 <img src={topImage} className="img-fluid"/>
             </div>
-            <div className="bg-dirt text-center" onClick={bottomClick}>
+            <div className="bg-dirt text-center" onClick={bottomClick} style={{
+                    cursor: 'pointer'
+                }}>
                 <img src={bottomImage} className="img-fluid"/>
             </div>
         </div>
@@ -112,18 +93,22 @@ const SelectAction = ({
     isHighlighted,
     image,
     altText,
-    onClick
+    onClick,
+    disabled
 }) => {
-    return(<img src={image} 
+    return (
+        <img 
+            src={image} 
             alt={altText} 
             style={{
-                border: isHighlighted 
-                ? 'solid cyan 2px' 
-                : undefined
+                border: isHighlighted ? 'solid cyan 2px' : undefined,
+                ...(disabled ? disabledImageStyle : clickableStyle)
             }}
             className="img-thumb"
-            onClick={onClick} />)
-}
+            onClick={disabled ? undefined : onClick}
+        />
+    )
+};
 
 export function MainField({ G, moves, matchData }) {
     // On the gameGrid, the numbers inside the 2D array both provide a key for the crop and a way to set and compare the selected tile.
@@ -151,6 +136,25 @@ export function MainField({ G, moves, matchData }) {
     const [gridWarnings, setGridWarnings] = useState([[false, false, false], [false, false, false], [false, false, false]])
     const [showWarning, setShowWarning] = useState(false)
     const playerID = useRecoilValue(playerIDAtom);
+
+    const isOptionDisabled = (option) => {
+        if (!G.gameConfig || !G.gameConfig.disabledOptions) return false;
+        
+        const { riverWater, wellWater, emptyCrop, highCrop } = G.gameConfig.disabledOptions;
+        
+        switch(option) {
+            case river:
+                return riverWater;
+            case well:
+                return wellWater;
+            case crop_empty:
+                return emptyCrop;
+            case crop_high:
+                return highCrop;
+            default:
+                return false;
+        }
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -191,12 +195,14 @@ export function MainField({ G, moves, matchData }) {
     }
     // Selectors for both top and left options
     const selectLeftOption = (option) => {
+        if (isOptionDisabled(option)) return;
         let tempObject = {...selectedOption};
         tempObject.left = option;
         setSelectedOption(tempObject);
     }
 
     const selectTopOption = (option) => {
+        if (isOptionDisabled(option)) return;
         let tempObject = {...selectedOption};
         tempObject.top = option;
         setSelectedOption(tempObject);
@@ -296,7 +302,7 @@ export function MainField({ G, moves, matchData }) {
                     <div className="bg-wet-dirt-bank text-center">
                         <h6 className="text-white-50 mt-2 mb-0">WATER options:</h6>
                         {leftOptions.map((option, index) => {
-                            return(<SelectAction isHighlighted={option === selectedOption.left} image={option} altText="placeholder" key={index} onClick={() => {selectLeftOption(option)}}/>)
+                            return(<SelectAction isHighlighted={option === selectedOption.left} image={option} altText="placeholder" key={index} onClick={() => {selectLeftOption(option)}} disabled={isOptionDisabled(option)}/>)
                         })}
                     </div>
                 </div>
@@ -304,7 +310,7 @@ export function MainField({ G, moves, matchData }) {
                     <div className="bg-dirt-bank text-center">
                         <h6 className="text-white-50 mt-2 mb-0">CROP options:</h6>
                         {topOptions.map((option, index) => {
-                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}}/>)
+                        return(<SelectAction isHighlighted={option === selectedOption.top} image={option} altText="placeholder" key={index} onClick={() => {selectTopOption(option)}} disabled={isOptionDisabled(option)}/>)
                         })}
                     </div>
                 </div>
@@ -316,7 +322,7 @@ export function MainField({ G, moves, matchData }) {
                             Players Submitted: {G.playerStats.filter(stat => stat.selectionsSubmitted == true).length}/{matchData.filter(player => ((!G.gameConfig.moderated || player.id != 0 ) && player.name != undefined && player.isConnected != undefined && player.isConnected == true)).length}
                         </div>
                         <div className="text-white text-end">
-                            Clear all fields <img src={reset} alt="reset button" onClick={resetOptions} className="img-icon" /> 
+                            Clear all fields <img src={reset} alt="reset button" onClick={resetOptions} className="img-icon" style={clickableStyle}/> 
                         </div>
                     </div>
                     <div>
