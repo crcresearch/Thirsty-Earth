@@ -141,7 +141,7 @@ export function ButtonBoard({ ctx, G, moves, sendChatMessage, chatMessages, matc
                             </div>
                         }
                         <div className="col-md-3 align-self-center mt-2 mb-2">
-                            For more information, <a className="text-light" target="_blank" href="https://drive.google.com/file/d/1UhCNF9zYWDqmRvvIPv5VtrsD5_XdFDk2/view?usp=sharing">click here</a>.
+                            For more information, <a className="text-light" target="_blank" href="https://drive.google.com/file/d/1T6TSsrjN_EZ64JGANfIRbpSaab02RMeR/view?usp=drive_link">click here</a>.
                         </div>
                     </div>
                 </div>

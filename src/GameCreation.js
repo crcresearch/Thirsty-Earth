@@ -527,7 +527,7 @@ export function CreateGame() {
             </div>
             }
             <nav className="navbar">
-                <a className="navbar-brand" target="_blank" href="https://drive.google.com/drive/u/0/folders/14b00jvGWzQ-elFGk8LrtbPAg4ak5VFvy">
+                <a className="navbar-brand" target="_blank" href="https://drive.google.com/drive/folders/1QL50Qc3KFfqMNm70zY79fVAVcZJDd5fn?usp=sharing">
                   Instructor Documents
                 </a>
                 <a onClick={() => { setShowFeedbackModal(true) }} className="btn btn-navy my-2 my-sm-0">

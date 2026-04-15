@@ -84,7 +84,7 @@ export function JoinGame() {
   return (
     <div className="container mt-4">
       <nav className="navbar">
-        <a className="navbar-brand" target="_blank" href="https://drive.google.com/file/d/1CTSnA8LY_b65BZO8yILr6W98T6LuChep/view?usp=sharing">
+        <a className="navbar-brand" target="_blank" href="https://drive.google.com/file/d/1T6TSsrjN_EZ64JGANfIRbpSaab02RMeR/view?usp=drive_link">
           Students Start Here
         </a>
         <a href="/game-creation" className="btn btn-navy my-2 my-sm-0">
@@ -128,7 +128,7 @@ export function JoinGame() {
           ></input>
           <div class="row row-cols-2 mt-3 ">
             <div class="col col-1"><input type="checkbox" id="isModerated" value={agreeTOS} onChange={e => setAgreeTOS(e.target.checked)} /></div>
-            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to the <a href="https://drive.google.com/file/d/1ptLTGySpdp0mdQSd-x63DIAZM8NLjGFw/view" target="_blank">Terms and Conditions</a> of this site.</label></div>
+            <div class="col col-11"><label htmlFor="isModerated">  I confirm that I have read and agreed to the <a href="https://drive.google.com/file/d/1FnF8hUvAzN_8Hqw1fTlwMUVj5-5fh15l/view?usp=drive_link" target="_blank">Terms and Conditions</a> of this site.</label></div>
           </div>
 
           <div className="d-flex flex-row-reverse">
